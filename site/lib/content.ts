@@ -2,8 +2,20 @@ import path from "path";
 import fs from "fs";
 import { marked } from "marked";
 
-const BLOG_DIR = path.join(process.cwd(), "..", "docs", "blog");
-const PUBLIC_IMAGES_DIR = path.join(process.cwd(), "public", "images");
+function getRootDir(): string {
+  const cwd = process.cwd();
+  if (fs.existsSync(path.join(cwd, "docs", "blog"))) {
+    return cwd;
+  }
+  if (fs.existsSync(path.join(cwd, "..", "docs", "blog"))) {
+    return path.join(cwd, "..");
+  }
+  return cwd;
+}
+
+const ROOT_DIR = getRootDir();
+const BLOG_DIR = path.join(ROOT_DIR, "docs", "blog");
+const PUBLIC_IMAGES_DIR = path.join(ROOT_DIR, "site", "public", "images");
 
 // ─── Image Sync Helper ───────────────────────────────────────────────────────
 
@@ -110,7 +122,12 @@ function extractRelatedServices(raw: string): string[] {
 
 function extractImage(raw: string): string | undefined {
   const m = raw.match(/!\[.*?\]\([^\)]*?([^/\)]+\.(?:jpg|jpeg|png|webp|avif|svg))\)/i);
-  return m ? `/images/${m[1]}` : undefined;
+  if (!m) return undefined;
+  const filename = m[1];
+  if (fs.existsSync(path.join(PUBLIC_IMAGES_DIR, filename))) {
+    return `/images/${filename}`;
+  }
+  return undefined;
 }
 
 function extractDescriptions(introRaw: string): Record<string, string> {
@@ -222,7 +239,9 @@ function loadCategories(): Category[] {
         const found = fs.readdirSync(imagesPath).find((f) =>
           new RegExp(`^pillar_${numPadded}`, "i").test(f)
         );
-        if (found) coverImage = `/images/${found}`;
+        if (found && fs.existsSync(path.join(PUBLIC_IMAGES_DIR, found))) {
+          coverImage = `/images/${found}`;
+        }
       }
 
       // Extract intro paragraph
@@ -250,7 +269,9 @@ function loadCategories(): Category[] {
             new RegExp(`^(article_${artNum}|${artNum}[._-]|p0?${num}_0?${artNum})`, "i").test(f) ||
             f.toLowerCase().includes(slug)
           );
-          if (found) articleCover = `/images/${found}`;
+          if (found && fs.existsSync(path.join(PUBLIC_IMAGES_DIR, found))) {
+            articleCover = `/images/${found}`;
+          }
         }
       }
 

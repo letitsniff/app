@@ -2,7 +2,19 @@ import path from "path";
 import fs from "fs";
 import { marked } from "marked";
 
-const SERVICES_DIR = path.join(process.cwd(), "..", "docs", "services");
+function getRootDir(): string {
+  const cwd = process.cwd();
+  if (fs.existsSync(path.join(cwd, "docs", "services"))) {
+    return cwd;
+  }
+  if (fs.existsSync(path.join(cwd, "..", "docs", "services"))) {
+    return path.join(cwd, "..");
+  }
+  return cwd;
+}
+
+const ROOT_DIR = getRootDir();
+const SERVICES_DIR = path.join(ROOT_DIR, "docs", "services");
 
 export interface Service {
   slug: string;
