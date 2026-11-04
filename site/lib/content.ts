@@ -3,6 +3,44 @@ import fs from "fs";
 import { marked } from "marked";
 
 const BLOG_DIR = path.join(process.cwd(), "..", "docs", "blog");
+const PUBLIC_IMAGES_DIR = path.join(process.cwd(), "public", "images");
+
+// ─── Image Sync Helper ───────────────────────────────────────────────────────
+
+function syncImages(): void {
+  try {
+    if (!fs.existsSync(PUBLIC_IMAGES_DIR)) {
+      fs.mkdirSync(PUBLIC_IMAGES_DIR, { recursive: true });
+    }
+
+    if (!fs.existsSync(BLOG_DIR)) return;
+
+    const dirs = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
+    for (const dir of dirs) {
+      if (dir.isDirectory()) {
+        const imagesPath = path.join(BLOG_DIR, dir.name, "images");
+        if (fs.existsSync(imagesPath)) {
+          const files = fs.readdirSync(imagesPath);
+          for (const file of files) {
+            const src = path.join(imagesPath, file);
+            const dest = path.join(PUBLIC_IMAGES_DIR, file);
+            if (fs.statSync(src).isFile()) {
+              // Copy if destination doesn't exist or is older
+              if (
+                !fs.existsSync(dest) ||
+                fs.statSync(src).mtimeMs > fs.statSync(dest).mtimeMs
+              ) {
+                fs.copyFileSync(src, dest);
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error syncing images to public folder:", err);
+  }
+}
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -16,6 +54,7 @@ export interface Article {
   excerpt: string;
   htmlContent: string;
   relatedService: string[];
+  coverImage?: string;
 }
 
 export interface Category {
@@ -25,6 +64,7 @@ export interface Category {
   intro: string;
   relatedService: string[];
   articles: Article[];
+  coverImage?: string;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -68,6 +108,11 @@ function extractRelatedServices(raw: string): string[] {
     .map((s) => s.replace("/ypiresies/", ""));
 }
 
+function extractImage(raw: string): string | undefined {
+  const m = raw.match(/!\[.*?\]\([^\)]*?([^/\)]+\.(?:jpg|jpeg|png|webp|avif|svg))\)/i);
+  return m ? `/images/${m[1]}` : undefined;
+}
+
 function makeExcerpt(html: string, length = 160): string {
   const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   return text.length > length ? text.slice(0, length).replace(/\s\S+$/, "") + "…" : text;
@@ -79,13 +124,17 @@ function cleanMarkdownForDisplay(raw: string): string {
     .replace(/\*\*Κατηγορία:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Προτεινόμενο URL:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Χρόνος ανάγνωσης:\*\*[^\n]+\n?/g, "")
-    .replace(/^##\s*---\s*$/m, "")
+    .replace(/^##\s*\\?---\s*$/m, "")
+    // Rewrite relative markdown image URLs to point to /images/
+    .replace(/!\[(.*?)\]\(\.?\/?images\/([^)]+)\)/g, "![$1](/images/$2)")
     .trim();
 }
 
 // ─── Loaders ─────────────────────────────────────────────────────────────────
 
 function loadCategories(): Category[] {
+  syncImages();
+
   if (!fs.existsSync(BLOG_DIR)) return [];
 
   const dirs = fs
@@ -108,12 +157,27 @@ function loadCategories(): Category[] {
     let categoryTitle = dir.replace(/^\d{2}\s+-\s+/, "");
     let relatedService: string[] = [];
     let intro = "";
+    let coverImage: string | undefined = undefined;
+
+    const imagesPath = path.join(dirPath, "images");
 
     if (introFile) {
       introRaw = fs.readFileSync(path.join(dirPath, introFile), "utf-8");
       const titleMatch = introRaw.match(/^#\s+\**Πυλώνας \d+:\s*(.+?)\**\s*$/m);
       if (titleMatch) categoryTitle = titleMatch[1].trim();
       relatedService = extractRelatedServices(introRaw);
+
+      // Extract cover image from pillar intro (e.g. ![...](./images/pillar_01_cover.jpg))
+      coverImage = extractImage(introRaw);
+
+      // If not in markdown, check if pillar_XX_cover.* exists in images folder
+      if (!coverImage && fs.existsSync(imagesPath)) {
+        const numPadded = String(num).padStart(2, "0");
+        const found = fs.readdirSync(imagesPath).find((f) =>
+          new RegExp(`^pillar_${numPadded}`, "i").test(f)
+        );
+        if (found) coverImage = `/images/${found}`;
+      }
 
       // Extract intro paragraph
       const introMatch = introRaw.match(/\*\*Εισαγωγή:\*\*\s*([^\n]+)/);
@@ -133,6 +197,20 @@ function loadCategories(): Category[] {
       const html = marked.parse(cleaned) as string;
       const excerpt = makeExcerpt(html);
 
+      // Article gets its OWN image from markdown or matching convention in images folder
+      let articleCover = extractImage(raw);
+      if (!articleCover && fs.existsSync(imagesPath)) {
+        const afNumMatch = af.match(/^(\d{2})/);
+        if (afNumMatch) {
+          const artNum = afNumMatch[1];
+          const found = fs.readdirSync(imagesPath).find((f) =>
+            new RegExp(`^(article_${artNum}|${artNum}[._-])`, "i").test(f) ||
+            f.toLowerCase().includes(slug)
+          );
+          if (found) articleCover = `/images/${found}`;
+        }
+      }
+
       articles.push({
         slug,
         title,
@@ -143,6 +221,7 @@ function loadCategories(): Category[] {
         excerpt,
         htmlContent: html,
         relatedService,
+        coverImage: articleCover,
       });
     }
 
@@ -153,6 +232,7 @@ function loadCategories(): Category[] {
       intro,
       relatedService,
       articles,
+      coverImage,
     });
   }
 

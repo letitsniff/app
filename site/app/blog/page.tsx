@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getAllCategories } from "@/lib/content";
 import ArticleCard from "@/components/ArticleCard";
-import CategoryCard from "@/components/CategoryCard";
 import { BookOpen } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -36,21 +35,30 @@ export default function BlogPage() {
       <div className="space-y-16">
         {categories.map((cat) => (
           <section key={cat.slug} id={cat.slug}>
-            {/* Category header */}
-            <div className="flex items-start gap-4 mb-6 pb-4 border-b border-[var(--color-sandDark)]">
+            {/* Category header with optional cover image */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-[var(--color-sandDark)]">
               <div className="flex-1">
                 <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
                   Ενότητα {String(cat.number).padStart(2, "0")}
                 </p>
-                <h2 className="font-heading text-2xl text-[var(--color-brown)]">
+                <h2 className="font-heading text-2xl md:text-3xl text-[var(--color-brown)]">
                   {cat.title}
                 </h2>
                 {cat.intro && (
-                  <p className="text-sm text-[var(--color-muted)] mt-1 leading-relaxed max-w-2xl">
+                  <p className="text-sm text-[var(--color-muted)] mt-2 leading-relaxed max-w-2xl">
                     {cat.intro}
                   </p>
                 )}
               </div>
+              {cat.coverImage && (
+                <div className="w-full md:w-64 aspect-[16/10] md:h-36 rounded-2xl overflow-hidden shadow-sm flex-shrink-0 border border-[var(--color-sandDark)]/20">
+                  <img
+                    src={cat.coverImage}
+                    alt={cat.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Articles grid */}

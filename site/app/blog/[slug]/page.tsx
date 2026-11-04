@@ -25,6 +25,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: article.title,
     description: article.excerpt,
+    openGraph: article.coverImage
+      ? {
+          images: [{ url: article.coverImage }],
+        }
+      : undefined,
   };
 }
 
@@ -92,8 +97,21 @@ export default async function ArticlePage({ params }: Props) {
         </div>
       </div>
 
+      {/* ── Hero / Cover image ───────────────────────────── */}
+      {article.coverImage && (
+        <div className="max-w-5xl mx-auto px-5 -mt-4 mb-6">
+          <div className="relative aspect-[16/9] md:aspect-[21/9] w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-md border border-[var(--color-sandDark)]/20">
+            <img
+              src={article.coverImage}
+              alt={article.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      )}
+
       {/* ── Content + sidebar ───────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-5 py-12">
+      <div className="max-w-6xl mx-auto px-5 py-10">
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-14">
           {/* Article body */}
           <article>

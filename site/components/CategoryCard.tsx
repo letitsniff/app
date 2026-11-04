@@ -13,22 +13,44 @@ export default function CategoryCard({ category }: Props) {
   return (
     <Link
       href={firstArticle ? `/blog/${firstArticle.slug}/` : `/blog/`}
-      className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+      className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-[var(--color-sandDark)]/20"
     >
-      {/* Top color bar */}
-      <div className="h-1.5" style={{ backgroundColor: color }} />
+      {/* Cover Image or Color Bar */}
+      {category.coverImage ? (
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-[var(--color-sand)]">
+          <img
+            src={category.coverImage}
+            alt={category.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div className="absolute top-3 left-3">
+            <span
+              className="inline-block text-xs font-bold px-2.5 py-1 rounded-full shadow-sm"
+              style={{
+                backgroundColor: color,
+                color: "#ffffff",
+              }}
+            >
+              {String(category.number).padStart(2, "0")}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="h-1.5" style={{ backgroundColor: color }} />
+      )}
 
       <div className="p-6">
-        {/* Number pill */}
-        <span
-          className="inline-block text-xs font-bold px-2 py-0.5 rounded mb-3"
-          style={{
-            backgroundColor: `color-mix(in srgb, ${color} 15%, white)`,
-            color,
-          }}
-        >
-          {String(category.number).padStart(2, "0")}
-        </span>
+        {!category.coverImage && (
+          <span
+            className="inline-block text-xs font-bold px-2 py-0.5 rounded mb-3"
+            style={{
+              backgroundColor: `color-mix(in srgb, ${color} 15%, white)`,
+              color,
+            }}
+          >
+            {String(category.number).padStart(2, "0")}
+          </span>
+        )}
 
         <h3 className="font-heading text-lg text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-2">
           {category.title}

@@ -67,6 +67,9 @@ def scan_drive_tree_recursive(folder_id, current_rel_dir=""):
         item_id = it.get("id")
         
         if mime == "application/vnd.google-apps.folder":
+            # Ignore archive/backup folders
+            if name.lower() in ["blogold", "old", "archive", "backup", "trash", ".trash"]:
+                continue
             sub_rel = os.path.join(current_rel_dir, name) if current_rel_dir else name
             sub_folders, sub_files = scan_drive_tree_recursive(item_id, sub_rel)
             folder_map.update(sub_folders)
@@ -135,6 +138,20 @@ def sync_drive_to_docs():
                 run_gdrive("readonly", "export", drive_id, local_abs, "--format", "md")
             else:
                 run_gdrive("readonly", "download", drive_id, "--out", local_abs)
+
+            # Safeguard: strip any inline base64 image bloat from markdown files
+            if local_abs.endswith(".md") and os.path.exists(local_abs):
+                try:
+                    with open(local_abs, "r", encoding="utf-8", errors="ignore") as f:
+                        text = f.read()
+                    if "data:image/" in text:
+                        import re
+                        cleaned = re.sub(r"\n*\[image\d+\]:\s*<data:image/[^>]+>", "", text)
+                        cleaned = re.sub(r"!\[\]\[image\d+\]", "", cleaned)
+                        with open(local_abs, "w", encoding="utf-8") as f:
+                            f.write(cleaned)
+                except Exception:
+                    pass
 
             files_state[local_rel] = {
                 "drive_id": drive_id,
