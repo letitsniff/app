@@ -62,7 +62,7 @@ export default function BlogPage() {
               </div>
             ) : (
               <p className="text-sm text-[var(--color-muted)] italic">
-                Τα άρθρα αυτής της ενότητας έρχονται近τα.
+                Τα άρθρα αυτής της ενότητας έρχονται σύντομα.
               </p>
             )}
           </section>
