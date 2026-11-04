@@ -9,6 +9,8 @@ out/
 # Sync metadata and tokens
 .sync/token.json
 .sync/sync_state.json
+__pycache__/
+*.pyc
 
 # Environment files
 .env*
