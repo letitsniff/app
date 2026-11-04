@@ -31,7 +31,7 @@ letitsniff/
   - `**Προτεινόμενο URL:**` → SEO slug e.g. `/blog/my-slug`
   - `**Χρόνος ανάγνωσης:**` → reading time
 - Pillar intro files (`00. Εισαγωγή...`) contain category metadata including `**Συνδεδεμένη Υπηρεσία:**`
-- Services live in `docs/services/[slug].md` with YAML frontmatter
+- Services live in `docs/services/[slug].md` with inline metadata (no YAML frontmatter)
 
 ## Content Paths (from site/)
 - Blog: `../docs/blog/`

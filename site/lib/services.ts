@@ -17,15 +17,79 @@ export interface Service {
   pillars: number[]; // linked pillar numbers
 }
 
-function parseFrontmatter(raw: string): { data: Record<string, string>; content: string } {
-  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!m) return { data: {}, content: raw };
-  const data: Record<string, string> = {};
-  for (const line of m[1].split("\n")) {
-    const kv = line.match(/^(\w+):\s*(.+)$/);
-    if (kv) data[kv[1]] = kv[2].trim().replace(/^["']|["']$/g, "");
+function extractField(raw: string, fieldNames: string[]): string {
+  for (const name of fieldNames) {
+    const regex = new RegExp(`\\*\\*${name}:\\*\\*\\s*([^\\n]+)`, "u");
+    const m = raw.match(regex);
+    if (m) return m[1].trim();
   }
-  return { data, content: m[2] };
+  return "";
+}
+
+function extractTitle(raw: string, defaultSlug: string): string {
+  const m = raw.match(/^#\s+\**(.+?)\**\s*$/m);
+  if (m) return m[1].replace(/\\/g, "").trim();
+  const f = extractField(raw, ["Τίτλος", "Title", "title"]);
+  return f || defaultSlug;
+}
+
+function cleanServiceContent(raw: string): string {
+  let clean = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+  clean = clean.replace(/^#\s+[^\n]+\n?/, "");
+  const fields = [
+    "Τίτλος \\(Αγγλικά\\)", "TitleEn", "titleEn",
+    "Tagline", "tagline",
+    "Περιγραφή", "Description", "description",
+    "Icon", "icon", "Εικονίδιο",
+    "Τιμή", "Price", "price",
+    "Διάρκεια", "Duration", "duration",
+    "Πυλώνες", "Pillars", "pillars",
+  ];
+  for (const f of fields) {
+    const regex = new RegExp(`\\*\\*${f}:\\*\\*[^\\n]+\\n?`, "g");
+    clean = clean.replace(regex, "");
+  }
+  return clean.trim();
+}
+
+function parseServiceMetadata(raw: string, slug: string): Service {
+  // Support legacy YAML frontmatter if present
+  const yamlData: Record<string, string> = {};
+  const fmM = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+  if (fmM) {
+    for (const line of fmM[1].split("\n")) {
+      const kv = line.match(/^(\w+):\s*(.+)$/);
+      if (kv) yamlData[kv[1]] = kv[2].trim().replace(/^["']|["']$/g, "");
+    }
+  }
+
+  const title = yamlData.title || extractTitle(raw, slug);
+  const titleEn = yamlData.titleEn || extractField(raw, ["Τίτλος (Αγγλικά)", "TitleEn", "titleEn"]);
+  const tagline = yamlData.tagline || extractField(raw, ["Tagline", "tagline"]);
+  const description = yamlData.description || extractField(raw, ["Περιγραφή", "Description", "description"]);
+  const icon = yamlData.icon || extractField(raw, ["Icon", "icon", "Εικονίδιο"]) || "🐾";
+  const price = yamlData.price || extractField(raw, ["Τιμή", "Price", "price"]) || undefined;
+  const duration = yamlData.duration || extractField(raw, ["Διάρκεια", "Duration", "duration"]) || undefined;
+  const pillarsRaw = yamlData.pillars || extractField(raw, ["Πυλώνες", "Pillars", "pillars"]);
+  const pillars = pillarsRaw
+    ? pillarsRaw.split(",").map((s) => parseInt(s.trim(), 10)).filter((n) => !isNaN(n))
+    : [];
+
+  const cleanedContent = cleanServiceContent(raw);
+  const htmlContent = marked.parse(cleanedContent) as string;
+
+  return {
+    slug,
+    title,
+    titleEn,
+    tagline,
+    description,
+    icon,
+    price,
+    duration,
+    pillars,
+    htmlContent,
+  };
 }
 
 function loadServices(): Service[] {
@@ -33,21 +97,8 @@ function loadServices(): Service[] {
   const files = fs.readdirSync(SERVICES_DIR).filter((f) => f.endsWith(".md")).sort();
   return files.map((f) => {
     const raw = fs.readFileSync(path.join(SERVICES_DIR, f), "utf-8");
-    const { data, content } = parseFrontmatter(raw);
     const slug = f.replace(".md", "");
-    const html = marked.parse(content) as string;
-    return {
-      slug,
-      title: data.title || slug,
-      titleEn: data.titleEn || "",
-      tagline: data.tagline || "",
-      description: data.description || "",
-      icon: data.icon || "🐾",
-      price: data.price,
-      duration: data.duration,
-      pillars: data.pillars ? data.pillars.split(",").map(Number) : [],
-      htmlContent: html,
-    };
+    return parseServiceMetadata(raw, slug);
   });
 }
 
