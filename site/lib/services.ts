@@ -104,7 +104,10 @@ function loadServices(): Service[] {
 
 let _services: Service[] | null = null;
 export function getAllServices(): Service[] {
-  if (!_services) _services = loadServices();
+  if (process.env.NODE_ENV === "production" && _services) {
+    return _services;
+  }
+  _services = loadServices();
   return _services;
 }
 

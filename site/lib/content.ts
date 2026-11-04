@@ -113,21 +113,64 @@ function extractImage(raw: string): string | undefined {
   return m ? `/images/${m[1]}` : undefined;
 }
 
-function makeExcerpt(html: string, length = 160): string {
-  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+function extractDescriptions(introRaw: string): Record<string, string> {
+  const map: Record<string, string> = {};
+  const entries = introRaw.split(/>\s*\*\s+/);
+  for (const entry of entries) {
+    const urlMatch = entry.match(/\*URL:\*\s*([^\n\r]+)/);
+    const descMatch = entry.match(/\*Περιγραφή:\*\s*([^\n\r]+)/);
+    if (urlMatch && descMatch) {
+      const slug = urlMatch[1].trim().replace(/^\/blog\//, "").replace(/\/$/, "");
+      map[slug] = descMatch[1].trim();
+    }
+  }
+  return map;
+}
+
+function extractExcerptFromBody(cleanedMarkdown: string, length = 160): string {
+  const text = cleanedMarkdown
+    .replace(/^##+\s+[^\n]+/gm, "")
+    .replace(/^>\s*/gm, "")
+    .replace(/\*\*Με μια ματιά \(TL;DR\)\*\*/gi, "")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+    .replace(/[*_`#]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
   return text.length > length ? text.slice(0, length).replace(/\s\S+$/, "") + "…" : text;
 }
 
-function cleanMarkdownForDisplay(raw: string): string {
-  // Remove the metadata lines at the top (Κατηγορία, Προτεινόμενο URL, Χρόνος) and the separator
-  return raw
+function cleanMarkdownForDisplay(raw: string, coverImage?: string): string {
+  let cleaned = raw;
+
+  // 1. Remove the first H1 header (it is already rendered by the page layout)
+  cleaned = cleaned.replace(/^#\s+[^\n]+\n*/m, "");
+
+  // 2. If a cover image exists, remove its occurrence at the top of the post to prevent duplicates
+  if (coverImage) {
+    const filename = coverImage.split("/").pop();
+    if (filename) {
+      const escaped = filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const coverImgRegex = new RegExp(`!\\[[^\\]]*\\]\\([^)]*${escaped}[^)]*\\)\\s*`, "i");
+      cleaned = cleaned.replace(coverImgRegex, "");
+    }
+  }
+
+  // 3. Remove inline metadata lines and separators
+  cleaned = cleaned
     .replace(/\*\*Κατηγορία:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Προτεινόμενο URL:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Χρόνος ανάγνωσης:\*\*[^\n]+\n?/g, "")
-    .replace(/^##\s*\\?---\s*$/m, "")
-    // Rewrite relative markdown image URLs to point to /images/
-    .replace(/!\[(.*?)\]\(\.?\/?images\/([^)]+)\)/g, "![$1](/images/$2)")
-    .trim();
+    .replace(/^##\s*\\?---\s*$/gm, "");
+
+  // 4. Rewrite relative markdown image URLs to point to /images/
+  cleaned = cleaned.replace(
+    /!\[(.*?)\]\(\.?\/?images\/([^)]+)\)/g,
+    "![$1](/images/$2)"
+  );
+
+  return cleaned.trim();
 }
 
 // ─── Loaders ─────────────────────────────────────────────────────────────────
@@ -161,8 +204,11 @@ function loadCategories(): Category[] {
 
     const imagesPath = path.join(dirPath, "images");
 
+    let descriptions: Record<string, string> = {};
+
     if (introFile) {
       introRaw = fs.readFileSync(path.join(dirPath, introFile), "utf-8");
+      descriptions = extractDescriptions(introRaw);
       const titleMatch = introRaw.match(/^#\s+\**Πυλώνας \d+:\s*(.+?)\**\s*$/m);
       if (titleMatch) categoryTitle = titleMatch[1].trim();
       relatedService = extractRelatedServices(introRaw);
@@ -193,9 +239,6 @@ function loadCategories(): Category[] {
       const title = extractTitle(raw);
       const slug = extractSlug(raw) || af.replace(/\.md$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const readingTime = extractField(raw, "Χρόνος ανάγνωσης") || "3 λεπτά";
-      const cleaned = cleanMarkdownForDisplay(raw);
-      const html = marked.parse(cleaned) as string;
-      const excerpt = makeExcerpt(html);
 
       // Article gets its OWN image from markdown or matching convention in images folder
       let articleCover = extractImage(raw);
@@ -204,12 +247,20 @@ function loadCategories(): Category[] {
         if (afNumMatch) {
           const artNum = afNumMatch[1];
           const found = fs.readdirSync(imagesPath).find((f) =>
-            new RegExp(`^(article_${artNum}|${artNum}[._-])`, "i").test(f) ||
+            new RegExp(`^(article_${artNum}|${artNum}[._-]|p0?${num}_0?${artNum})`, "i").test(f) ||
             f.toLowerCase().includes(slug)
           );
           if (found) articleCover = `/images/${found}`;
         }
       }
+
+      // Clean markdown, stripping H1 and cover image to prevent duplicates on the article page
+      const cleaned = cleanMarkdownForDisplay(raw, articleCover);
+      const html = marked.parse(cleaned) as string;
+
+      // Prefer handcrafted TOC description from pillar intro, otherwise extract clean text from body
+      const tocExcerpt = descriptions[slug];
+      const excerpt = tocExcerpt || extractExcerptFromBody(cleaned);
 
       articles.push({
         slug,
@@ -239,11 +290,14 @@ function loadCategories(): Category[] {
   return categories;
 }
 
-// Memoize at module level (runs once per build)
+// Memoize at module level in production only
 let _categories: Category[] | null = null;
 
 export function getAllCategories(): Category[] {
-  if (!_categories) _categories = loadCategories();
+  if (process.env.NODE_ENV === "production" && _categories) {
+    return _categories;
+  }
+  _categories = loadCategories();
   return _categories;
 }
 

@@ -12,7 +12,7 @@ export default function CategoryCard({ category }: Props) {
 
   return (
     <Link
-      href={firstArticle ? `/blog/${firstArticle.slug}/` : `/blog/`}
+      href={`/blog/#${category.slug}`}
       className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-[var(--color-sandDark)]/20"
     >
       {/* Cover Image or Color Bar */}
