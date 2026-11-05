@@ -218,8 +218,8 @@ Every pillar uses a designated primary accent tone from `CATEGORY_COLORS` (`site
 3. **Artifact retrieval:** Subagents write generated images into the conversation artifact/brain directory (`<brain>/<basename>_<timestamp>.jpg`). Copy them using a Python script or shell command into `docs/blog/[NN] - [Pillar Name]/images/<target_name>.jpg`.
 4. **Clean paths in shell/scripts:** Always handle Greek pillar folder names safely (e.g., via `glob.glob("docs/blog/05*")[0]`).
 
-### 5. Markdown Article Integration
-Embed the illustration immediately under the H1 heading and before metadata:
+### 5. Markdown Article & Pillar Cover Integration
+- **Article illustrations:** Embed the illustration immediately under the H1 heading and before metadata in each `[AA]. Article.md`:
 
 ```markdown
 # **01\. Title of the article**
@@ -230,6 +230,17 @@ Embed the illustration immediately under the H1 heading and before metadata:
 **Προτεινόμενο URL:** /blog/my-slug  
 **Χρόνος ανάγνωσης:** 2 λεπτά
 ```
+
+- **Pillar cover images:** Each pillar must also have its own dedicated cover illustration embedded immediately below the H1 in its intro index file (`00. Εισαγωγή & Πίνακας Περιεχομένων - Πυλώνας [PP].md`):
+
+```markdown
+# **Πυλώνας 02: Ζωή στην Πολυκατοικία & Διαχείριση Άγχους**
+
+![Ζωή στην Πολυκατοικία & Διαχείριση Άγχους](./images/pillar_02_cover.jpg)
+
+**Εισαγωγή:** ...
+```
+The Next.js content loader (`site/lib/content.ts`) extracts this cover to display on category cards on `/blog/` and hero headers.
 
 - Always use meaningful Greek alt text describing the illustration.
 - Ensure blank lines precede and follow the image tag.
