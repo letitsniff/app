@@ -1,0 +1,58 @@
+name: Sync from Google Drive & Deploy
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Automatically runs every hour
+  repository_dispatch:
+    types: [sync-drive] # Webhook triggered by Alex's "Publish" button in Google Docs
+  workflow_dispatch:     # Manual run button in GitHub Actions
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: "drive-sync"
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Google API dependencies
+        run: |
+          pip install --no-cache-dir google-api-python-client google-auth
+
+      - name: Sync docs from Google Drive
+        env:
+          GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}
+          GDRIVE_ROOT_FOLDER_ID: "1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi"
+        run: |
+          python scripts/sync_from_drive_ci.py
+
+      - name: Check for changes, commit and trigger deploy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          if git diff --staged --quiet; then
+            echo "No changes found in docs from Google Drive."
+          else
+            echo "Changes detected! Committing and pushing..."
+            git commit -m "Auto-sync docs from Google Drive [skip ci]"
+            git push origin main
+            echo "Triggering GitHub Pages deployment workflow..."
+            gh workflow run deploy.yml --ref main
+          fi
