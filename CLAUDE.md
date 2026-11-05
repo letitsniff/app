@@ -169,6 +169,101 @@ For article creation or corrections:
 
 Report what was created or fixed and which checks passed, failed, or could not run. Do not claim images were generated, Drive was updated, or changes were deployed unless those actions were explicitly requested and actually completed.
 
+## Blog Illustration Generation Workflow
+
+When generating editorial illustrations for blog articles and pillars, follow this standardized, end-to-end automated process:
+
+### 1. Art Direction & Style Specifications
+Every generated image must maintain a cohesive visual identity across the entire blog library:
+- **Style:** Minimalist vector illustration, modern flat design, clean lines, bold organic & geometric shapes.
+- **Editorial Aesthetic:** Modern infographic editorial layout, magazine-ready clarity, conceptual design (symbolic storytelling rather than literal clip-art).
+- **Aspect Ratio:** 16:9 landscape format (`AspectRatio: "16:9"`).
+- **Welfare & Safety Consistency:** Never illustrate aversive tools, physical force, choking, punitive measures, or unsafe child-dog interactions as recommended practice.
+- **Strictly Avoid:** Photorealism, 3D renders, glossy textures, visual clutter, watermarks, and gibberish/AI text artifacts.
+
+### 2. Color Palette & Pillar Themes
+Every pillar uses a designated primary accent tone from `CATEGORY_COLORS` (`site/lib/content.ts`), paired with a warm, welcoming supporting palette:
+- **Base Background:** Warm cream (`#FAF7F2` or `#F8F5EE`).
+- **Warm Accents:** Golden amber/ochre (`#E29538` / `#C4852A`) and soft terracotta (`#C4522A`).
+- **Neutral Outlines/Accents:** Clean charcoal/slate (`#2B2D42` / `#2C3539`).
+- **Pillar Primary Color Matrix (`CATEGORY_COLORS`):**
+  - **Pillar 01:** `#C4852A` — Η Φιλοσοφία Let It Sniff & Αστική Βόλτα (Warm Amber)
+  - **Pillar 02:** `#C4522A` — Ζωή στην Πολυκατοικία & Διαχείριση Άγχους (Terracotta)
+  - **Pillar 03:** `#A83228` — Αντιδραστικότητα, Φοβίες & Ερεθίσματα της Πόλης (Brick Red)
+  - **Pillar 04:** `#5A7A54` — Κουτάβι στο Διαμέρισμα (Puppy Hub) (Sage Green)
+  - **Pillar 05:** `#6B7C3A` — Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων (Olive / Moss Green)
+  - **Pillar 06:** `#2E7D7A` — Συνεργατική Φροντίδα, Κτηνίατρος & Grooming (Teal)
+  - **Pillar 07:** `#9B4D6B` — Οικογένεια, Μωρά, Παιδιά & Πολλά Κατοικίδια (Plum / Berry)
+  - **Pillar 08:** `#3A6B9B` — Ταξίδια, Μετακινήσεις στην Αθήνα & Διακοπές (Steel Blue)
+  - **Pillar 09:** `#6B4D9B` — Φυλές, Ημίαιμα & Γενετικά Ένστικτα στο Διαμέρισμα (Purple / Indigo)
+  - **Pillar 10:** `#B85C20` — Παράξενες Συμπεριφορές & Καθημερινά Αινίγματα (Rust / Sienna)
+  - **Pillar 11:** `#7A2E4A` — Ηλικία, Υγεία, Ορμόνες & Συμπεριφορά (Maroon / Burgundy)
+  - **Pillar 12:** `#3D5C38` — Πώς Εκφράζονται τα Σκυλιά (Γλώσσα Σώματος) (Forest Green)
+  - **Pillar 13:** `#2E4D7A` — Φωνητική Έκφραση & Επικοινωνία Μεταξύ Σκύλων (Deep Slate Blue)
+  - **Pillar 14:** `#9B7A2E` — Πριν την Υιοθεσία (Επιλογή Σκύλου & Προετοιμασία) (Mustard / Khaki)
+  - **Pillar 15:** `#3D7A5C` — Η Μετάβαση μετά την Υιοθεσία (Αποσυμπίεση & Δέσιμο) (Emerald Sea Green)
+  - **Pillar 16:** `#7A5C2E` — Εξοπλισμός, Λιχουδιές & Αισθητηριακός Πλούτος (Earthy Ochre)
+  - **Pillar 17:** `#2E7A9B` — Πάρκα Σκύλων, Dog Walkers & Κοινωνική Ζωή (Sky / Ocean Teal)
+  - **Pillar 18:** `#4D3D7A` — Η Ψυχολογία του Κηδεμόνα στην Πόλη (Deep Violet)
+
+### 3. File Naming & Directory Organization
+- Source image directory: `docs/blog/[NN] - [Pillar Name]/images/`
+- Unique basenames: Every image filename must be globally unique across all pillars because Next.js content loader flattens them into `site/public/images/`.
+- **Article illustrations:** `p[PP]_[AA]_[short_descriptive_slug].jpg` (e.g. `p04_01_puppy_potty_training.jpg`).
+- **Pillar cover images:** `pillar_[PP]_cover.jpg` (e.g. `pillar_01_cover.jpg`).
+
+### 4. Subagent Execution & Batching
+1. **Spawn dedicated subagents:** Use one `image-generator` subagent per article, passing the specific article title, summary/content, pillar primary color, and style prompt.
+2. **Batch concurrency:** Launch in batches of 2–3 subagents to manage resources cleanly and avoid sudden burst limits.
+3. **Artifact retrieval:** Subagents write generated images into the conversation artifact/brain directory (`<brain>/<basename>_<timestamp>.jpg`). Copy them using a Python script or shell command into `docs/blog/[NN] - [Pillar Name]/images/<target_name>.jpg`.
+4. **Clean paths in shell/scripts:** Always handle Greek pillar folder names safely (e.g., via `glob.glob("docs/blog/05*")[0]`).
+
+### 5. Markdown Article Integration
+Embed the illustration immediately under the H1 heading and before metadata:
+
+```markdown
+# **01\. Title of the article**
+
+![Descriptive Greek alt text](./images/p05_01_positive_reinforcement_boundaries.jpg)
+
+**Κατηγορία:** 05 - Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων  
+**Προτεινόμενο URL:** /blog/my-slug  
+**Χρόνος ανάγνωσης:** 2 λεπτά
+```
+
+- Always use meaningful Greek alt text describing the illustration.
+- Ensure blank lines precede and follow the image tag.
+
+### 6. Build, Verification & Image Sync
+After modifying Markdown files and adding images:
+1. Run `cd site && pnpm build`.
+2. The custom content loader in `site/lib/content.ts` will:
+   - Synchronize all files from `docs/blog/*/images/*` into `site/public/images/`.
+   - Extract the top image link to populate article heroes and social card metadata.
+3. Verify that Next.js static export finishes cleanly with 0 errors (all routes generated).
+
+### 7. Version Control & Continuous Deployment
+1. Stage modified articles and copied images:
+   ```bash
+   git add "docs/blog/[NN] - [Pillar Name]" site/public/images/p[PP]*
+   ```
+2. Commit with descriptive semantic message:
+   ```bash
+   git commit -m "feat(blog): add illustrations for articles 01-06 in pillar [PP]"
+   ```
+3. Push directly to `main`:
+   ```bash
+   git push origin main
+   ```
+   Pushing to `main` automatically triggers `.github/workflows/deploy.yml` on GitHub Actions to deploy to production (`https://letitsniff.gr`).
+
+### 8. Handling API Rate Limits & Quotas
+- If an image generator subagent encounters `429 RESOURCE_EXHAUSTED` (e.g., on `gemini-3.1-flash-image`):
+  1. Do not enter an aggressive retry loop.
+  2. Commit and push all completed images and updated articles up to that point.
+  3. Record the reset timestamp reported by the API error message.
+  4. Notify the user or schedule resumption via `/schedule` after the reset window expires.
+
 ## Google Drive Synchronization Architecture
 Synchronization is **strictly one-way** (Google Drive / Google Docs ➔ GitHub Repository `docs/` ➔ Live Site). Changes are never pushed from git to Google Drive.
 - **Root Folder ID:** `1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi` (`letitsniff.gr - Πυλώνες Περιεχομένου`)
