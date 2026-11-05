@@ -52,6 +52,7 @@ jobs:
           else
             echo "Changes detected! Committing and pushing..."
             git commit -m "Auto-sync docs from Google Drive [skip ci]"
+            git pull --rebase origin main
             git push origin main
             echo "Triggering GitHub Pages deployment workflow..."
             gh workflow run deploy.yml --ref main
