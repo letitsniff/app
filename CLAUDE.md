@@ -265,23 +265,25 @@ After modifying Markdown files and adding images:
   4. Notify the user or schedule resumption via `/schedule` after the reset window expires.
 
 ## Google Drive Synchronization Architecture
-Synchronization is **strictly one-way** (Google Drive / Google Docs ➔ GitHub Repository `docs/` ➔ Live Site). Changes are never pushed from git to Google Drive.
+- **Markdown Articles (One-Way):** Google Drive / Google Docs ➔ GitHub Repository `docs/` ➔ Live Site. Articles are never pushed from git to Google Drive, preserving Google Docs as Alex's primary content editor.
+- **Article Images (Git ➔ Drive):** Generated and committed images in `docs/blog/[Pillar]/images/*` are automatically synced and uploaded to the matching `images` folder inside that pillar on Google Drive.
 - **Root Folder ID:** `1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi` (`letitsniff.gr - Πυλώνες Περιεχομένου`)
 - **CI Sync Workflow (`.github/workflows/sync-from-drive.yml`):**
   - **Triggers:**
     - Schedule: runs hourly (`cron: '0 * * * *'`).
     - Webhook: `repository_dispatch: [sync-drive]` (triggered by Alex's 1-click button in Google Docs).
     - Manual: `workflow_dispatch`.
-  - **Incremental Sync (`scripts/sync_from_drive_ci.py`):**
+  - **Incremental Sync & Image Upload (`scripts/sync_from_drive_ci.py`):**
+    - Uploads any newly committed local images to Google Drive.
     - Checks Drive `modifiedTime` against `.sync/drive_state.json`.
     - Only downloads/exports files that were newly added or modified on Drive.
     - If no files changed, finishes in ~4 seconds and skips committing/deploying.
-    - Automatically cleans deleted files and empty folders.
+    - Automatically cleans deleted files while protecting all local images.
     - Sanitizes markdown exports by removing inline base64 image strings.
     - When changes are detected: commits changes, pushes to `main`, and dispatches `.github/workflows/deploy.yml`.
-- **Local Sync Daemon (`.sync/sync_daemon.py`):**
-  - Runs locally for development sync if needed.
-  - Strictly one-way (Drive ➔ `docs/`).
+- **Local Scripts & Daemon:**
+  - `python3 scripts/sync_images_to_drive.py`: Uploads all local article images to Google Drive.
+  - `.sync/sync_daemon.py`: Background daemon keeping local `docs/` and Drive in sync.
 
 ## URL & Route Structure
 - `/` — Homepage

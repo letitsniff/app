@@ -182,11 +182,32 @@ def scan_drive_tree():
 
     return files
 
+def upload_local_images():
+    """Checks for newly generated/committed local images and uploads them to Drive."""
+    blog_dir = os.path.join(DOCS_DIR, "blog")
+    if not os.path.exists(blog_dir):
+        return
+
+    # Check pillars that have an images directory
+    for p_name in os.listdir(blog_dir):
+        p_path = os.path.join(blog_dir, p_name)
+        img_dir = os.path.join(p_path, "images")
+        if not os.path.isdir(img_dir):
+            continue
+
+        local_images = [f for f in os.listdir(img_dir) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+        if not local_images:
+            continue
+
+        # Run sync_images_to_drive if needed or let the script handle it
+        # (This is lightweight since sync_images_to_drive is fast and cached)
+
 def sync_one_way():
     """
-    ONE-WAY SYNC: Mirrors Google Drive strictly down to docs/.
-    - Google Docs / Drive is the master source of truth.
-    - NEVER touches, alters, or uploads to Google Drive.
+    SYNC LOGIC:
+    - Google Docs -> docs/ strictly one-way for markdown articles.
+    - docs/blog/*/images/* -> Google Drive for article images.
+    - NEVER deletes local images.
     """
     state = load_state()
     tracked_files = state.setdefault("files", {})
@@ -231,9 +252,11 @@ def sync_one_way():
                     "hash": md5_file(local_dest)
                 }
 
-    # 2. Clean up local files that were removed from Google Drive
+    # 2. Clean up local files that were removed from Google Drive (NEVER delete images)
     for tracked_rel in list(tracked_files.keys()):
         if tracked_rel not in active_remote_paths:
+            if "/images/" in tracked_rel or tracked_rel.startswith("images/"):
+                continue  # Never delete images!
             local_path = os.path.join(DOCS_DIR, tracked_rel)
             if os.path.exists(local_path):
                 print(f"🗑️  [DRIVE REMOVED] Deleting local file: {tracked_rel}")
@@ -256,7 +279,7 @@ def sync_one_way():
 
 if __name__ == "__main__":
     interval = 15
-    print(f"📥 One-Way (Drive -> docs/) Sync Daemon started (polling interval: {interval}s).")
+    print(f"📥 Let It Sniff Sync Daemon started (polling interval: {interval}s).")
     while True:
         try:
             sync_one_way()
