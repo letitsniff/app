@@ -283,12 +283,14 @@ After modifying Markdown files and adding images:
   4. Notify the user or schedule resumption via `/schedule` after the reset window expires.
 
 ## Google Drive Synchronization Architecture
-- **Markdown Articles (One-Way):** Google Drive / Google Docs ➔ GitHub Repository `docs/` ➔ Live Site. Articles are never pushed from git to Google Drive, preserving Google Docs as Alex's primary content editor.
+- **Bidirectional Image Link Translation & Mapping:**
+  - **Git Repository:** Always contains clean **relative file paths** (`./images/filename.jpg` / `./images/pillar_XX_cover.jpg`). Google Drive links must never exist in the Git repo.
+  - **Google Drive Documents:** Contain direct **Google Drive links** (`https://drive.google.com/file/d/<id>/view`).
+  - **Drive ➔ Git (Sync Pull):** When syncing markdown from Google Drive (in CI `scripts/sync_from_drive_ci.py` and local daemon `.sync/sync_daemon.py`), any Google Drive image link is automatically replaced with its local relative file link.
+    - **Security / Consistency Rule:** **Only links from the shared folders are allowed.** Any image link not matching an image in the shared folder (`.sync/drive_state.json`) is rejected and stripped.
+    - **Base64 Stripping:** Any insert-image base64 strings (`data:image/...`) are completely stripped and ignored.
+  - **Laptop ➔ Drive (Sync Push):** Running `python3 scripts/sync_to_drive.py` converts local relative image paths to the corresponding Google Drive links on the fly before updating documents in Google Drive. This overwrites any base64-polluted documents on Drive in-place, while leaving local Git files untouched with proper relative paths.
 - **Article Images (Git ➔ Drive):** Generated and committed images in `docs/blog/[Pillar]/images/*` are automatically synced and uploaded to the matching `images` folder inside that pillar on Google Drive.
-- **No Base64 / Drive Links to Local Assets:**
-  - Google Docs exported markdowns are sanitized in CI and locally to eliminate all inline base64 blobs.
-  - Alex or editors can paste direct Google Drive image links (`https://drive.google.com/file/d/<id>/view` or `https://lh3.googleusercontent.com/d/<id>`).
-  - At build time (both locally and in CI), `site/lib/content.ts` cross-references `.sync/drive_state.json` and automatically rewrites Drive links to local static `/images/<filename>` assets. Unsynced IDs fall back gracefully to Google's image CDN.
 - **Build-Time Public Asset Population:** `site/public/images/` is excluded from git tracking. `site/next.config.ts` and `site/lib/content.ts` automatically populate `site/public/images/` from `docs/blog/*/images/` in < 100ms whenever Next.js starts or builds.
 - **Root Folder ID:** `1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi` (`letitsniff.gr - Πυλώνες Περιεχομένου`)
 - **CI Sync Workflow (`.github/workflows/sync-from-drive.yml`):**
@@ -300,13 +302,14 @@ After modifying Markdown files and adding images:
     - Uploads any newly committed local images to Google Drive.
     - Checks Drive `modifiedTime` against `.sync/drive_state.json`.
     - Only downloads/exports files that were newly added or modified on Drive.
+    - Converts Drive image links from shared folders into local relative file links (`./images/filename.jpg`).
+    - Strips base64 image strings.
     - If no files changed, finishes in ~4 seconds and skips committing/deploying.
-    - Automatically cleans deleted files while protecting all local images.
-    - Sanitizes markdown exports by removing inline base64 image strings.
     - When changes are detected: commits changes, pushes to `main`, and dispatches `.github/workflows/deploy.yml`.
 - **Local Scripts & Daemon:**
   - `systemctl --user status letitsniff-sync`: Native systemd user background service actively syncing laptop <-> Google Drive.
   - `journalctl --user -u letitsniff-sync -f`: Live logs of the sync service.
+  - `python3 scripts/sync_to_drive.py`: Pushes local images & docs to Drive (with Drive links on Drive, relative paths in Git, overwriting base64).
   - `python3 scripts/sync_images_to_drive.py`: Standalone upload script for article images.
   - `.sync/sync_daemon.py`: Python daemon script executed by the systemd service.
 

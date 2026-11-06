@@ -16,6 +16,7 @@ from scripts.sync_images_to_drive import sync_images
 DOCS_DIR = os.path.join(WORKSPACE_DIR, "docs")
 SYNC_DIR = os.path.join(WORKSPACE_DIR, ".sync")
 STATE_FILE = os.path.join(SYNC_DIR, "sync_state.json")
+DRIVE_STATE_FILE = os.path.join(SYNC_DIR, "drive_state.json")
 ROOT_FOLDER_ID = "1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi"
 IGNORE_FOLDERS = {"blogold", "old", "archive", "backup", "trash", ".trash"}
 
@@ -43,19 +44,70 @@ def list_drive_folder(folder_id):
     except Exception:
         return []
 
-def sanitize_markdown(filepath):
+def get_shared_images_map():
+    """Builds a lookup of {drive_file_id: filename} for all images in the shared folders."""
+    if not os.path.exists(DRIVE_STATE_FILE):
+        return {}
+    try:
+        with open(DRIVE_STATE_FILE, "r", encoding="utf-8") as f:
+            state = json.load(f)
+        id_to_filename = {}
+        for rel_path, info in state.get("files", {}).items():
+            if "images/" in rel_path and info.get("id"):
+                id_to_filename[info["id"]] = os.path.basename(rel_path)
+        return id_to_filename
+    except Exception:
+        return {}
+
+def sanitize_markdown(filepath, id_to_filename=None):
+    """
+    1. Removes any inline base64 image strings exported by Google Docs.
+    2. Replaces Google Drive image links with local relative paths (./images/<filename>).
+       ONLY links from the shared folders are allowed.
+    """
     if not filepath.endswith(".md") or not os.path.exists(filepath):
         return
     try:
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             text = f.read()
+
+        original_text = text
+
+        # 1. Strip base64 image definitions & usages
         if "data:image/" in text:
-            cleaned = re.sub(r"\n*\[image\d+\]:\s*<data:image/[^>]+>", "", text)
-            cleaned = re.sub(r"!\[\]\[image\d+\]", "", cleaned)
+            text = re.sub(r"\n*\[image\d+\]:\s*<data:image/[^>]+>", "", text)
+            text = re.sub(r"!\[\]\[image\d+\]", "", text)
+            text = re.sub(r"!\[.*?\]\(data:image/[^\)]+\)", "", text)
+
+        # 2. Map Drive image links to local relative paths (Shared folders ONLY)
+        if id_to_filename is None:
+            id_to_filename = get_shared_images_map()
+
+        def drive_link_to_relative(match):
+            alt = match.group(1)
+            raw_url = match.group(2).strip("<> ")
+
+            # Match Google Drive file ID
+            m = re.search(r"(?:drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*?id=)|lh3\.googleusercontent\.com\/d\/)([a-zA-Z0-9_-]+)", raw_url)
+            if m:
+                drive_id = m.group(1)
+                filename = id_to_filename.get(drive_id)
+                if filename:
+                    # Allowed: image belongs to the shared folders
+                    return f"![{alt}](./images/{filename})"
+                else:
+                    # Unauthorized: not from the shared folders -> ignore / strip
+                    return ""
+
+            return match.group(0)
+
+        cleaned = re.sub(r"!\[(.*?)\]\((.*?)\)", drive_link_to_relative, text)
+
+        if cleaned != original_text:
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(cleaned)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error sanitizing markdown {filepath}: {e}")
 
 def normalize_rel_path(path_str):
     p = path_str.replace("\\", "/").strip("/")
