@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Compass, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
 import {
   getAllCategories,
   getAllArticles,
   THEMATIC_CLUSTERS,
-  type Article,
 } from "@/lib/content";
-import ArticleCard from "@/components/ArticleCard";
 import CategoryCard from "@/components/CategoryCard";
 
 export const metadata: Metadata = {
@@ -20,19 +18,6 @@ export default function BlogPage() {
   const categories = getAllCategories();
   const allArticles = getAllArticles();
   const totalArticles = allArticles.length;
-
-  // Curated featured article (Urban walk philosophy)
-  const featuredArticle =
-    categories.find((c) => c.number === 1)?.articles[0] ?? allArticles[0];
-
-  // Secondary highlights from core pillars (Puppy hub and Reactivity)
-  const candidateHighlights = [
-    categories.find((c) => c.number === 4)?.articles[0],
-    categories.find((c) => c.number === 3)?.articles[0],
-  ];
-  const highlightArticles = candidateHighlights.filter(
-    (a): a is Article => Boolean(a && a.slug !== featuredArticle?.slug)
-  );
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
@@ -70,33 +55,6 @@ export default function BlogPage() {
           </div>
         </div>
       </header>
-
-      {/* ── Featured & Popular Guides ──────────────────────── */}
-      {featuredArticle && (
-        <section className="mb-20 pb-16 border-b border-[var(--color-sandDark)]">
-          <div className="flex items-center justify-between mb-8 pb-3 border-b border-[var(--color-sandDark)]/60">
-            <div className="flex items-center gap-2">
-              <Compass size={16} className="text-[var(--color-amber)]" />
-              <h2 className="font-heading text-2xl text-[var(--color-brown)]">
-                Προτεινόμενο Ανάγνωσμα
-              </h2>
-            </div>
-            <span className="text-xs uppercase tracking-wider text-[var(--color-mutedLight)] font-mono">
-              Editorial Pick
-            </span>
-          </div>
-
-          <ArticleCard article={featuredArticle} featured={true} priority={true} />
-
-          {highlightArticles.length > 0 && (
-            <div className="grid sm:grid-cols-2 gap-8 mt-8 pt-8 border-t border-[var(--color-sand)]">
-              {highlightArticles.map((a) => (
-                <ArticleCard key={a.slug} article={a} />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
 
       {/* ── Thematic Clusters (Macro-Nesting) ───────────────── */}
       <div className="space-y-24">

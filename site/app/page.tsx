@@ -1,28 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { getAllCategories, getAllArticles } from "@/lib/content";
+import {
+  getAllCategories,
+  THEMATIC_CLUSTERS,
+  CATEGORY_COLORS,
+} from "@/lib/content";
 import { getAllServices } from "@/lib/services";
 import { getImageVariants } from "@/lib/images";
-import ArticleCard from "@/components/ArticleCard";
-import CategoryCard from "@/components/CategoryCard";
 import ServiceCard from "@/components/ServiceCard";
 
 export default function HomePage() {
   const categories = getAllCategories();
-  const articles = getAllArticles();
   const services = getAllServices();
-
-  // Curated single featured article with an image
-  const featuredArticle =
-    articles.find((a) => a.coverImage) ?? articles[0];
-
-  // Secondary editorial selection (3 articles)
-  const editorialArticles = articles
-    .filter((a) => a.slug !== featuredArticle?.slug)
-    .slice(0, 3);
-
-  // Six primary categories
-  const featuredCategories = categories.slice(0, 6);
 
   const heroImage = getImageVariants("/images/hero-home.jpg");
 
@@ -137,53 +126,95 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Single Editorial Featured Article ─────────────── */}
-      {featuredArticle && (
-        <section className="max-w-5xl mx-auto px-5 py-16 md:py-20 border-b border-[var(--color-sandDark)]">
-          <div className="mb-8">
-            <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
-              Επιλεγμένο Άρθρο
-            </p>
-            <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)]">
-              Από τη Βιβλιοθήκη
-            </h2>
-          </div>
-
-          <ArticleCard article={featuredArticle} featured={true} priority={true} />
-
-          {editorialArticles.length > 0 && (
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12 pt-8 border-t border-[var(--color-sand)]">
-              {editorialArticles.map((a) => (
-                <ArticleCard key={a.slug} article={a} />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ── Browse Library / Categories ───────────────────── */}
+      {/* ── Knowledge Library / Thematic Umbrellas ─────────── */}
       <section className="max-w-5xl mx-auto px-5 py-16 md:py-20">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-[var(--color-sandDark)]">
           <div>
-            <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
-              Θεματικοί Πυλώνες
+            <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-1">
+              Βιβλιοθήκη Γνώσης · 18 Ενότητες · 104 Οδηγοί
             </p>
-            <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)]">
-              Εξερεύνησε ανά Ενότητα
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl text-[var(--color-brown)]">
+              Εξερευνήστε ανά Θεματική Ομπρέλα
             </h2>
           </div>
           <Link
             href="/blog"
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors"
           >
-            Όλες οι {categories.length} Ενότητες <ArrowRight size={13} />
+            Όλοι οι Οδηγοί & Ενότητες <ArrowRight size={13} />
           </Link>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {featuredCategories.map((cat) => (
-            <CategoryCard key={cat.slug} category={cat} />
-          ))}
+        <div className="grid sm:grid-cols-2 gap-6">
+          {THEMATIC_CLUSTERS.map((cluster, idx) => {
+            const clusterCategories = cluster.pillarNumbers
+              .map((num) => categories.find((c) => c.number === num))
+              .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+            return (
+              <div
+                key={cluster.id}
+                className="flex flex-col justify-between bg-white border border-[var(--color-sandDark)]/80 p-6 sm:p-7 hover:border-[var(--color-sandDark)] transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-4 mb-3">
+                    <span className="text-xs font-mono font-bold tracking-wider text-[var(--color-amber)]">
+                      ΟΜΠΡΕΛΑ 0{idx + 1}
+                    </span>
+                    <span className="text-xs text-[var(--color-mutedLight)]">
+                      {clusterCategories.length} ενότητες
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading text-xl text-[var(--color-brown)] mb-2">
+                    {cluster.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-[var(--color-muted)] leading-relaxed mb-6">
+                    {cluster.tagline}
+                  </p>
+
+                  {/* Pillars in this cluster */}
+                  <ul className="space-y-2 mb-6 pt-4 border-t border-[var(--color-sand)] text-xs">
+                    {clusterCategories.map((cat) => {
+                      const color = CATEGORY_COLORS[cat.number] ?? "#C4852A";
+                      return (
+                        <li key={cat.slug}>
+                          <Link
+                            href={`/blog/enotita/${cat.slug}/`}
+                            className="group flex items-center justify-between gap-3 text-[var(--color-brownMid)] hover:text-[var(--color-amber)] transition-colors py-1"
+                          >
+                            <span className="flex items-center gap-2 truncate">
+                              <span
+                                className="w-1.5 h-1.5 rounded-full shrink-0"
+                                style={{ backgroundColor: color }}
+                              />
+                              <span className="truncate">
+                                {String(cat.number).padStart(2, "0")}. {cat.title}
+                              </span>
+                            </span>
+                            <span className="text-[11px] text-[var(--color-mutedLight)] shrink-0 font-mono">
+                              {cat.articles.length} άρθρα →
+                            </span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+                <div className="pt-4 border-t border-[var(--color-sand)]">
+                  <Link
+                    href={`/blog#${cluster.id}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-amber)] hover:text-[var(--color-brown)] transition-colors"
+                  >
+                    <span>Όλοι οι οδηγοί αυτής της ομπρέλας</span>
+                    <ArrowRight size={12} />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
     </>
