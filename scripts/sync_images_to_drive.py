@@ -113,13 +113,9 @@ def sync_images(verbose=True):
     uploaded_count = 0
     skipped_count = 0
 
-    for pillar_dir in sorted(local_blog_dir.iterdir()):
-        if not pillar_dir.is_dir():
-            continue
-        images_dir = pillar_dir / "images"
-        if not images_dir.exists() or not images_dir.is_dir():
-            continue
-
+    images_dirs = sorted(local_blog_dir.glob("**/images"))
+    for images_dir in images_dirs:
+        pillar_dir = images_dir.parent
         pillar_name = pillar_dir.name
         pillar_drive_id = drive_pillars.get(pillar_name)
         if not pillar_drive_id:

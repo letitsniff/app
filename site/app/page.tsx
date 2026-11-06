@@ -126,22 +126,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Knowledge Library / Thematic Umbrellas ─────────── */}
+      {/* ── Knowledge Library / Thematic Categories ──────── */}
       <section className="max-w-5xl mx-auto px-5 py-16 md:py-20">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-[var(--color-sandDark)]">
           <div>
             <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-1">
-              Βιβλιοθήκη Γνώσης · 18 Ενότητες · 104 Οδηγοί
+              Βιβλιοθήκη Γνώσης · 18 Πυλώνες · 104 Οδηγοί
             </p>
             <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl text-[var(--color-brown)]">
-              Εξερευνήστε ανά Θεματική Ομπρέλα
+              Εξερευνήστε ανά Θεματική Ενότητα
             </h2>
           </div>
           <Link
             href="/blog"
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors"
           >
-            Όλοι οι Οδηγοί & Ενότητες <ArrowRight size={13} />
+            Όλοι οι Οδηγοί & Πυλώνες <ArrowRight size={13} />
           </Link>
         </div>
 
@@ -159,10 +159,10 @@ export default function HomePage() {
                 <div>
                   <div className="flex items-center justify-between gap-4 mb-3">
                     <span className="text-xs font-mono font-bold tracking-wider text-[var(--color-amber)]">
-                      ΟΜΠΡΕΛΑ 0{idx + 1}
+                      ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ 0{idx + 1}
                     </span>
                     <span className="text-xs text-[var(--color-mutedLight)]">
-                      {clusterCategories.length} ενότητες
+                      {clusterCategories.length} πυλώνες
                     </span>
                   </div>
 
@@ -174,7 +174,7 @@ export default function HomePage() {
                     {cluster.tagline}
                   </p>
 
-                  {/* Pillars in this cluster */}
+                  {/* Pillars in this category */}
                   <ul className="space-y-2 mb-6 pt-4 border-t border-[var(--color-sand)] text-xs">
                     {clusterCategories.map((cat) => {
                       const color = CATEGORY_COLORS[cat.number] ?? "#C4852A";
@@ -208,7 +208,7 @@ export default function HomePage() {
                     href={`/blog#${cluster.id}`}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-amber)] hover:text-[var(--color-brown)] transition-colors"
                   >
-                    <span>Όλοι οι οδηγοί αυτής της ομπρέλας</span>
+                    <span>Όλοι οι οδηγοί αυτής της ενότητας</span>
                     <ArrowRight size={12} />
                   </Link>
                 </div>

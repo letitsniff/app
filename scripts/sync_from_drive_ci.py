@@ -200,13 +200,8 @@ def upload_local_images_to_drive(service):
 
     uploaded_count = 0
 
-    for pillar_dir in sorted(local_blog_dir.iterdir()):
-        if not pillar_dir.is_dir():
-            continue
-        images_dir = pillar_dir / "images"
-        if not images_dir.exists() or not images_dir.is_dir():
-            continue
-
+    for images_dir in sorted(local_blog_dir.glob("**/images")):
+        pillar_dir = images_dir.parent
         pillar_name = pillar_dir.name
         pillar_id = drive_pillars.get(pillar_name)
         if not pillar_id:
@@ -266,6 +261,39 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2, ensure_ascii=False)
 
+MACRO_CATEGORIES_MAP = {
+    1: "01 - Αστική Ζωή & Καθημερινότητα",
+    2: "01 - Αστική Ζωή & Καθημερινότητα",
+    8: "01 - Αστική Ζωή & Καθημερινότητα",
+    17: "01 - Αστική Ζωή & Καθημερινότητα",
+    3: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    10: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    12: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    13: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    18: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    4: "03 - Στάδια Ζωής & Υιοθεσία",
+    9: "03 - Στάδια Ζωής & Υιοθεσία",
+    11: "03 - Στάδια Ζωής & Υιοθεσία",
+    14: "03 - Στάδια Ζωής & Υιοθεσία",
+    15: "03 - Στάδια Ζωής & Υιοθεσία",
+    5: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+    6: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+    7: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+    16: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+}
+
+def map_drive_rel_to_local_rel(rel_path):
+    parts = Path(rel_path).parts
+    if len(parts) >= 2 and parts[0] == "blog":
+        m = re.match(r"^(\d{2})\s+-", parts[1])
+        if m:
+            num = int(m.group(1))
+            if num in MACRO_CATEGORIES_MAP:
+                macro_dir = MACRO_CATEGORIES_MAP[num]
+                if parts[1] != macro_dir:
+                    return str(Path("blog") / macro_dir / Path(*parts[1:]))
+    return rel_path
+
 def main():
     print(f"Connecting to Google Drive (Root Folder: {ROOT_FOLDER_ID})...")
     service = get_drive_service()
@@ -292,7 +320,8 @@ def main():
     skipped_count = 0
 
     for rel_path, item_id, mime, original_name, modified_time in drive_files:
-        dest_path = DOCS_DIR / rel_path
+        local_rel = map_drive_rel_to_local_rel(rel_path)
+        dest_path = DOCS_DIR / local_rel
         active_paths.add(dest_path)
 
         cached_info = tracked_files.get(rel_path, {})
@@ -309,7 +338,7 @@ def main():
         print(f"\n⚡ Downloading {len(to_download)} changed/new file(s)...")
         for rel_path, item_id, mime, modified_time, dest_path in to_download:
             action = "Updating" if dest_path.exists() else "Pulling new"
-            print(f"⬇️  [{action}] {rel_path}")
+            print(f"⬇️  [{action}] {rel_path} -> {dest_path.relative_to(DOCS_DIR)}")
             export_file(service, item_id, mime, dest_path)
             tracked_files[rel_path] = {
                 "id": item_id,
@@ -319,13 +348,13 @@ def main():
     else:
         print("\n✨ All files are already up-to-date! No downloads needed.")
 
-    # Clean local files in docs/ that were removed on Drive (NEVER remove images)
+    # Clean local files in docs/ that were removed on Drive (NEVER remove images or index.md)
     deleted_count = 0
     for root, _, files in os.walk(DOCS_DIR):
         for f in files:
             p = Path(root) / f
-            if "images" in p.parts:
-                continue  # Never delete images!
+            if "images" in p.parts or p.name == "index.md":
+                continue  # Never delete images or index.md!
             if p not in active_paths:
                 rel_p = str(p.relative_to(DOCS_DIR))
                 print(f"🗑️  Removing deleted file: {rel_p}")

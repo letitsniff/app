@@ -54,14 +54,20 @@ async function optimizeImages() {
     }
   }
 
-  // 1. Blog pillar images
-  if (fs.existsSync(BLOG_DIR)) {
-    const dirs = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
-    for (const dir of dirs) {
-      if (!dir.isDirectory()) continue;
-      collectFromDir(path.join(BLOG_DIR, dir.name, "images"));
+  // 1. Blog pillar images (scans recursively)
+  function collectBlogImages(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      if (entry.name === "images") {
+        collectFromDir(path.join(dir, entry.name));
+      } else {
+        collectBlogImages(path.join(dir, entry.name));
+      }
     }
   }
+  collectBlogImages(BLOG_DIR);
 
   // 2. Services images
   collectFromDir(SERVICES_IMAGES_DIR);
@@ -105,14 +111,14 @@ async function optimizeImages() {
           const inputBuffer = fs.readFileSync(task.srcPath);
 
           if (!cardFresh) {
-            await sharp(inputBuffer)
+            await sharp(inputBuffer, { failOn: "none" })
               .resize({ width: 720, withoutEnlargement: true })
               .webp({ quality: 80, effort: 4 })
               .toFile(task.destCard);
           }
 
           if (!heroFresh) {
-            await sharp(inputBuffer)
+            await sharp(inputBuffer, { failOn: "none" })
               .resize({ width: 1400, withoutEnlargement: true })
               .webp({ quality: 82, effort: 4 })
               .toFile(task.destHero);

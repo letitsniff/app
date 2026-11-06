@@ -48,10 +48,12 @@ def sync_markdown_to_drive(verbose=True):
         print(f"📊 Loaded {len(filename_to_drive_id)} shared images from drive_state.json")
 
     blog_dir = DOCS_DIR / "blog"
-    md_files = sorted(blog_dir.glob("*/*.md"))
+    md_files = sorted(blog_dir.glob("**/*.md"))
 
     tasks = []
     for md_file in md_files:
+        if md_file.name == "index.md":
+            continue
         rel_path = f"blog/{md_file.parent.name}/{md_file.name}"
         doc_info = tracked_files.get(rel_path)
         if not doc_info or not doc_info.get("id"):

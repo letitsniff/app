@@ -31,13 +31,13 @@ export default function BlogPage() {
         </h1>
         <p className="text-base md:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
           Απαντήσεις, συμπεριφορική ανάλυση και επιστημονική γνώση για την καθημερινότητα με τον σκύλο
-          στην Αθήνα — οργανωμένα σε 4 θεματικές ομπρέλες.
+          στην Αθήνα — οργανωμένα σε 4 θεματικές ενότητες.
         </p>
 
-        {/* Macro-Cluster Quick Jump Bar */}
+        {/* Macro-Category Quick Jump Bar */}
         <div className="mt-8 pt-6 border-t border-[var(--color-sand)]">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] block mb-3">
-            Περιήγηση ανά Θεματική Ομπρέλα:
+            Περιήγηση ανά Θεματική Ενότητα:
           </span>
           <div className="flex flex-wrap gap-2 text-xs">
             {THEMATIC_CLUSTERS.map((cluster, idx) => (
@@ -56,7 +56,7 @@ export default function BlogPage() {
         </div>
       </header>
 
-      {/* ── Thematic Clusters (Macro-Nesting) ───────────────── */}
+      {/* ── Thematic Categories ─────────────────────────────── */}
       <div className="space-y-24">
         {THEMATIC_CLUSTERS.map((cluster, clusterIdx) => {
           const clusterCategories = cluster.pillarNumbers
@@ -74,17 +74,17 @@ export default function BlogPage() {
               id={cluster.id}
               className="scroll-mt-20 pt-2"
             >
-              {/* Cluster Heading */}
+              {/* Category Heading */}
               <div className="border-b-2 border-[var(--color-brown)] pb-4 mb-8">
                 <div className="flex items-center justify-between gap-4 mb-2">
                   <div className="flex items-center gap-2">
                     <Layers size={14} className="text-[var(--color-amber)]" />
                     <span className="text-xs font-mono font-bold tracking-widest uppercase text-[var(--color-amber)]">
-                      ΘΕΜΑΤΙΚΗ ΟΜΠΡΕΛΑ 0{clusterIdx + 1}
+                      ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ 0{clusterIdx + 1}
                     </span>
                   </div>
                   <span className="text-xs text-[var(--color-mutedLight)] font-mono">
-                    {clusterCategories.length} ενότητες · {clusterArticlesCount} οδηγοί
+                    {clusterCategories.length} πυλώνες · {clusterArticlesCount} οδηγοί
                   </span>
                 </div>
 

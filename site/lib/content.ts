@@ -72,6 +72,22 @@ export function resolveImageUrl(url: string): string {
 
 // ─── Image Sync Helper ───────────────────────────────────────────────────────
 
+function findImageDirs(dir: string): string[] {
+  const results: string[] = [];
+  if (!fs.existsSync(dir)) return results;
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      if (entry.name === "images") {
+        results.push(path.join(dir, entry.name));
+      } else {
+        results.push(...findImageDirs(path.join(dir, entry.name)));
+      }
+    }
+  }
+  return results;
+}
+
 function syncImages(): void {
   try {
     if (!fs.existsSync(PUBLIC_IMAGES_DIR)) {
@@ -80,25 +96,20 @@ function syncImages(): void {
 
     if (!fs.existsSync(BLOG_DIR)) return;
 
-    const dirs = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
-    for (const dir of dirs) {
-      if (dir.isDirectory()) {
-        const imagesPath = path.join(BLOG_DIR, dir.name, "images");
-        if (fs.existsSync(imagesPath)) {
-          const files = fs.readdirSync(imagesPath);
-          for (const file of files) {
-            if (!/\.(jpe?g|png|webp|avif|svg)$/i.test(file)) continue;
-            const src = path.join(imagesPath, file);
-            const dest = path.join(PUBLIC_IMAGES_DIR, file);
-            if (fs.statSync(src).isFile()) {
-              // Copy if destination doesn't exist or is older
-              if (
-                !fs.existsSync(dest) ||
-                fs.statSync(src).mtimeMs > fs.statSync(dest).mtimeMs
-              ) {
-                fs.copyFileSync(src, dest);
-              }
-            }
+    const imageDirs = findImageDirs(BLOG_DIR);
+    for (const imagesPath of imageDirs) {
+      const files = fs.readdirSync(imagesPath);
+      for (const file of files) {
+        if (!/\.(jpe?g|png|webp|avif|svg)$/i.test(file)) continue;
+        const src = path.join(imagesPath, file);
+        const dest = path.join(PUBLIC_IMAGES_DIR, file);
+        if (fs.statSync(src).isFile()) {
+          // Copy if destination doesn't exist or is older
+          if (
+            !fs.existsSync(dest) ||
+            fs.statSync(src).mtimeMs > fs.statSync(dest).mtimeMs
+          ) {
+            fs.copyFileSync(src, dest);
           }
         }
       }
@@ -272,23 +283,65 @@ function cleanMarkdownForDisplay(raw: string, coverImage?: string): string {
 
 // ─── Loaders ─────────────────────────────────────────────────────────────────
 
+interface PillarDirInfo {
+  dirPath: string;
+  dirName: string;
+  num: number;
+}
+
+function getPillarDirectories(blogDir: string): PillarDirInfo[] {
+  if (!fs.existsSync(blogDir)) return [];
+
+  const results: PillarDirInfo[] = [];
+  const topEntries = fs
+    .readdirSync(blogDir, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && /^\d{2}\s+-/.test(e.name))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const top of topEntries) {
+    const topPath = path.join(blogDir, top.name);
+    // Check if this top folder is a Macro Category containing pillar subdirectories
+    const subEntries = fs
+      .readdirSync(topPath, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && /^\d{2}\s+-/.test(e.name))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (subEntries.length > 0) {
+      for (const sub of subEntries) {
+        const numMatch = sub.name.match(/^(\d{2})/);
+        if (!numMatch) continue;
+        results.push({
+          dirPath: path.join(topPath, sub.name),
+          dirName: sub.name,
+          num: parseInt(numMatch[1], 10),
+        });
+      }
+    } else {
+      const numMatch = top.name.match(/^(\d{2})/);
+      if (!numMatch) continue;
+      results.push({
+        dirPath: topPath,
+        dirName: top.name,
+        num: parseInt(numMatch[1], 10),
+      });
+    }
+  }
+
+  return results.sort((a, b) => a.num - b.num);
+}
+
 function loadCategories(): Category[] {
   syncImages();
 
   if (!fs.existsSync(BLOG_DIR)) return [];
 
-  const dirs = fs
-    .readdirSync(BLOG_DIR)
-    .filter((d) => /^\d{2}\s+-/.test(d))
-    .sort();
-
+  const pillarDirs = getPillarDirectories(BLOG_DIR);
   const categories: Category[] = [];
 
-  for (const dir of dirs) {
-    const numMatch = dir.match(/^(\d{2})/);
-    if (!numMatch) continue;
-    const num = parseInt(numMatch[1], 10);
-    const dirPath = path.join(BLOG_DIR, dir);
+  for (const pInfo of pillarDirs) {
+    const num = pInfo.num;
+    const dirPath = pInfo.dirPath;
+    const dir = pInfo.dirName;
 
     // Read pillar intro (00. file)
     const files = fs.readdirSync(dirPath).sort();
@@ -420,51 +473,118 @@ export function getCategoryBySlug(slug: string): Category | undefined {
   );
 }
 
-// ─── Thematic Clusters (Macro-Nesting) ───────────────────────────────────────
+// ─── Thematic Categories (Macro-Nesting from docs/blog/*/index.md) ─────────
 
-export interface ThematicCluster {
+export interface ThematicCategory {
   id: string;
+  number: number;
   title: string;
   tagline: string;
   pillarNumbers: number[];
 }
 
-export const THEMATIC_CLUSTERS: ThematicCluster[] = [
-  {
-    id: "astiki-zoi",
-    title: "Αστική Ζωή & Καθημερινότητα",
-    tagline: "Βόλτα, πολυκατοικία, μετακινήσεις και πάρκα στην πόλη",
-    pillarNumbers: [1, 2, 8, 17],
-  },
-  {
-    id: "symperifora-psychologia",
-    title: "Συμπεριφορά, Επικοινωνία & Ψυχολογία",
-    tagline: "Αντιδραστικότητα, φόβοι, γλώσσα σώματος και η ψυχολογία του κηδεμόνα",
-    pillarNumbers: [3, 10, 12, 13, 18],
-  },
-  {
-    id: "stadia-zois-yiothesia",
-    title: "Στάδια Ζωής & Υιοθεσία",
-    tagline: "Από το κουτάβι και την υιοθεσία έως την τρίτη ηλικία και τα ένστικτα φυλών",
-    pillarNumbers: [4, 14, 15, 9, 11],
-  },
-  {
-    id: "ekpaidefsi-frontida",
-    title: "Εκπαίδευση, Φροντίδα & Εξοπλισμός",
-    tagline: "Θετική προσέγγιση, συνεργατική φροντίδα, παιδιά και επιλογή εξοπλισμού",
-    pillarNumbers: [5, 6, 7, 16],
-  },
-];
+export type ThematicCluster = ThematicCategory;
 
-export function getClusterByPillarNumber(pillarNum: number): ThematicCluster | undefined {
-  return THEMATIC_CLUSTERS.find((c) => c.pillarNumbers.includes(pillarNum));
+export function loadMacroCategories(): ThematicCategory[] {
+  if (!fs.existsSync(BLOG_DIR)) return [];
+
+  const topEntries = fs
+    .readdirSync(BLOG_DIR, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && /^\d{2}\s+-/.test(e.name))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const macros: ThematicCategory[] = [];
+
+  const idMap: Record<number, string> = {
+    1: "astiki-zoi",
+    2: "symperifora-psychologia",
+    3: "stadia-zois-yiothesia",
+    4: "ekpaidefsi-frontida",
+  };
+
+  for (const top of topEntries) {
+    const topPath = path.join(BLOG_DIR, top.name);
+    const subEntries = fs
+      .readdirSync(topPath, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && /^\d{2}\s+-/.test(e.name))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (subEntries.length > 0) {
+      const macroNumMatch = top.name.match(/^(\d{2})/);
+      const macroNum = macroNumMatch ? parseInt(macroNumMatch[1], 10) : 0;
+      const macroTitle = top.name.replace(/^\d{2}\s+-\s+/, "");
+
+      let tagline = "";
+      const macroIndex = path.join(topPath, "index.md");
+      if (fs.existsSync(macroIndex)) {
+        const raw = fs.readFileSync(macroIndex, "utf-8");
+        const m = raw.match(/\*\*Εισαγωγή:\*\*\s*([^\n]+)/);
+        if (m) tagline = m[1].trim();
+      }
+
+      const pillarNumbers = subEntries
+        .map((e) => {
+          const m = e.name.match(/^(\d{2})/);
+          return m ? parseInt(m[1], 10) : 0;
+        })
+        .filter((n) => n > 0);
+
+      macros.push({
+        id: idMap[macroNum] ?? `enotita-${macroNum}`,
+        number: macroNum,
+        title: macroTitle,
+        tagline,
+        pillarNumbers,
+      });
+    }
+  }
+
+  if (macros.length > 0) return macros;
+
+  return [
+    {
+      id: "astiki-zoi",
+      number: 1,
+      title: "Αστική Ζωή & Καθημερινότητα",
+      tagline: "Βόλτα, πολυκατοικία, μετακινήσεις και πάρκα στην πόλη",
+      pillarNumbers: [1, 2, 8, 17],
+    },
+    {
+      id: "symperifora-psychologia",
+      number: 2,
+      title: "Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+      tagline: "Αντιδραστικότητα, φόβοι, γλώσσα σώματος και η ψυχολογία του κηδεμόνα",
+      pillarNumbers: [3, 10, 12, 13, 18],
+    },
+    {
+      id: "stadia-zois-yiothesia",
+      number: 3,
+      title: "Στάδια Ζωής & Υιοθεσία",
+      tagline: "Από το κουτάβι και την υιοθεσία έως την τρίτη ηλικία και τα ένστικτα φυλών",
+      pillarNumbers: [4, 9, 11, 14, 15],
+    },
+    {
+      id: "ekpaidefsi-frontida",
+      number: 4,
+      title: "Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+      tagline: "Θετική προσέγγιση, συνεργατική φροντίδα, παιδιά και επιλογή εξοπλισμού",
+      pillarNumbers: [5, 6, 7, 16],
+    },
+  ];
+}
+
+export const THEMATIC_CATEGORIES: ThematicCategory[] = loadMacroCategories();
+export const THEMATIC_CLUSTERS = THEMATIC_CATEGORIES;
+
+export function getClusterByPillarNumber(pillarNum: number): ThematicCategory | undefined {
+  return THEMATIC_CATEGORIES.find((c) => c.pillarNumbers.includes(pillarNum));
 }
 
 export function getCategoriesByClusterId(clusterId: string): Category[] {
-  const cluster = THEMATIC_CLUSTERS.find((c) => c.id === clusterId);
-  if (!cluster) return [];
+  const cat = THEMATIC_CATEGORIES.find((c) => c.id === clusterId);
+  if (!cat) return [];
   const all = getAllCategories();
-  return cluster.pillarNumbers
+  return cat.pillarNumbers
     .map((num) => all.find((c) => c.number === num))
     .filter((c): c is Category => Boolean(c));
 }

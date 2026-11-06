@@ -20,6 +20,39 @@ DRIVE_STATE_FILE = os.path.join(SYNC_DIR, "drive_state.json")
 ROOT_FOLDER_ID = "1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi"
 IGNORE_FOLDERS = {"blogold", "old", "archive", "backup", "trash", ".trash"}
 
+MACRO_CATEGORIES_MAP = {
+    1: "01 - Αστική Ζωή & Καθημερινότητα",
+    2: "01 - Αστική Ζωή & Καθημερινότητα",
+    8: "01 - Αστική Ζωή & Καθημερινότητα",
+    17: "01 - Αστική Ζωή & Καθημερινότητα",
+    3: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    10: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    12: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    13: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    18: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    4: "03 - Στάδια Ζωής & Υιοθεσία",
+    9: "03 - Στάδια Ζωής & Υιοθεσία",
+    11: "03 - Στάδια Ζωής & Υιοθεσία",
+    14: "03 - Στάδια Ζωής & Υιοθεσία",
+    15: "03 - Στάδια Ζωής & Υιοθεσία",
+    5: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+    6: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+    7: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+    16: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+}
+
+def map_drive_rel_to_local_rel(rel_path):
+    parts = rel_path.split(os.sep)
+    if len(parts) >= 2 and parts[0] == "blog":
+        m = re.match(r"^(\d{2})\s+-", parts[1])
+        if m:
+            num = int(m.group(1))
+            if num in MACRO_CATEGORIES_MAP:
+                macro_dir = MACRO_CATEGORIES_MAP[num]
+                if parts[1] != macro_dir:
+                    return os.path.join("blog", macro_dir, *parts[1:])
+    return rel_path
+
 def md5_file(filepath):
     try:
         h = hashlib.md5()
@@ -247,7 +280,8 @@ def sync_from_drive():
         drive_id = rem.get("id")
         mime = rem.get("mimeType")
         r_mod = rem.get("modifiedTime")
-        local_dest = os.path.join(DOCS_DIR, rel_path)
+        local_rel = map_drive_rel_to_local_rel(rel_path)
+        local_dest = os.path.join(DOCS_DIR, local_rel)
 
         record = tracked_files.get(rel_path)
         needs_pull = False
@@ -279,12 +313,12 @@ def sync_from_drive():
                     "hash": md5_file(local_dest)
                 }
 
-    # 2. Clean up local files that were removed from Google Drive (NEVER delete images)
+    # 2. Clean up local files that were removed from Google Drive (NEVER delete images or index.md)
     for tracked_rel in list(tracked_files.keys()):
         if tracked_rel not in active_remote_paths:
-            if "/images/" in tracked_rel or tracked_rel.startswith("images/"):
-                continue  # Never delete images!
-            local_path = os.path.join(DOCS_DIR, tracked_rel)
+            if "/images/" in tracked_rel or tracked_rel.startswith("images/") or tracked_rel.endswith("index.md"):
+                continue  # Never delete images or index.md!
+            local_path = os.path.join(DOCS_DIR, map_drive_rel_to_local_rel(tracked_rel))
             if os.path.exists(local_path):
                 print(f"🗑️  [DRIVE REMOVED] Deleting local file: {tracked_rel}")
                 try:
