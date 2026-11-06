@@ -16,6 +16,59 @@ function getRootDir(): string {
 const ROOT_DIR = getRootDir();
 const BLOG_DIR = path.join(ROOT_DIR, "docs", "blog");
 const PUBLIC_IMAGES_DIR = path.join(ROOT_DIR, "site", "public", "images");
+const DRIVE_STATE_FILE = path.join(ROOT_DIR, ".sync", "drive_state.json");
+
+let _driveIdMap: Record<string, string> | null = null;
+
+function getDriveIdToFilenameMap(): Record<string, string> {
+  if (_driveIdMap) return _driveIdMap;
+  _driveIdMap = {};
+  if (fs.existsSync(DRIVE_STATE_FILE)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(DRIVE_STATE_FILE, "utf-8"));
+      for (const [relPath, info] of Object.entries(data.files || {})) {
+        const fileInfo = info as { id?: string };
+        if (fileInfo.id) {
+          const filename = path.basename(relPath);
+          _driveIdMap[fileInfo.id] = filename;
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return _driveIdMap;
+}
+
+export function resolveImageUrl(url: string): string {
+  const cleanUrl = url.trim().replace(/^<|>$/g, "");
+
+  // 1. If it's a Google Drive link
+  const driveIdMatch = cleanUrl.match(
+    /(?:drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*?id=)|lh3\.googleusercontent\.com\/d\/)([a-zA-Z0-9_-]+)/i
+  );
+  if (driveIdMatch) {
+    const driveId = driveIdMatch[1];
+    const map = getDriveIdToFilenameMap();
+    if (map[driveId]) {
+      return `/images/${map[driveId]}`;
+    }
+    return `https://lh3.googleusercontent.com/d/${driveId}`;
+  }
+
+  // 2. If it's an external URL (http / https), leave as is
+  if (/^https?:\/\//i.test(cleanUrl)) {
+    return cleanUrl;
+  }
+
+  // 3. If it's a relative/local image path (e.g. ./images/foo.jpg, images/foo.jpg, foo.jpg)
+  const localMatch = cleanUrl.match(/(?:(?:^|\/)?images\/|^)([^\/\)]+\.(?:jpe?g|png|webp|avif|svg))$/i);
+  if (localMatch) {
+    return `/images/${localMatch[1]}`;
+  }
+
+  return cleanUrl;
+}
 
 // ─── Image Sync Helper ───────────────────────────────────────────────────────
 
@@ -122,11 +175,16 @@ function extractRelatedServices(raw: string): string[] {
 }
 
 function extractImage(raw: string): string | undefined {
-  const m = raw.match(/!\[.*?\]\([^\)]*?([^/\)]+\.(?:jpg|jpeg|png|webp|avif|svg))\)/i);
+  const m = raw.match(/!\[.*?\]\(([^\)]+)\)/i);
   if (!m) return undefined;
-  const filename = m[1];
-  if (fs.existsSync(path.join(PUBLIC_IMAGES_DIR, filename))) {
-    return `/images/${filename}`;
+  const resolved = resolveImageUrl(m[1]);
+  if (resolved.startsWith("/images/")) {
+    const filename = resolved.replace("/images/", "");
+    if (fs.existsSync(path.join(PUBLIC_IMAGES_DIR, filename))) {
+      return resolved;
+    }
+  } else if (/^https?:\/\//i.test(resolved)) {
+    return resolved;
   }
   return undefined;
 }
@@ -165,7 +223,13 @@ function cleanMarkdownForDisplay(raw: string, coverImage?: string): string {
   // 1. Remove the first H1 header (it is already rendered by the page layout)
   cleaned = cleaned.replace(/^#\s+[^\n]+\n*/m, "");
 
-  // 2. If a cover image exists, remove its occurrence at the top of the post to prevent duplicates
+  // 2. Rewrite all markdown image URLs (resolving Drive links and relative paths to /images/)
+  cleaned = cleaned.replace(
+    /!\[(.*?)\]\(([^\)]+)\)/g,
+    (_, alt, url) => `![${alt}](${resolveImageUrl(url)})`
+  );
+
+  // 3. If a cover image exists, remove its occurrence at the top of the post to prevent duplicates
   if (coverImage) {
     const filename = coverImage.split("/").pop();
     if (filename) {
@@ -175,18 +239,12 @@ function cleanMarkdownForDisplay(raw: string, coverImage?: string): string {
     }
   }
 
-  // 3. Remove inline metadata lines and separators
+  // 4. Remove inline metadata lines and separators
   cleaned = cleaned
     .replace(/\*\*Κατηγορία:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Προτεινόμενο URL:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Χρόνος ανάγνωσης:\*\*[^\n]+\n?/g, "")
     .replace(/^##\s*\\?---\s*$/gm, "");
-
-  // 4. Rewrite relative markdown image URLs to point to /images/
-  cleaned = cleaned.replace(
-    /!\[(.*?)\]\(\.?\/?images\/([^)]+)\)/g,
-    "![$1](/images/$2)"
-  );
 
   return cleaned.trim();
 }
