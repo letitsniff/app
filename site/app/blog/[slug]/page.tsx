@@ -12,6 +12,7 @@ import { getServiceBySlug } from "@/lib/services";
 import Prose from "@/components/Prose";
 import ArticleCard from "@/components/ArticleCard";
 import ReadingProgress from "@/components/ReadingProgress";
+import { getImageVariants } from "@/lib/images";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -103,17 +104,34 @@ export default async function ArticlePage({ params }: Props) {
         </header>
 
         {/* ── Cover Image (Full Width Editorial) ───────────── */}
-        {article.coverImage && (
-          <div className="max-w-4xl mx-auto px-5 pt-8">
-            <div className="overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/60">
-              <img
-                src={article.coverImage}
-                alt={article.title}
-                className="w-full aspect-[16/9] md:aspect-[21/10] object-cover"
-              />
+        {article.coverImage && (() => {
+          const variants = getImageVariants(article.coverImage);
+          return (
+            <div className="max-w-4xl mx-auto px-5 pt-8">
+              <div className="overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/60">
+                <picture>
+                  {variants?.card && variants?.hero && (
+                    <source
+                      type="image/webp"
+                      srcSet={`${variants.card} 720w, ${variants.hero} 1400w`}
+                      sizes="(max-width: 768px) 100vw, 896px"
+                    />
+                  )}
+                  <img
+                    src={article.coverImage}
+                    alt={article.title}
+                    width={1400}
+                    height={788}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    className="w-full aspect-[16/9] md:aspect-[21/10] object-cover"
+                  />
+                </picture>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ── Content & Editorial Sidebar ─────────────────── */}
         <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Clock } from "lucide-react";
 import type { Article } from "@/lib/content";
 import { CATEGORY_COLORS } from "@/lib/content";
+import { getImageVariants } from "@/lib/images";
 
 interface Props {
   article: Article;
@@ -15,6 +16,7 @@ export default function ArticleCard({
   priority = false,
 }: Props) {
   const color = CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
+  const variants = getImageVariants(article.coverImage);
 
   if (featured) {
     return (
@@ -26,11 +28,21 @@ export default function ArticleCard({
         <div className="grid md:grid-cols-12 gap-8 items-start">
           {article.coverImage && (
             <div className="md:col-span-7 overflow-hidden bg-[var(--color-sand)]">
-              <img
-                src={article.coverImage}
-                alt={article.title}
-                className="w-full aspect-[16/10] object-cover transition-opacity duration-300 group-hover:opacity-90"
-              />
+              <picture>
+                {variants?.card && (
+                  <source type="image/webp" srcSet={variants.card} />
+                )}
+                <img
+                  src={article.coverImage}
+                  alt={article.title}
+                  width={720}
+                  height={450}
+                  loading={priority ? "eager" : "lazy"}
+                  fetchPriority={priority ? "high" : "low"}
+                  decoding="async"
+                  className="w-full aspect-[16/10] object-cover transition-opacity duration-300 group-hover:opacity-90"
+                />
+              </picture>
             </div>
           )}
           <div className={article.coverImage ? "md:col-span-5 flex flex-col justify-between h-full" : "md:col-span-12"}>
@@ -68,11 +80,21 @@ export default function ArticleCard({
       <div>
         {article.coverImage && (
           <div className="overflow-hidden bg-[var(--color-sand)] mb-4">
-            <img
-              src={article.coverImage}
-              alt={article.title}
-              className="w-full aspect-[16/10] object-cover transition-opacity duration-300 group-hover:opacity-90"
-            />
+            <picture>
+              {variants?.card && (
+                <source type="image/webp" srcSet={variants.card} />
+              )}
+              <img
+                src={article.coverImage}
+                alt={article.title}
+                width={720}
+                height={450}
+                loading={priority ? "eager" : "lazy"}
+                fetchPriority={priority ? "high" : "low"}
+                decoding="async"
+                className="w-full aspect-[16/10] object-cover transition-opacity duration-300 group-hover:opacity-90"
+              />
+            </picture>
           </div>
         )}
         <span

@@ -128,7 +128,7 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <ArticleCard article={featuredArticle} featured={true} />
+          <ArticleCard article={featuredArticle} featured={true} priority={true} />
 
           {editorialArticles.length > 0 && (
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12 pt-8 border-t border-[var(--color-sand)]">
