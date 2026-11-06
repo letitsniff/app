@@ -5,7 +5,23 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight, Mail } from "lucide-react";
 
-const NAV_LINKS = [
+export interface NavLinkItem {
+  href: string;
+  label: string;
+  desc: string;
+}
+
+export interface NavbarProps {
+  navLinks?: NavLinkItem[];
+  brand?: string;
+  contactLabel?: string;
+  mobileMenuTitle?: string;
+  mobileContactLabel?: string;
+  mobileArea?: string;
+  email?: string;
+}
+
+const DEFAULT_NAV_LINKS: NavLinkItem[] = [
   {
     href: "/blog",
     label: "Άρθρα & Οδηγοί",
@@ -41,7 +57,15 @@ function PawMark() {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({
+  navLinks = DEFAULT_NAV_LINKS,
+  brand = "Let It Sniff",
+  contactLabel = "Επικοινωνία",
+  mobileMenuTitle = "Μενού Πλοήγησης",
+  mobileContactLabel = "Επικοινωνία με τον Αλέξανδρο",
+  mobileArea = "Αθήνα & Αττική",
+  email = "info@letitsniff.gr",
+}: NavbarProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -77,11 +101,11 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
           >
             <PawMark />
-            <span>Let It Sniff</span>
+            <span>{brand}</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((l) => {
+            {navLinks.map((l) => {
               const isActive =
                 pathname === l.href ||
                 (l.href !== "/" && pathname.startsWith(l.href));
@@ -107,7 +131,7 @@ export default function Navbar() {
           href="/o-alexandros#epikoinonia"
           className="hidden md:inline-flex bg-[var(--color-brown)] text-white text-xs font-semibold uppercase tracking-wider px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
         >
-          Επικοινωνία
+          {contactLabel}
         </Link>
 
         {/* Mobile toggle button */}
@@ -127,9 +151,9 @@ export default function Navbar() {
         <div className="md:hidden bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100vh-3.5rem)] overflow-y-auto">
           <div className="space-y-3">
             <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-mutedLight)] mb-2">
-              Μενού Πλοήγησης
+              {mobileMenuTitle}
             </p>
-            {NAV_LINKS.map((l) => {
+            {navLinks.map((l) => {
               const isActive =
                 pathname === l.href ||
                 (l.href !== "/" && pathname.startsWith(l.href));
@@ -176,18 +200,18 @@ export default function Navbar() {
                 className="flex items-center justify-center gap-2 w-full bg-[var(--color-brown)] text-white font-medium py-3.5 text-sm hover:bg-[var(--color-brownMid)] transition-colors"
                 onClick={() => setOpen(false)}
               >
-                Επικοινωνία με τον Αλέξανδρο <ArrowRight size={14} />
+                {mobileContactLabel} <ArrowRight size={14} />
               </Link>
             </div>
           </div>
 
           <div className="mt-6 pt-4 border-t border-[var(--color-sandDark)]/70 text-xs text-[var(--color-muted)] flex items-center justify-between">
-            <span>Αθήνα & Αττική</span>
+            <span>{mobileArea}</span>
             <a
-              href="mailto:info@letitsniff.gr"
+              href={`mailto:${email}`}
               className="flex items-center gap-1.5 text-[var(--color-brown)] font-medium hover:text-[var(--color-amber)]"
             >
-              <Mail size={13} /> info@letitsniff.gr
+              <Mail size={13} /> {email}
             </a>
           </div>
         </div>

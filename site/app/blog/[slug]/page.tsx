@@ -8,6 +8,7 @@ import {
   getCategoryBySlug,
 } from "@/lib/content";
 import { getServiceBySlug } from "@/lib/services";
+import { getGlobalSettings } from "@/lib/siteContent";
 import Prose from "@/components/Prose";
 import ArticleCard from "@/components/ArticleCard";
 import ReadingProgress from "@/components/ReadingProgress";
@@ -53,6 +54,8 @@ export default async function ArticlePage({ params }: Props) {
       ? getServiceBySlug(article.relatedService[0])
       : undefined;
 
+  const { siteName, consultationBox, ui } = getGlobalSettings();
+
   return (
     <>
       <ReadingProgress color={color} />
@@ -95,9 +98,9 @@ export default async function ArticlePage({ params }: Props) {
                 <Clock size={13} /> {article.readingTime}
               </span>
               <span>·</span>
-              <span>Κείμενο: Αλέξανδρος</span>
+              <span>{ui.authorText}</span>
               <span>·</span>
-              <span>Let It Sniff</span>
+              <span>{siteName}</span>
             </div>
           </div>
         </header>
@@ -148,20 +151,19 @@ export default async function ArticlePage({ params }: Props) {
                 style={{ borderLeftColor: color }}
               >
                 <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-2">
-                  Εξατομικευμένη Καθοδήγηση
+                  {consultationBox.kicker}
                 </p>
                 <h3 className="font-heading text-lg text-[var(--color-brown)] mb-3">
-                  Αντιμετωπίζετε παρόμοια πρόκληση;
+                  {consultationBox.title}
                 </h3>
                 <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-5">
-                  Κάθε σκύλος και κάθε σπίτι στην πόλη είναι μοναδικά. Μπορούμε να δουλέψουμε μαζί
-                  με εξατομικευμένο πλάνο θετικής εκπαίδευσης.
+                  {consultationBox.text}
                 </p>
                 <Link
-                  href="/o-alexandros#epikoinonia"
+                  href={consultationBox.buttonLink}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors"
                 >
-                  Επικοινωνία με τον Αλέξανδρο <ArrowRight size={13} />
+                  {consultationBox.buttonText} <ArrowRight size={13} />
                 </Link>
               </div>
 
@@ -169,7 +171,7 @@ export default async function ArticlePage({ params }: Props) {
               {relatedService && (
                 <div className="bg-[var(--color-sand)]/40 border border-[var(--color-sandDark)] p-6">
                   <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
-                    Σχετική Υπηρεσία
+                    {ui.relatedService}
                   </p>
                   <div className="text-2xl mb-2">{relatedService.icon}</div>
                   <h4 className="font-heading text-base text-[var(--color-brown)] mb-2">
@@ -182,7 +184,7 @@ export default async function ArticlePage({ params }: Props) {
                     href={`/ypiresies/${relatedService.slug}/`}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors"
                   >
-                    Μάθετε περισσότερα <ArrowRight size={12} />
+                    {ui.learnMore} <ArrowRight size={12} />
                   </Link>
                 </div>
               )}
@@ -191,7 +193,7 @@ export default async function ArticlePage({ params }: Props) {
               {category && category.articles.length > 1 && (
                 <div className="pt-6 border-t border-[var(--color-sandDark)]">
                   <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
-                    Περισσότερα στην ενότητα
+                    {ui.moreInCategory}
                   </p>
                   <Link
                     href={`/blog/enotita/${category.slug}/`}
@@ -225,10 +227,10 @@ export default async function ArticlePage({ params }: Props) {
             <section className="mt-20 pt-10 border-t border-[var(--color-sandDark)]">
               <div className="mb-8">
                 <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
-                  Συνέχεια Ανάγνωσης
+                  {ui.continueReading}
                 </p>
                 <h3 className="font-heading text-2xl text-[var(--color-brown)]">
-                  Σχετικά Άρθρα
+                  {ui.relatedArticles}
                 </h3>
               </div>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">

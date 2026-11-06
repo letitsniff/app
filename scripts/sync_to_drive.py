@@ -51,9 +51,12 @@ def sync_markdown_to_drive(verbose=True):
 
     blog_dir = DOCS_DIR / "blog"
     services_dir = DOCS_DIR / "services"
+    site_dir = DOCS_DIR / "site"
     md_files = sorted(blog_dir.glob("**/*.md"))
     if services_dir.exists():
         md_files += sorted(services_dir.glob("*.md"))
+    if site_dir.exists():
+        md_files += sorted(site_dir.glob("*.md"))
 
     tasks = []
     for md_file in md_files:

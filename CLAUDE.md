@@ -15,7 +15,13 @@ letitsniff/
 │   │       ├── 00. Εισαγωγή ... (pillar intro / category metadata)
 │   │       ├── [NN]. Article title.md
 │   │       └── images/    # Local article & cover images
-│   └── services/          # Service pages (.md files with inline metadata)
+│   ├── services/          # Service pages (.md files with inline metadata)
+│   └── site/              # Site pages, navigation, global copy (.md files)
+│       ├── home.md        # Homepage hero, services header, philosophy, clusters
+│       ├── about.md       # About Alex page bio, methodology, principles, contact
+│       ├── services.md    # Services hub header and callout
+│       ├── blog.md        # Blog hub header, jumpbar, and bottom callout
+│       └── global.md      # Navigation, footer, meta, sidebar boxes, UI strings
 ├── site/                  # Next.js app (source)
 │   ├── app/               # Next.js App Router pages
 │   ├── components/        # UI components
@@ -60,6 +66,9 @@ letitsniff/
   - `**Εισαγωγή:**` → short macro summary
 - Services live in `docs/services/[slug].md` with inline metadata:
   - `**Τίτλος:**`, `**Υπότιτλος:**`, `**Tagline:**`, `**Εικονίδιο:**`, `**Σειρά:**`
+- Site pages, global navigation, and UI text live in `docs/site/*.md` with inline metadata:
+  - `home.md`, `about.md`, `services.md`, `blog.md`, `global.md`
+  - Loaded dynamically via `site/lib/siteContent.ts` so all site copy is centrally managed in `docs/`.
 
 ## Creating and Fixing Blog Articles
 

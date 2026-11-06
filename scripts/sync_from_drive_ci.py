@@ -312,13 +312,13 @@ def main():
     else:
         print("\n✨ All files are already up-to-date! No downloads needed.")
 
-    # Clean local files in docs/ that were removed on Drive (NEVER remove images or index.md)
+    # Clean local files in docs/ that were removed on Drive (NEVER remove images, index.md, or site copy)
     deleted_count = 0
     for root, _, files in os.walk(DOCS_DIR):
         for f in files:
             p = Path(root) / f
-            if "images" in p.parts or p.name == "index.md":
-                continue  # Never delete images or index.md!
+            if "images" in p.parts or p.name == "index.md" or "site" in p.parts:
+                continue  # Never delete images, index.md, or site copy!
             if p not in active_paths:
                 rel_p = str(p.relative_to(DOCS_DIR))
                 print(f"🗑️  Removing deleted file: {rel_p}")
@@ -331,7 +331,7 @@ def main():
 
     # Remove any state entries no longer on Drive
     for tracked_rel in list(tracked_files.keys()):
-        if (DOCS_DIR / tracked_rel) not in active_paths and "images" not in tracked_rel:
+        if (DOCS_DIR / tracked_rel) not in active_paths and "images" not in tracked_rel and not tracked_rel.startswith("site/"):
             tracked_files.pop(tracked_rel, None)
 
     # Clean empty directories

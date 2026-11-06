@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Clock } from "lucide-react";
 import type { Article } from "@/lib/content";
 import { getImageVariants } from "@/lib/images";
+import { getUIStrings } from "@/lib/siteContent";
 
 interface Props {
   article: Article;
@@ -16,6 +17,7 @@ export default function ArticleCard({
 }: Props) {
   const color = article.categoryColor || "#C4852A";
   const variants = getImageVariants(article.coverImage);
+  const ui = getUIStrings();
 
   if (featured) {
     return (
@@ -63,7 +65,7 @@ export default function ArticleCard({
               <Clock size={13} />
               <span>{article.readingTime}</span>
               <span>·</span>
-              <span className="text-[var(--color-amber)] group-hover:underline">Διαβάστε το άρθρο →</span>
+              <span className="text-[var(--color-amber)] group-hover:underline">{ui.readArticle}</span>
             </div>
           </div>
         </div>

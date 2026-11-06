@@ -7,14 +7,30 @@ import {
 } from "@/lib/content";
 import { getAllServices } from "@/lib/services";
 import { getImageVariants } from "@/lib/images";
+import { getHomePageContent } from "@/lib/siteContent";
 import ServiceCard from "@/components/ServiceCard";
+
+function renderEmphasizedTitle(title: string) {
+  const parts = title.split(/(\*[^*]+\*)/g);
+  return parts.map((part, idx) => {
+    if (part.startsWith("*") && part.endsWith("*")) {
+      return (
+        <em key={idx} className="text-[var(--color-amber)] italic">
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+    return <span key={idx}>{part}</span>;
+  });
+}
 
 export default function HomePage() {
   const categories = getAllCategories();
   const allArticles = getAllArticles();
   const services = getAllServices();
+  const page = getHomePageContent();
 
-  const heroImage = getImageVariants("/images/hero-home.jpg");
+  const heroImage = getImageVariants(page.hero.image);
 
   return (
     <>
@@ -23,33 +39,30 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-5 pt-16 pb-14 md:pt-24 md:pb-20">
           <div className="max-w-3xl mb-10 md:mb-14">
             <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-4">
-              Εκπαίδευση Σκύλων στην Αθήνα
+              {page.hero.kicker}
             </p>
 
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-[var(--color-brown)] leading-[1.1] mb-6">
-              Άφησε τον σκύλο σου{" "}
-              <em className="text-[var(--color-amber)] italic">να μυρίσει</em>{" "}
-              τη ζωή στην πόλη.
+              {renderEmphasizedTitle(page.hero.title)}
             </h1>
 
             <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed mb-8 max-w-2xl font-light">
-              Επιστημονική, θετική εκπαίδευση προσαρμοσμένη στις πραγματικές
-              συνθήκες της Αθήνας. Ήρεμες βόλτες, συμβίωση χωρίς πίεση και ουσιαστικός δεσμός εμπιστοσύνης.
+              {page.hero.subtitle}
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                href="/ypiresies"
+                href={page.hero.link1}
                 className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors"
               >
-                Υπηρεσίες Εκπαίδευσης <ArrowRight size={15} />
+                {page.hero.button1} <ArrowRight size={15} />
               </Link>
               <Link
-                href="/blog"
+                href={page.hero.link2}
                 className="inline-flex items-center gap-2 border border-[var(--color-sandDark)] bg-white text-[var(--color-brown)] text-sm font-medium px-6 py-3.5 hover:border-[var(--color-brown)] transition-colors"
               >
                 <BookOpen size={15} />
-                Βιβλιοθήκη Άρθρων
+                {page.hero.button2}
               </Link>
             </div>
           </div>
@@ -62,7 +75,7 @@ export default function HomePage() {
                   <source srcSet={heroImage.card} type="image/webp" />
                   <img
                     src={heroImage.src}
-                    alt="Χαρούμενος σκύλος και κηδεμόνας σε χαλαρή βόλτα στην Αθήνα"
+                    alt={page.hero.alt}
                     fetchPriority="high"
                     decoding="async"
                     className="w-full h-full object-cover object-center"
@@ -80,17 +93,17 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-[var(--color-sandDark)]">
             <div>
               <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
-                Συνεργασία & Καθοδήγηση
+                {page.services.kicker}
               </p>
               <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)]">
-                Πώς Δουλεύουμε Μαζί
+                {page.services.title}
               </h2>
             </div>
             <Link
-              href="/ypiresies"
+              href={page.services.linkUrl}
               className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors"
             >
-              Όλες οι Υπηρεσίες <ArrowRight size={13} />
+              {page.services.linkText} <ArrowRight size={13} />
             </Link>
           </div>
 
@@ -107,21 +120,19 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto px-5">
           <div className="max-w-2xl">
             <span className="text-xs uppercase tracking-widest text-[var(--color-amberLight)] font-semibold mb-4 block">
-              Η Προσέγγιση
+              {page.philosophy.kicker}
             </span>
             <blockquote className="font-heading text-2xl sm:text-3xl md:text-4xl text-white leading-snug mb-6">
-              «Η βόλτα δεν είναι άσκηση υπακοής. Είναι το παράθυρο του σκύλου στον κόσμο.»
+              {page.philosophy.quote}
             </blockquote>
-            <p className="text-[var(--color-sandDark)] text-base md:text-lg leading-relaxed mb-8 font-light">
-              Χωρίς βία, χωρίς πνίχτες και εκφοβισμούς. Η θετική ενίσχυση στηρίζεται στη
-              συμπεριφορική επιστήμη και στον σεβασμό των αναγκών του ζώου μέσα στο
-              απαιτητικό αστικό περιβάλλον.
+            <p className="text-[var(--color-sandDark)] text-base md:text-lg leading-relaxed mb-8 font-light whitespace-pre-line">
+              {page.philosophy.body}
             </p>
             <Link
-              href="/o-alexandros"
+              href={page.philosophy.linkUrl}
               className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-[var(--color-amberLight)] hover:text-white transition-colors"
             >
-              Γνωρίστε τον Αλέξανδρο και τη μεθοδολογία <ArrowRight size={14} />
+              {page.philosophy.linkText} <ArrowRight size={14} />
             </Link>
           </div>
         </div>
@@ -132,17 +143,17 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-[var(--color-sandDark)]">
           <div>
             <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-1">
-              Βιβλιοθήκη Γνώσης · {categories.length} Θεματικοί Πυλώνες · {allArticles.length} Οδηγοί
+              {page.library.kicker} · {categories.length} {page.library.pillarsSuffix} · {allArticles.length} Οδηγοί
             </p>
             <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl text-[var(--color-brown)]">
-              Εξερευνήστε ανά Θεματική Ενότητα
+              {page.library.title}
             </h2>
           </div>
           <Link
-            href="/blog"
+            href={page.library.linkUrl}
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors"
           >
-            Όλοι οι Οδηγοί & Πυλώνες <ArrowRight size={13} />
+            {page.library.linkText} <ArrowRight size={13} />
           </Link>
         </div>
 
@@ -158,10 +169,10 @@ export default function HomePage() {
                 <div>
                   <div className="flex items-center justify-between gap-4 mb-3">
                     <span className="text-xs font-mono font-bold tracking-wider text-[var(--color-amber)]">
-                      {`ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ ${String(cluster.number).padStart(2, "0")}`}
+                      {`${page.library.badgePrefix} ${String(cluster.number).padStart(2, "0")}`}
                     </span>
                     <span className="text-xs text-[var(--color-mutedLight)]">
-                      {clusterCategories.length} πυλώνες
+                      {clusterCategories.length} {page.library.pillarsSuffix}
                     </span>
                   </div>
 
@@ -193,7 +204,7 @@ export default function HomePage() {
                               </span>
                             </span>
                             <span className="text-[11px] text-[var(--color-mutedLight)] shrink-0 font-mono">
-                              {cat.articles.length} άρθρα →
+                              {cat.articles.length} {page.library.articlesSuffix}
                             </span>
                           </Link>
                         </li>
@@ -207,7 +218,7 @@ export default function HomePage() {
                     href={`/blog#${cluster.id}`}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-amber)] hover:text-[var(--color-brown)] transition-colors"
                   >
-                    <span>Όλοι οι οδηγοί αυτής της ενότητας</span>
+                    <span>{page.library.clusterLinkText}</span>
                     <ArrowRight size={12} />
                   </Link>
                 </div>

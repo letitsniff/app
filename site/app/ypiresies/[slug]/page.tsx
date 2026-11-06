@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { getAllServices, getServiceBySlug } from "@/lib/services";
 import { getAllCategories } from "@/lib/content";
 import { getImageVariants } from "@/lib/images";
+import { getGlobalSettings } from "@/lib/siteContent";
 import Prose from "@/components/Prose";
 import ArticleCard from "@/components/ArticleCard";
 
@@ -37,6 +38,8 @@ export default async function ServicePage({ params }: Props) {
 
   const imageVariants = getImageVariants(service.image);
 
+  const { assessmentBox, ui } = getGlobalSettings();
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -44,7 +47,7 @@ export default async function ServicePage({ params }: Props) {
         <div className="max-w-4xl mx-auto px-5">
           <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6">
             <Link href="/ypiresies" className="hover:text-[var(--color-brown)] transition-colors">
-              Υπηρεσίες
+              {ui.allServices}
             </Link>
             <span>/</span>
             <span className="text-[var(--color-brown)]">{service.title}</span>
@@ -63,7 +66,7 @@ export default async function ServicePage({ params }: Props) {
               href="/o-alexandros#epikoinonia"
               className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
             >
-              Κλείστε Συνεδρία <ArrowRight size={13} />
+              {ui.bookSession} <ArrowRight size={13} />
             </Link>
           </div>
 
@@ -96,24 +99,23 @@ export default async function ServicePage({ params }: Props) {
             {/* Direct CTA */}
             <div className="bg-[var(--color-brown)] text-white p-6">
               <h3 className="font-heading text-lg text-white mb-2">
-                Αρχική Αξιολόγηση
+                {assessmentBox.title}
               </h3>
               <p className="text-xs text-[var(--color-sandDark)] mb-5 leading-relaxed font-light">
-                Συζητάμε τις ανάγκες του σκύλου σας και σχεδιάζουμε το πρόγραμμα που ταιριάζει
-                στο πρόγραμμά σας.
+                {assessmentBox.text}
               </p>
               <Link
-                href="/o-alexandros#epikoinonia"
+                href={assessmentBox.buttonLink}
                 className="block w-full text-center bg-[var(--color-amber)] text-white text-xs font-semibold uppercase tracking-wider py-2.5 hover:bg-[var(--color-amberDark)] transition-colors"
               >
-                Επικοινωνία
+                {assessmentBox.buttonText}
               </Link>
             </div>
 
             {/* Other services */}
             <div className="pt-6 border-t border-[var(--color-sandDark)]">
               <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
-                Όλες οι Υπηρεσίες
+                {ui.allServices}
               </p>
               <ul className="space-y-2 text-xs">
                 {getAllServices()
@@ -139,10 +141,10 @@ export default async function ServicePage({ params }: Props) {
           <section className="mt-20 pt-10 border-t border-[var(--color-sandDark)]">
             <div className="mb-8">
               <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
-                Σχετική Θεματολογία
+                {ui.relatedTopics}
               </p>
               <h3 className="font-heading text-2xl text-[var(--color-brown)]">
-                Άρθρα για αυτή την Υπηρεσία
+                {ui.articlesForService}
               </h3>
             </div>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">

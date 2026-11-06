@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Category } from "@/lib/content";
 import { getImageVariants } from "@/lib/images";
+import { getUIStrings } from "@/lib/siteContent";
 
 interface Props {
   category: Category;
@@ -11,6 +12,7 @@ interface Props {
 export default function CategoryCard({ category, showCover = false }: Props) {
   const color = category.color || "#C4852A";
   const catVariants = showCover && category.coverImage ? getImageVariants(category.coverImage) : null;
+  const ui = getUIStrings();
 
   return (
     <Link
@@ -44,10 +46,10 @@ export default function CategoryCard({ category, showCover = false }: Props) {
               className="text-xs font-mono font-bold tracking-wider"
               style={{ color }}
             >
-              ΕΝΟΤΗΤΑ {String(category.number).padStart(2, "0")}
+              {ui.pillarBadge} {String(category.number).padStart(2, "0")}
             </span>
             <span className="text-xs text-[var(--color-mutedLight)] font-medium">
-              {category.articles.length} {category.articles.length === 1 ? "άρθρο" : "άρθρα"}
+              {category.articles.length} {category.articles.length === 1 ? ui.articleSingleSuffix : ui.articleCountSuffix}
             </span>
           </div>
 
@@ -65,7 +67,7 @@ export default function CategoryCard({ category, showCover = false }: Props) {
 
       <div className="px-5 sm:px-6 pb-5 pt-0">
         <div className="pt-3 border-t border-[var(--color-sand)] flex items-center justify-between text-xs font-semibold text-[var(--color-brownMid)] group-hover:text-[var(--color-amber)] transition-colors">
-          <span>Εξερεύνηση Ενότητας</span>
+          <span>{ui.exploreCluster}</span>
           <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
         </div>
       </div>

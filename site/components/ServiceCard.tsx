@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Service } from "@/lib/services";
 import { ArrowRight } from "lucide-react";
 import { getImageVariants } from "@/lib/images";
+import { getUIStrings } from "@/lib/siteContent";
 
 interface Props {
   service: Service;
@@ -10,6 +11,7 @@ interface Props {
 
 export default function ServiceCard({ service, variant = "card" }: Props) {
   const imageVariants = getImageVariants(service.image);
+  const ui = getUIStrings();
 
   if (variant === "hero") {
     return (
@@ -45,7 +47,7 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
             href={`/ypiresies/${service.slug}/`}
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors pt-3 border-t border-[var(--color-sand)] w-full justify-between"
           >
-            <span>Αναλυτικά</span>
+            <span>{ui.details}</span>
             <ArrowRight size={13} />
           </Link>
         </div>
@@ -90,7 +92,7 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
           </div>
           <div className="flex items-center justify-between pt-3 border-t border-[var(--color-sand)]/60 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] group-hover:text-[var(--color-amberDark)]">
             <span className="flex items-center gap-1.5">
-              <span>Μάθετε περισσότερα</span>
+              <span>{ui.learnMore}</span>
               <ArrowRight size={13} />
             </span>
           </div>

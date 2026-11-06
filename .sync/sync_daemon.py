@@ -222,8 +222,8 @@ def sync_from_drive():
     else:
         for tracked_rel in list(tracked_files.keys()):
             if tracked_rel not in active_remote_paths:
-                if "/images/" in tracked_rel or tracked_rel.startswith("images/") or tracked_rel.endswith("index.md"):
-                    continue  # Never delete images or index.md!
+                if "/images/" in tracked_rel or tracked_rel.startswith("images/") or tracked_rel.endswith("index.md") or tracked_rel.startswith("site/"):
+                    continue  # Never delete images, index.md, or site copy!
                 local_path = os.path.join(DOCS_DIR, map_drive_rel_to_local_rel(tracked_rel))
                 if os.path.exists(local_path):
                     print(f"🗑️  [DRIVE REMOVED] Deleting local file: {tracked_rel}")

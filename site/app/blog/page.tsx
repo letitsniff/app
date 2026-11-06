@@ -6,38 +6,42 @@ import {
   getAllArticles,
   THEMATIC_CLUSTERS,
 } from "@/lib/content";
+import { getBlogPageContent, getUIStrings } from "@/lib/siteContent";
 import CategoryCard from "@/components/CategoryCard";
 
-export const metadata: Metadata = {
-  title: "Βιβλιοθήκη Άρθρων & Οδηγών Εκπαίδευσης",
-  description:
-    "Οργανωμένη βιβλιοθήκη θετικής εκπαίδευσης σκύλων στην Αθήνα — θεματικοί οδηγοί και άρθρα για τη βόλτα, το διαμέρισμα, την αντιδραστικότητα, το κουτάβι και την υιοθεσία.",
-};
+export function generateMetadata(): Metadata {
+  const content = getBlogPageContent();
+  return {
+    title: content.meta.title,
+    description: content.meta.description,
+  };
+}
 
 export default function BlogPage() {
   const categories = getAllCategories();
   const allArticles = getAllArticles();
   const totalArticles = allArticles.length;
+  const content = getBlogPageContent();
+  const ui = getUIStrings();
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
       {/* ── Page Header ───────────────────────────────────── */}
       <header className="mb-14 pb-8 border-b border-[var(--color-sandDark)]">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-2">
-          Βιβλιοθήκη Γνώσης · {categories.length} Θεματικές Ενότητες · {totalArticles} Άρθρα
+          {content.header.kicker} · {categories.length} Θεματικές Ενότητες · {totalArticles} Άρθρα
         </p>
         <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] mb-4">
-          Άρθρα & Πρακτικοί Οδηγοί
+          {content.header.title}
         </h1>
-        <p className="text-base md:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          Απαντήσεις, συμπεριφορική ανάλυση και επιστημονική γνώση για την καθημερινότητα με τον σκύλο
-          στην Αθήνα — οργανωμένα σε θεματικές ενότητες.
+        <p className="text-base md:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed whitespace-pre-line">
+          {content.header.description}
         </p>
 
         {/* Macro-Category Quick Jump Bar */}
         <div className="mt-8 pt-6 border-t border-[var(--color-sand)]">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] block mb-3">
-            Περιήγηση ανά Θεματική Ενότητα:
+            {content.header.jumpBarLabel}
           </span>
           <div className="flex flex-wrap gap-2 text-xs">
             {THEMATIC_CLUSTERS.map((cluster) => (
@@ -82,7 +86,7 @@ export default function BlogPage() {
                     </span>
                   </div>
                   <span className="text-xs text-[var(--color-mutedLight)] font-mono">
-                    {clusterCategories.length} πυλώνες · {clusterArticlesCount} οδηγοί
+                    {clusterCategories.length} {ui.guideCountSuffix === "οδηγοί" ? "πυλώνες" : ui.guideCountSuffix} · {clusterArticlesCount} {ui.guideCountSuffix}
                   </span>
                 </div>
 
@@ -112,27 +116,26 @@ export default function BlogPage() {
       {/* ── Bottom Help & Contact Bar ─────────────────────── */}
       <div className="mt-24 pt-12 border-t border-[var(--color-sandDark)] text-center">
         <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-2 font-semibold">
-          Χρειάζεστε εξατομικευμένη καθοδήγηση;
+          {content.bottomCallout.kicker}
         </p>
         <h3 className="font-heading text-2xl text-[var(--color-brown)] mb-4">
-          Συνεδρίες Θετικής Εκπαίδευσης στην Αθήνα
+          {content.bottomCallout.title}
         </h3>
-        <p className="text-sm text-[var(--color-muted)] max-w-xl mx-auto mb-6">
-          Κάθε σκύλος είναι μοναδικός. Δείτε τις διαθέσιμες υπηρεσίες ή επικοινωνήστε απευθείας με τον
-          Αλέξανδρο για κατ’ οίκον αξιολόγηση.
+        <p className="text-sm text-[var(--color-muted)] max-w-xl mx-auto mb-6 whitespace-pre-line">
+          {content.bottomCallout.description}
         </p>
         <div className="flex flex-wrap justify-center gap-4 text-xs font-semibold">
           <Link
-            href="/ypiresies"
+            href={content.bottomCallout.link1}
             className="px-5 py-2.5 bg-[var(--color-brown)] text-white hover:bg-[var(--color-brownLight)] transition-colors"
           >
-            Δείτε τις Υπηρεσίες Εκπαίδευσης
+            {content.bottomCallout.button1}
           </Link>
           <Link
-            href="/o-alexandros"
+            href={content.bottomCallout.link2}
             className="px-5 py-2.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brown)] hover:border-[var(--color-amber)] hover:text-[var(--color-amber)] transition-colors"
           >
-            Γνωρίστε τον Αλέξανδρο
+            {content.bottomCallout.button2}
           </Link>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
 } from "@/lib/content";
 import { getServiceBySlug } from "@/lib/services";
 import { getImageVariants } from "@/lib/images";
+import { getUIStrings } from "@/lib/siteContent";
 import ArticleCard from "@/components/ArticleCard";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -67,6 +68,7 @@ export default async function EnotitaPage({ params }: Props) {
   const color = category.color || "#C4852A";
   const cluster = THEMATIC_CATEGORIES.find((c) => c.number === category.macroNumber);
   const catVariants = getImageVariants(category.coverImage);
+  const ui = getUIStrings();
 
   // Connected service if any
   const connectedServices = (category.relatedService || [])
@@ -89,7 +91,7 @@ export default async function EnotitaPage({ params }: Props) {
             </Link>
             <span>/</span>
             <span className="text-[var(--color-brown)] truncate">
-              Ενότητα {String(category.number).padStart(2, "0")}
+              {ui.pillarBreadcrumb} {String(category.number).padStart(2, "0")}
             </span>
           </nav>
 
@@ -99,7 +101,7 @@ export default async function EnotitaPage({ params }: Props) {
               className="text-xs font-mono font-bold tracking-wider px-2.5 py-1 bg-white border"
               style={{ color, borderColor: `${color}40` }}
             >
-              ΕΝΟΤΗΤΑ {String(category.number).padStart(2, "0")}
+              {ui.pillarBadge} {String(category.number).padStart(2, "0")}
             </span>
             {cluster && (
               <span className="text-xs text-[var(--color-muted)] flex items-center gap-1.5">
@@ -108,7 +110,7 @@ export default async function EnotitaPage({ params }: Props) {
               </span>
             )}
             <span className="text-xs text-[var(--color-mutedLight)]">
-              · {category.articles.length} {category.articles.length === 1 ? "οδηγός" : "οδηγοί"}
+              · {category.articles.length} {category.articles.length === 1 ? ui.guideSingleSuffix : ui.guideCountSuffix}
             </span>
           </div>
 
@@ -126,7 +128,7 @@ export default async function EnotitaPage({ params }: Props) {
           {connectedServices.length > 0 && (
             <div className="mt-6 pt-5 border-t border-[var(--color-sandDark)]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
               <span className="text-[var(--color-muted)] font-medium">
-                Σχετική υπηρεσία εκπαίδευσης στην Αθήνα:
+                {ui.connectedServiceLabel}
               </span>
               <div className="flex flex-wrap gap-2">
                 {connectedServices.map((srv) => (
@@ -174,11 +176,11 @@ export default async function EnotitaPage({ params }: Props) {
             <div className="flex items-center gap-2">
               <BookOpen size={16} className="text-[var(--color-amber)]" />
               <h2 className="font-heading text-2xl text-[var(--color-brown)]">
-                Οδηγοί της Ενότητας
+                {ui.clusterContents}
               </h2>
             </div>
             <span className="text-xs text-[var(--color-mutedLight)] font-mono">
-              {category.articles.length} άρθρα
+              {category.articles.length} {category.articles.length === 1 ? ui.articleSingleSuffix : ui.articleCountSuffix}
             </span>
           </div>
 
@@ -194,7 +196,7 @@ export default async function EnotitaPage({ params }: Props) {
             </div>
           ) : (
             <p className="text-sm text-[var(--color-muted)] italic py-4">
-              Τα άρθρα αυτής της ενότητας ανανεώνονται σύντομα.
+              {ui.emptyArticles}
             </p>
           )}
         </section>
@@ -207,7 +209,7 @@ export default async function EnotitaPage({ params }: Props) {
               className="group block p-4 bg-white border border-[var(--color-sandDark)]/60 hover:border-[var(--color-sandDark)] transition-colors text-left"
             >
               <span className="inline-flex items-center gap-1 text-xs text-[var(--color-mutedLight)] group-hover:text-[var(--color-amber)] transition-colors mb-1 font-mono">
-                <ArrowLeft size={12} /> Προηγούμενη ενότητα
+                <ArrowLeft size={12} /> {ui.prevPillar}
               </span>
               <p className="font-heading text-sm text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors line-clamp-1">
                 {String(prevCategory.number).padStart(2, "0")}. {prevCategory.title}
@@ -223,7 +225,7 @@ export default async function EnotitaPage({ params }: Props) {
               className="group block p-4 bg-white border border-[var(--color-sandDark)]/60 hover:border-[var(--color-sandDark)] transition-colors text-right sm:col-start-2"
             >
               <span className="inline-flex items-center justify-end gap-1 text-xs text-[var(--color-mutedLight)] group-hover:text-[var(--color-amber)] transition-colors mb-1 font-mono">
-                Επόμενη ενότητα <ArrowRight size={12} />
+                {ui.nextPillar} <ArrowRight size={12} />
               </span>
               <p className="font-heading text-sm text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors line-clamp-1">
                 {String(nextCategory.number).padStart(2, "0")}. {nextCategory.title}
@@ -238,7 +240,7 @@ export default async function EnotitaPage({ params }: Props) {
             href="/blog"
             className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] hover:text-[var(--color-brown)] transition-colors"
           >
-            ← Επιστροφή σε όλες τις θεματικές ενότητες
+            {ui.backToAllClusters}
           </Link>
         </div>
       </div>
