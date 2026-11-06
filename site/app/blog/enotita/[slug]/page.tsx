@@ -16,9 +16,15 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
   const categories = getAllCategories();
-  return categories.map((c) => ({
-    slug: c.slug,
-  }));
+  const params: { slug: string }[] = [];
+  for (const c of categories) {
+    params.push({ slug: c.slug });
+    const legacy = `pillar-${String(c.number).padStart(2, "0")}`;
+    if (legacy !== c.slug) {
+      params.push({ slug: legacy });
+    }
+  }
+  return params;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

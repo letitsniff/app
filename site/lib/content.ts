@@ -135,8 +135,29 @@ export interface Category {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function categorySlug(num: number): string {
-  return `pillar-${String(num).padStart(2, "0")}`;
+export const PILLAR_SLUGS: Record<number, string> = {
+  1:  "filosofia-let-it-sniff-astiki-volta",
+  2:  "zoi-stin-polykatoikia-diacheirisi-agchous",
+  3:  "antidrastikotita-fovies-erethismata-polis",
+  4:  "koutavi-sto-diamerisma-puppy-hub",
+  5:  "epistimi-thetiki-ekpaidefsi-katarripsi-mython",
+  6:  "synergatiki-frontida-ktiniatros-grooming",
+  7:  "oikogeneia-mora-paidia-polla-katoikidia",
+  8:  "taxidia-metakiniseis-stin-athina-diakopes",
+  9:  "fyles-imiaima-genetika-enstikta-diamerisma",
+  10: "paraxenes-symperifores-kathimerina-ainigmata",
+  11: "ilikia-ygeia-ormones-symperifora",
+  12: "pos-ekfrazontai-ta-skylia-glossa-somatos",
+  13: "fonitiki-ekfrasi-epikoinonia-metaxy-skylon",
+  14: "prin-tin-yiothesia-epilogi-skylou-proetoimasia",
+  15: "metavasi-meta-tin-yiothesia-aposympiesi-desimo",
+  16: "exoplismos-lixoudies-aisthitiriakos-ploutos",
+  17: "parka-skylon-dog-walkers-koinoniki-zoi",
+  18: "i-psychologia-tou-kidemona-stin-poli",
+};
+
+export function categorySlug(num: number): string {
+  return PILLAR_SLUGS[num] ?? `pillar-${String(num).padStart(2, "0")}`;
 }
 
 function extractTitle(raw: string): string {
@@ -392,7 +413,11 @@ export function getArticleBySlug(slug: string): Article | undefined {
 }
 
 export function getCategoryBySlug(slug: string): Category | undefined {
-  return getAllCategories().find((c) => c.slug === slug);
+  const all = getAllCategories();
+  return (
+    all.find((c) => c.slug === slug) ||
+    all.find((c) => `pillar-${String(c.number).padStart(2, "0")}` === slug)
+  );
 }
 
 // ─── Thematic Clusters (Macro-Nesting) ───────────────────────────────────────
