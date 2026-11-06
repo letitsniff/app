@@ -15,6 +15,8 @@ function getRootDir() {
 
 const ROOT_DIR = getRootDir();
 const BLOG_DIR = path.join(ROOT_DIR, "docs", "blog");
+const SERVICES_IMAGES_DIR = path.join(ROOT_DIR, "docs", "services", "images");
+const SITE_IMAGES_DIR = path.join(ROOT_DIR, "docs", "images");
 const PUBLIC_IMAGES_DIR = path.join(ROOT_DIR, "site", "public", "images");
 
 async function optimizeImages() {
@@ -25,24 +27,16 @@ async function optimizeImages() {
     fs.mkdirSync(PUBLIC_IMAGES_DIR, { recursive: true });
   }
 
-  if (!fs.existsSync(BLOG_DIR)) {
-    console.warn("⚠️ Blog directory not found:", BLOG_DIR);
-    return;
-  }
-
-  const dirs = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
   const tasks = [];
 
-  for (const dir of dirs) {
-    if (!dir.isDirectory()) continue;
-    const imagesPath = path.join(BLOG_DIR, dir.name, "images");
-    if (!fs.existsSync(imagesPath)) continue;
-
-    const files = fs.readdirSync(imagesPath);
+  // Helper to collect tasks from an images directory
+  function collectFromDir(dirPath) {
+    if (!fs.existsSync(dirPath)) return;
+    const files = fs.readdirSync(dirPath);
     for (const file of files) {
       if (!/\.(jpe?g|png)$/i.test(file)) continue;
 
-      const srcPath = path.join(imagesPath, file);
+      const srcPath = path.join(dirPath, file);
       const ext = path.extname(file);
       const baseName = path.basename(file, ext);
 
@@ -60,7 +54,22 @@ async function optimizeImages() {
     }
   }
 
-  console.log(`🔍 [Image Optimizer] Found ${tasks.length} master images in docs/blog.`);
+  // 1. Blog pillar images
+  if (fs.existsSync(BLOG_DIR)) {
+    const dirs = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
+    for (const dir of dirs) {
+      if (!dir.isDirectory()) continue;
+      collectFromDir(path.join(BLOG_DIR, dir.name, "images"));
+    }
+  }
+
+  // 2. Services images
+  collectFromDir(SERVICES_IMAGES_DIR);
+
+  // 3. Site-wide images (hero, etc.)
+  collectFromDir(SITE_IMAGES_DIR);
+
+  console.log(`🔍 [Image Optimizer] Found ${tasks.length} master images across docs.`);
 
   let processedCount = 0;
   let skippedCount = 0;

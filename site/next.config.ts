@@ -27,23 +27,20 @@ function syncBlogImages(): void {
     }
 
     const blogDir = path.join(rootDir, "docs", "blog");
+    const servicesImagesDir = path.join(rootDir, "docs", "services", "images");
+    const siteImagesDir = path.join(rootDir, "docs", "images");
     const publicImagesDir = path.join(rootDir, "site", "public", "images");
 
-    if (!fs.existsSync(blogDir)) return;
     if (!fs.existsSync(publicImagesDir)) {
       fs.mkdirSync(publicImagesDir, { recursive: true });
     }
 
-    const dirs = fs.readdirSync(blogDir, { withFileTypes: true });
-    for (const dir of dirs) {
-      if (!dir.isDirectory()) continue;
-      const imagesPath = path.join(blogDir, dir.name, "images");
-      if (!fs.existsSync(imagesPath)) continue;
-
-      const files = fs.readdirSync(imagesPath);
+    const copyFrom = (dir: string) => {
+      if (!fs.existsSync(dir)) return;
+      const files = fs.readdirSync(dir);
       for (const file of files) {
         if (!/\.(jpe?g|png|webp|avif|svg)$/i.test(file)) continue;
-        const src = path.join(imagesPath, file);
+        const src = path.join(dir, file);
         const dest = path.join(publicImagesDir, file);
         if (
           !fs.existsSync(dest) ||
@@ -52,7 +49,17 @@ function syncBlogImages(): void {
           fs.copyFileSync(src, dest);
         }
       }
+    };
+
+    if (fs.existsSync(blogDir)) {
+      const dirs = fs.readdirSync(blogDir, { withFileTypes: true });
+      for (const dir of dirs) {
+        if (!dir.isDirectory()) continue;
+        copyFrom(path.join(blogDir, dir.name, "images"));
+      }
     }
+    copyFrom(servicesImagesDir);
+    copyFrom(siteImagesDir);
   } catch (err) {
     console.error("Error syncing and optimizing blog images in next.config.ts:", err);
   }

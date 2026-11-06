@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
 import { getAllServices, getServiceBySlug } from "@/lib/services";
 import { getAllCategories } from "@/lib/content";
+import { getImageVariants } from "@/lib/images";
 import Prose from "@/components/Prose";
 import ArticleCard from "@/components/ArticleCard";
 
@@ -34,6 +35,8 @@ export default async function ServicePage({ params }: Props) {
     .filter((c) => service.pillars.includes(c.number))
     .flatMap((c) => c.articles.slice(0, 1));
 
+  const imageVariants = getImageVariants(service.image);
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -47,26 +50,48 @@ export default async function ServicePage({ params }: Props) {
             <span className="text-[var(--color-brown)]">{service.title}</span>
           </nav>
 
-          <div className="text-4xl mb-3">{service.icon}</div>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4">
-            {service.title}
-          </h1>
-          <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
-            {service.tagline}
-          </p>
+          <div className="md:grid md:grid-cols-12 md:gap-10 md:items-center">
+            <div className={imageVariants ? "md:col-span-7" : "md:col-span-12"}>
+              <div className="text-3xl mb-3">{service.icon}</div>
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4">
+                {service.title}
+              </h1>
+              <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
+                {service.tagline}
+              </p>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs">
-            {service.duration && (
-              <span className="inline-flex items-center gap-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] px-3 py-1.5">
-                <Clock size={13} /> {service.duration}
-              </span>
+              <div className="flex flex-wrap items-center gap-4 text-xs">
+                {service.duration && (
+                  <span className="inline-flex items-center gap-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] px-3 py-1.5">
+                    <Clock size={13} /> {service.duration}
+                  </span>
+                )}
+                <Link
+                  href="/o-alexandros#epikoinonia"
+                  className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
+                >
+                  Κλείστε Συνεδρία <ArrowRight size={13} />
+                </Link>
+              </div>
+            </div>
+
+            {imageVariants && (
+              <div className="mt-8 md:mt-0 md:col-span-5">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)] shadow-sm">
+                  <picture>
+                    <source srcSet={imageVariants.hero} media="(min-width: 768px)" type="image/webp" />
+                    <source srcSet={imageVariants.card} type="image/webp" />
+                    <img
+                      src={imageVariants.src}
+                      alt={service.title}
+                      fetchPriority="high"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </picture>
+                </div>
+              </div>
             )}
-            <Link
-              href="/o-alexandros#epikoinonia"
-              className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
-            >
-              Κλείστε Συνεδρία <ArrowRight size={13} />
-            </Link>
           </div>
         </div>
       </header>

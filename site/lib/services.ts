@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { marked } from "marked";
+import { resolveImageUrl } from "./content";
 
 function getRootDir(): string {
   const cwd = process.cwd();
@@ -24,6 +25,7 @@ export interface Service {
   description: string;
   htmlContent: string;
   icon: string; // emoji or icon name
+  image?: string;
   price?: string;
   duration?: string;
   pillars: number[]; // linked pillar numbers
@@ -53,6 +55,7 @@ function cleanServiceContent(raw: string): string {
     "Tagline", "tagline",
     "Περιγραφή", "Description", "description",
     "Icon", "icon", "Εικονίδιο",
+    "Εικόνα", "Image", "image",
     "Τιμή", "Price", "price",
     "Διάρκεια", "Duration", "duration",
     "Πυλώνες", "Pillars", "pillars",
@@ -80,6 +83,14 @@ function parseServiceMetadata(raw: string, slug: string): Service {
   const tagline = yamlData.tagline || extractField(raw, ["Tagline", "tagline"]);
   const description = yamlData.description || extractField(raw, ["Περιγραφή", "Description", "description"]);
   const icon = yamlData.icon || extractField(raw, ["Icon", "icon", "Εικονίδιο"]) || "🐾";
+  const imageField = yamlData.image || extractField(raw, ["Εικόνα", "Image", "image"]);
+  let image = imageField ? resolveImageUrl(imageField) : undefined;
+  if (!image) {
+    const serviceImgPath = path.join(ROOT_DIR, "docs", "services", "images", `${slug}.jpg`);
+    if (fs.existsSync(serviceImgPath)) {
+      image = `/images/${slug}.jpg`;
+    }
+  }
   const price = yamlData.price || extractField(raw, ["Τιμή", "Price", "price"]) || undefined;
   const duration = yamlData.duration || extractField(raw, ["Διάρκεια", "Duration", "duration"]) || undefined;
   const pillarsRaw = yamlData.pillars || extractField(raw, ["Πυλώνες", "Pillars", "pillars"]);
@@ -97,6 +108,7 @@ function parseServiceMetadata(raw: string, slug: string): Service {
     tagline,
     description,
     icon,
+    image,
     price,
     duration,
     pillars,

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { getAllCategories, getAllArticles } from "@/lib/content";
 import { getAllServices } from "@/lib/services";
+import { getImageVariants } from "@/lib/images";
 import ArticleCard from "@/components/ArticleCard";
 import CategoryCard from "@/components/CategoryCard";
 import ServiceCard from "@/components/ServiceCard";
@@ -23,42 +24,64 @@ export default function HomePage() {
   // Six primary categories
   const featuredCategories = categories.slice(0, 6);
 
+  const heroImage = getImageVariants("/images/hero-home.jpg");
+
   return (
     <>
       {/* ── Hero ──────────────────────────────────────────── */}
       <section className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)]">
-        <div className="max-w-5xl mx-auto px-5 pt-20 pb-16 md:pt-28 md:pb-24">
-          <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-4">
-              Εκπαίδευση Σκύλων στην Αθήνα
-            </p>
+        <div className="max-w-5xl mx-auto px-5 pt-16 pb-16 md:pt-24 md:pb-20">
+          <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
+            <div className="md:col-span-7">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-4">
+                Εκπαίδευση Σκύλων στην Αθήνα
+              </p>
 
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-[var(--color-brown)] leading-[1.1] mb-6">
-              Άφησε τον σκύλο σου{" "}
-              <em className="text-[var(--color-amber)] italic">να μυρίσει</em>{" "}
-              τη ζωή στην πόλη.
-            </h1>
+              <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-[var(--color-brown)] leading-[1.1] mb-6">
+                Άφησε τον σκύλο σου{" "}
+                <em className="text-[var(--color-amber)] italic">να μυρίσει</em>{" "}
+                τη ζωή στην πόλη.
+              </h1>
 
-            <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed mb-8 max-w-2xl font-light">
-              Επιστημονική, θετική εκπαίδευση προσαρμοσμένη στις πραγματικές
-              συνθήκες της Αθήνας. Ήρεμες βόλτες, συμβίωση χωρίς πίεση και ουσιαστικός δεσμός εμπιστοσύνης.
-            </p>
+              <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed mb-8 max-w-2xl font-light">
+                Επιστημονική, θετική εκπαίδευση προσαρμοσμένη στις πραγματικές
+                συνθήκες της Αθήνας. Ήρεμες βόλτες, συμβίωση χωρίς πίεση και ουσιαστικός δεσμός εμπιστοσύνης.
+              </p>
 
-            <div className="flex flex-wrap items-center gap-4">
-              <Link
-                href="/ypiresies"
-                className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors"
-              >
-                Υπηρεσίες Εκπαίδευσης <ArrowRight size={15} />
-              </Link>
-              <Link
-                href="/blog"
-                className="inline-flex items-center gap-2 border border-[var(--color-sandDark)] bg-white text-[var(--color-brown)] text-sm font-medium px-6 py-3.5 hover:border-[var(--color-brown)] transition-colors"
-              >
-                <BookOpen size={15} />
-                Βιβλιοθήκη Άρθρων
-              </Link>
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  href="/ypiresies"
+                  className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors"
+                >
+                  Υπηρεσίες Εκπαίδευσης <ArrowRight size={15} />
+                </Link>
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-2 border border-[var(--color-sandDark)] bg-white text-[var(--color-brown)] text-sm font-medium px-6 py-3.5 hover:border-[var(--color-brown)] transition-colors"
+                >
+                  <BookOpen size={15} />
+                  Βιβλιοθήκη Άρθρων
+                </Link>
+              </div>
             </div>
+
+            {heroImage && (
+              <div className="md:col-span-5 order-first md:order-last">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-white border border-[var(--color-sandDark)] shadow-sm">
+                  <picture>
+                    <source srcSet={heroImage.hero} media="(min-width: 768px)" type="image/webp" />
+                    <source srcSet={heroImage.card} type="image/webp" />
+                    <img
+                      src={heroImage.src}
+                      alt="Χαρούμενος σκύλος και κηδεμόνας σε χαλαρή βόλτα στην Αθήνα"
+                      fetchPriority="high"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </picture>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
