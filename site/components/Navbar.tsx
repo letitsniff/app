@@ -45,11 +45,13 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  // Close menu on route change
-  useEffect(() => {
+  // Close menu on route change (React-recommended pattern: adjust state during render)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   // Subtle border on scroll
   useEffect(() => {

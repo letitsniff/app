@@ -40,7 +40,7 @@ export default async function ServicePage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-12 pb-10">
+      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-12 pb-12">
         <div className="max-w-4xl mx-auto px-5">
           <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6">
             <Link href="/ypiresies" className="hover:text-[var(--color-brown)] transition-colors">
@@ -50,49 +50,43 @@ export default async function ServicePage({ params }: Props) {
             <span className="text-[var(--color-brown)]">{service.title}</span>
           </nav>
 
-          <div className="md:grid md:grid-cols-12 md:gap-10 md:items-center">
-            <div className={imageVariants ? "md:col-span-7" : "md:col-span-12"}>
-              <div className="text-3xl mb-3">{service.icon}</div>
-              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4">
-                {service.title}
-              </h1>
-              <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
-                {service.tagline}
-              </p>
+          {!imageVariants && <div className="text-4xl mb-3">{service.icon}</div>}
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4">
+            {service.title}
+          </h1>
+          <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
+            {service.tagline}
+          </p>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs">
-                {service.duration && (
-                  <span className="inline-flex items-center gap-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] px-3 py-1.5">
-                    <Clock size={13} /> {service.duration}
-                  </span>
-                )}
-                <Link
-                  href="/o-alexandros#epikoinonia"
-                  className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
-                >
-                  Κλείστε Συνεδρία <ArrowRight size={13} />
-                </Link>
-              </div>
-            </div>
-
-            {imageVariants && (
-              <div className="mt-8 md:mt-0 md:col-span-5">
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)] shadow-sm">
-                  <picture>
-                    <source srcSet={imageVariants.hero} media="(min-width: 768px)" type="image/webp" />
-                    <source srcSet={imageVariants.card} type="image/webp" />
-                    <img
-                      src={imageVariants.src}
-                      alt={service.title}
-                      fetchPriority="high"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
-                  </picture>
-                </div>
-              </div>
+          <div className="flex flex-wrap items-center gap-4 text-xs mb-8">
+            {service.duration && (
+              <span className="inline-flex items-center gap-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] px-3 py-1.5">
+                <Clock size={13} /> {service.duration}
+              </span>
             )}
+            <Link
+              href="/o-alexandros#epikoinonia"
+              className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
+            >
+              Κλείστε Συνεδρία <ArrowRight size={13} />
+            </Link>
           </div>
+
+          {imageVariants && (
+            <div className="relative aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/80 shadow-xs">
+              <picture>
+                <source srcSet={imageVariants.hero} media="(min-width: 768px)" type="image/webp" />
+                <source srcSet={imageVariants.card} type="image/webp" />
+                <img
+                  src={imageVariants.src}
+                  alt={service.title}
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+              </picture>
+            </div>
+          )}
         </div>
       </header>
 
