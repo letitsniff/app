@@ -6,6 +6,7 @@ import hashlib
 import subprocess
 import re
 from datetime import datetime
+import threading
 from concurrent.futures import ThreadPoolExecutor
 
 WORKSPACE_DIR = "/home/vasilis/Projects/letitsniff"
@@ -26,14 +27,16 @@ def run_gdrive(*args):
     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return res
 
-def list_drive_folder(folder_id):
-    res = run_gdrive("readonly", "ls", folder_id, "--json")
-    if res.returncode != 0:
-        return []
-    try:
-        return json.loads(res.stdout)
-    except Exception:
-        return []
+def list_drive_folder(folder_id, max_retries=3):
+    for attempt in range(max_retries):
+        res = run_gdrive("readonly", "ls", folder_id, "--json")
+        if res.returncode == 0:
+            try:
+                return json.loads(res.stdout)
+            except Exception:
+                pass
+        time.sleep(1 + attempt)
+    return None
 
 def get_shared_images_map():
     """Builds a lookup of {drive_file_id: filename} for all images in the shared folders."""
@@ -130,9 +133,17 @@ def save_state(state):
 def scan_drive_tree():
     """Recursively scans all files in Google Drive from ROOT_FOLDER_ID."""
     files = {}
+    lock = threading.Lock()
+    scan_had_errors = False
 
     def scan_recursive(folder_id, current_rel):
+        nonlocal scan_had_errors
         items = list_drive_folder(folder_id)
+        if items is None:
+            scan_had_errors = True
+            print(f"⚠️ Failed to list folder: {folder_id} ({current_rel})")
+            return
+
         sub_folders = []
         for it in items:
             name = it.get("name")
@@ -145,24 +156,26 @@ def scan_drive_tree():
             elif mime == "application/vnd.google-apps.document":
                 rel_name = name if name.endswith(".md") else f"{name}.md"
                 f_rel = os.path.join(current_rel, rel_name) if current_rel else rel_name
-                files[f_rel] = it
+                with lock:
+                    files[f_rel] = it
             else:
                 f_rel = os.path.join(current_rel, name) if current_rel else name
-                files[f_rel] = it
+                with lock:
+                    files[f_rel] = it
 
         if sub_folders:
             with ThreadPoolExecutor(max_workers=min(10, len(sub_folders))) as ex:
-                ex.map(lambda t: scan_recursive(t[0], t[1]), sub_folders)
+                list(ex.map(lambda t: scan_recursive(t[0], t[1]), sub_folders))
 
     scan_recursive(ROOT_FOLDER_ID, "")
-    return files
+    return files, scan_had_errors
 
 def sync_from_drive():
     """Pulls new or modified docs from Google Drive to docs/."""
     state = load_state()
     tracked_files = state.setdefault("files", {})
 
-    remote_files = scan_drive_tree()
+    remote_files, scan_had_errors = scan_drive_tree()
     active_remote_paths = set(remote_files.keys())
 
     # 1. Pull new or updated files from Drive
@@ -202,18 +215,23 @@ def sync_from_drive():
                 }
 
     # 2. Clean up local files that were removed from Google Drive (NEVER delete images or index.md)
-    for tracked_rel in list(tracked_files.keys()):
-        if tracked_rel not in active_remote_paths:
-            if "/images/" in tracked_rel or tracked_rel.startswith("images/") or tracked_rel.endswith("index.md"):
-                continue  # Never delete images or index.md!
-            local_path = os.path.join(DOCS_DIR, map_drive_rel_to_local_rel(tracked_rel))
-            if os.path.exists(local_path):
-                print(f"🗑️  [DRIVE REMOVED] Deleting local file: {tracked_rel}")
-                try:
-                    os.remove(local_path)
-                except Exception:
-                    pass
-            tracked_files.pop(tracked_rel, None)
+    if scan_had_errors:
+        print("⚠️ Scan encountered errors on one or more folders; skipping deletion cleanup to protect local files.")
+    elif len(tracked_files) > 0 and len(remote_files) < len(tracked_files) * 0.8:
+        print(f"⚠️ Remote scan returned suspiciously few files ({len(remote_files)} vs {len(tracked_files)} tracked); skipping deletion cleanup.")
+    else:
+        for tracked_rel in list(tracked_files.keys()):
+            if tracked_rel not in active_remote_paths:
+                if "/images/" in tracked_rel or tracked_rel.startswith("images/") or tracked_rel.endswith("index.md"):
+                    continue  # Never delete images or index.md!
+                local_path = os.path.join(DOCS_DIR, map_drive_rel_to_local_rel(tracked_rel))
+                if os.path.exists(local_path):
+                    print(f"🗑️  [DRIVE REMOVED] Deleting local file: {tracked_rel}")
+                    try:
+                        os.remove(local_path)
+                    except Exception:
+                        pass
+                tracked_files.pop(tracked_rel, None)
 
     # 3. Clean empty directories inside docs/
     for root, dirs, files_in_dir in os.walk(DOCS_DIR, topdown=False):
