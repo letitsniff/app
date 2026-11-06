@@ -2,63 +2,48 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--color-brown)] text-[var(--color-sandDark)] mt-24">
-      <div className="max-w-6xl mx-auto px-5 py-14 grid grid-cols-1 md:grid-cols-3 gap-10">
-        {/* Brand */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">🐾</span>
-            <span className="font-heading text-xl text-white font-semibold">Let It Sniff</span>
+    <footer className="border-t border-[var(--color-sandDark)] mt-20">
+      <div className="max-w-5xl mx-auto px-5 py-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div>
+            <p className="font-heading text-lg text-[var(--color-brown)] mb-1">
+              Let It Sniff
+            </p>
+            <p className="text-sm text-[var(--color-muted)]">
+              Θετική εκπαίδευση σκύλων · Αθήνα
+            </p>
           </div>
-          <p className="text-sm text-[var(--color-mutedLight)] leading-relaxed">
-            Θετική εκπαίδευση σκύλων στην Αθήνα.<br />
-            Επιστημονική, ανθρώπινη, αποτελεσματική.
-          </p>
-        </div>
-
-        {/* Links */}
-        <div>
-          <h3 className="text-white font-heading text-sm font-semibold uppercase tracking-widest mb-4">
-            Σύνδεσμοι
-          </h3>
-          <ul className="space-y-2 text-sm">
-            {[
-              { href: "/blog", label: "Άρθρα & Οδηγοί" },
-              { href: "/ypiresies", label: "Υπηρεσίες" },
-              { href: "/o-alexandros", label: "Ο Αλέξανδρος" },
-              { href: "/o-alexandros#epikoinonia", label: "Επικοινωνία" },
-            ].map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="text-[var(--color-mutedLight)] hover:text-[var(--color-amberLight)] transition-colors"
-                >
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Contact */}
-        <div>
-          <h3 className="text-white font-heading text-sm font-semibold uppercase tracking-widest mb-4">
-            Επικοινωνία
-          </h3>
-          <p className="text-sm text-[var(--color-mutedLight)] leading-relaxed">
-            Αθήνα, Ελλάδα<br />
+          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--color-muted)]">
+            <Link
+              href="/blog"
+              className="hover:text-[var(--color-brown)] transition-colors"
+            >
+              Άρθρα
+            </Link>
+            <Link
+              href="/ypiresies"
+              className="hover:text-[var(--color-brown)] transition-colors"
+            >
+              Υπηρεσίες
+            </Link>
+            <Link
+              href="/o-alexandros"
+              className="hover:text-[var(--color-brown)] transition-colors"
+            >
+              Ο Αλέξανδρος
+            </Link>
             <a
               href="mailto:info@letitsniff.gr"
-              className="hover:text-[var(--color-amberLight)] transition-colors"
+              className="hover:text-[var(--color-brown)] transition-colors"
             >
               info@letitsniff.gr
             </a>
-          </p>
+          </nav>
         </div>
-      </div>
-
-      <div className="border-t border-[var(--color-brownMid)] py-5 text-center text-xs text-[var(--color-muted)]">
-        © {new Date().getFullYear()} Let It Sniff — Αλέξανδρος, Εκπαιδευτής Σκύλων, Αθήνα
+        <p className="text-xs text-[var(--color-mutedLight)] mt-8">
+          © {new Date().getFullYear()} Let It Sniff — Αλέξανδρος, Εκπαιδευτής
+          Σκύλων
+        </p>
       </div>
     </footer>
   );

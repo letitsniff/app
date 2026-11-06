@@ -6,9 +6,14 @@ import { CATEGORY_COLORS } from "@/lib/content";
 interface Props {
   article: Article;
   featured?: boolean;
+  priority?: boolean;
 }
 
-export default function ArticleCard({ article, featured = false }: Props) {
+export default function ArticleCard({
+  article,
+  featured = false,
+  priority = false,
+}: Props) {
   const color = CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
 
   if (featured) {

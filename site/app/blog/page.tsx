@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getAllCategories } from "@/lib/content";
 import ArticleCard from "@/components/ArticleCard";
-import { BookOpen } from "lucide-react";
+import { CATEGORY_COLORS } from "@/lib/content";
+import { getImageVariants } from "@/lib/images";
 
 export const metadata: Metadata = {
   title: "Άρθρα & Οδηγοί",
@@ -14,67 +15,107 @@ export default function BlogPage() {
   const totalArticles = categories.reduce((s, c) => s + c.articles.length, 0);
 
   return (
-    <div className="max-w-6xl mx-auto px-5 py-14">
+    <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
       {/* Page header */}
-      <div className="mb-12">
-        <div className="inline-flex items-center gap-2 bg-[var(--color-sand)] text-[var(--color-amber)] text-sm font-medium px-4 py-1.5 rounded-full mb-4">
-          <BookOpen size={14} />
-          <span>{totalArticles} Άρθρα · {categories.length} Ενότητες</span>
-        </div>
-        <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] mb-4 leading-tight">
-          Βιβλιοθήκη Γνώσης
-        </h1>
-        <p className="text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          Οδηγοί, άρθρα και απαντήσεις σε καθημερινές απορίες για σκύλους που
-          ζουν στην πόλη — γραμμένα με επιστημονική ακρίβεια και πρακτική
-          σκοπιά.
+      <header className="mb-14 pb-8 border-b border-[var(--color-sandDark)]">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-2">
+          Βιβλιοθήκη Γνώσης · {totalArticles} Άρθρα
         </p>
-      </div>
+        <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] mb-4">
+          Άρθρα & Πρακτικοί Οδηγοί
+        </h1>
+        <p className="text-base md:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
+          Απαντήσεις, οδηγίες και συμπεριφορική ανάλυση για την καθημερινότητα με έναν σκύλο στην Αθήνα —
+          τεκμηριωμένα, ανθρώπινα και με σεβασμό.
+        </p>
 
-      {/* All categories with their articles */}
-      <div className="space-y-16">
-        {categories.map((cat) => (
-          <section key={cat.slug} id={cat.slug}>
-            {/* Category header with optional cover image */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-[var(--color-sandDark)]">
-              <div className="flex-1">
-                <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
-                  Ενότητα {String(cat.number).padStart(2, "0")}
-                </p>
-                <h2 className="font-heading text-2xl md:text-3xl text-[var(--color-brown)]">
+        {/* Quick jump anchor bar */}
+        <div className="mt-8 pt-6 border-t border-[var(--color-sand)] flex flex-wrap gap-2 text-xs">
+          <span className="text-[var(--color-mutedLight)] self-center mr-1">Ενότητες:</span>
+          {categories.map((cat) => (
+            <a
+              key={cat.slug}
+              href={`#${cat.slug}`}
+              className="px-2.5 py-1 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] hover:border-[var(--color-amber)] hover:text-[var(--color-amber)] transition-colors"
+            >
+              {String(cat.number).padStart(2, "0")}. {cat.title.split("&")[0].trim()}
+            </a>
+          ))}
+        </div>
+      </header>
+
+      {/* Categories and their articles */}
+      <div className="space-y-20">
+        {categories.map((cat, catIndex) => {
+          const color = CATEGORY_COLORS[cat.number] ?? "#C4852A";
+          const catVariants = getImageVariants(cat.coverImage);
+          return (
+            <section key={cat.slug} id={cat.slug} className="scroll-mt-20">
+              {/* Category header */}
+              <div
+                className="border-l-4 pl-4 sm:pl-6 pb-2 mb-8"
+                style={{ borderColor: color }}
+              >
+                <div className="flex items-center gap-3 mb-1">
+                  <span
+                    className="text-xs font-mono font-bold tracking-wider"
+                    style={{ color }}
+                  >
+                    ΕΝΟΤΗΤΑ {String(cat.number).padStart(2, "0")}
+                  </span>
+                  <span className="text-xs text-[var(--color-mutedLight)]">
+                    · {cat.articles.length} {cat.articles.length === 1 ? "άρθρο" : "άρθρα"}
+                  </span>
+                </div>
+                <h2 className="font-heading text-2xl md:text-3xl text-[var(--color-brown)] mb-2">
                   {cat.title}
                 </h2>
                 {cat.intro && (
-                  <p className="text-sm text-[var(--color-muted)] mt-2 leading-relaxed max-w-2xl">
+                  <p className="text-sm text-[var(--color-muted)] max-w-3xl leading-relaxed">
                     {cat.intro}
                   </p>
                 )}
               </div>
+
+              {/* Category cover banner if present */}
               {cat.coverImage && (
-                <div className="w-full md:w-64 aspect-[16/10] md:h-36 rounded-2xl overflow-hidden shadow-sm flex-shrink-0 border border-[var(--color-sandDark)]/20">
-                  <img
-                    src={cat.coverImage}
-                    alt={cat.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="mb-8 overflow-hidden bg-[var(--color-sand)] max-h-64 border border-[var(--color-sandDark)]/40">
+                  <picture>
+                    {catVariants?.card && (
+                      <source type="image/webp" srcSet={catVariants.card} />
+                    )}
+                    <img
+                      src={cat.coverImage}
+                      alt={cat.title}
+                      width={1200}
+                      height={400}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </picture>
                 </div>
               )}
-            </div>
 
-            {/* Articles grid */}
-            {cat.articles.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {cat.articles.map((a) => (
-                  <ArticleCard key={a.slug} article={a} />
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-[var(--color-muted)] italic">
-                Τα άρθρα αυτής της ενότητας έρχονται σύντομα.
-              </p>
-            )}
-          </section>
-        ))}
+              {/* Articles grid */}
+              {cat.articles.length > 0 ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {cat.articles.map((a, aIndex) => (
+                    <ArticleCard
+                      key={a.slug}
+                      article={a}
+                      priority={catIndex === 0 && aIndex < 3}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[var(--color-muted)] italic py-4">
+                  Τα άρθρα αυτής της ενότητας ανανεώνονται σύντομα.
+                </p>
+              )}
+            </section>
+          );
+        })}
       </div>
     </div>
   );

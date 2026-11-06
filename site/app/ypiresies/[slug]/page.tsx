@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Clock, ArrowRight } from "lucide-react";
+import { Clock, ArrowRight } from "lucide-react";
 import { getAllServices, getServiceBySlug } from "@/lib/services";
 import { getAllCategories } from "@/lib/content";
 import Prose from "@/components/Prose";
@@ -32,121 +32,123 @@ export default async function ServicePage({ params }: Props) {
   const categories = getAllCategories();
   const relatedArticles = categories
     .filter((c) => service.pillars.includes(c.number))
-    .flatMap((c) => c.articles.slice(0, 1)); // 1 per linked pillar, capped
+    .flatMap((c) => c.articles.slice(0, 1));
 
   return (
-    <div>
+    <div className="min-h-screen">
       {/* Header */}
-      <div
-        className="pt-12 pb-10"
-        style={{
-          background:
-            "linear-gradient(135deg, color-mix(in srgb, var(--color-terra) 8%, var(--color-cream)), var(--color-cream))",
-        }}
-      >
+      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-12 pb-10">
         <div className="max-w-4xl mx-auto px-5">
-          <Link
-            href="/ypiresies"
-            className="inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-amber)] transition-colors mb-6"
-          >
-            <ArrowLeft size={14} /> Πίσω στις Υπηρεσίες
-          </Link>
+          <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6">
+            <Link href="/ypiresies" className="hover:text-[var(--color-brown)] transition-colors">
+              Υπηρεσίες
+            </Link>
+            <span>/</span>
+            <span className="text-[var(--color-brown)]">{service.title}</span>
+          </nav>
 
-          <div className="text-5xl mb-5">{service.icon}</div>
-          <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-3">
+          <div className="text-4xl mb-3">{service.icon}</div>
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4">
             {service.title}
           </h1>
-          <p className="text-xl text-[var(--color-muted)] leading-relaxed max-w-xl mb-6">
+          <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
             {service.tagline}
           </p>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap items-center gap-4 text-xs">
             {service.duration && (
-              <span className="inline-flex items-center gap-2 bg-[var(--color-sand)] text-[var(--color-muted)] text-sm px-4 py-1.5 rounded-full">
+              <span className="inline-flex items-center gap-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] px-3 py-1.5">
                 <Clock size={13} /> {service.duration}
               </span>
             )}
             <Link
               href="/o-alexandros#epikoinonia"
-              className="inline-flex items-center gap-2 bg-[var(--color-amber)] text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-[var(--color-amberDark)] transition-colors"
+              className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
             >
-              Κλείσε Συνεδρία <ArrowRight size={14} />
+              Κλείστε Συνεδρία <ArrowRight size={13} />
             </Link>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-5 py-12">
-        <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-14">
-          <article>
+      <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
+        <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-16 items-start">
+          <main>
             <Prose html={service.htmlContent} />
-          </article>
+          </main>
 
-          <aside className="mt-10 lg:mt-0 space-y-6">
+          <aside className="mt-14 lg:mt-0 space-y-6 lg:sticky lg:top-20">
             {/* Price info */}
             {service.price && (
-              <div className="bg-[var(--color-sand)] rounded-2xl p-6">
-                <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-2">
+              <div className="bg-white border-l-4 border-[var(--color-terra)] border-y border-r border-[var(--color-sandDark)]/70 p-5">
+                <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-1">
                   Τιμολόγηση
                 </p>
-                <p className="font-heading text-[var(--color-brown)]">
+                <p className="font-heading text-lg text-[var(--color-brown)]">
                   {service.price}
                 </p>
               </div>
             )}
 
-            {/* CTA */}
-            <div className="bg-[var(--color-brown)] rounded-2xl p-6 text-center">
+            {/* Direct CTA */}
+            <div className="bg-[var(--color-brown)] text-white p-6">
               <h3 className="font-heading text-lg text-white mb-2">
-                Ξεκίνα Σήμερα
+                Αρχική Αξιολόγηση
               </h3>
-              <p className="text-sm text-[var(--color-sandDark)] mb-4 leading-relaxed">
-                Επικοινώνησε για μια δωρεάν αρχική αξιολόγηση.
+              <p className="text-xs text-[var(--color-sandDark)] mb-5 leading-relaxed font-light">
+                Συζητάμε τις ανάγκες του σκύλου σας και σχεδιάζουμε το πρόγραμμα που ταιριάζει
+                στο πρόγραμμά σας.
               </p>
               <Link
                 href="/o-alexandros#epikoinonia"
-                className="block w-full text-center bg-[var(--color-amber)] text-white text-sm font-medium py-3 rounded-xl hover:bg-[var(--color-amberDark)] transition-colors"
+                className="block w-full text-center bg-[var(--color-amber)] text-white text-xs font-semibold uppercase tracking-wider py-2.5 hover:bg-[var(--color-amberDark)] transition-colors"
               >
-                Επικοινώνησε
+                Επικοινωνία
               </Link>
             </div>
 
             {/* Other services */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-sandDark)]/30">
-              <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-4">
-                Άλλες Υπηρεσίες
+            <div className="pt-6 border-t border-[var(--color-sandDark)]">
+              <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
+                Όλες οι Υπηρεσίες
               </p>
-              <div className="space-y-3">
+              <ul className="space-y-2 text-xs">
                 {getAllServices()
                   .filter((s) => s.slug !== service.slug)
                   .map((s) => (
-                    <Link
-                      key={s.slug}
-                      href={`/ypiresies/${s.slug}/`}
-                      className="flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-amber)] transition-colors"
-                    >
-                      <span>{s.icon}</span>
-                      <span>{s.title}</span>
-                    </Link>
+                    <li key={s.slug}>
+                      <Link
+                        href={`/ypiresies/${s.slug}/`}
+                        className="flex items-center gap-2 text-[var(--color-muted)] hover:text-[var(--color-brown)] transition-colors py-1"
+                      >
+                        <span>{s.icon}</span>
+                        <span>{s.title}</span>
+                      </Link>
+                    </li>
                   ))}
-              </div>
+              </ul>
             </div>
           </aside>
         </div>
 
         {/* Related articles */}
         {relatedArticles.length > 0 && (
-          <div className="mt-16 pt-10 border-t border-[var(--color-sandDark)]">
-            <h2 className="font-heading text-2xl text-[var(--color-brown)] mb-6">
-              Διάβασε Σχετικά Άρθρα
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <section className="mt-20 pt-10 border-t border-[var(--color-sandDark)]">
+            <div className="mb-8">
+              <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
+                Σχετική Θεματολογία
+              </p>
+              <h3 className="font-heading text-2xl text-[var(--color-brown)]">
+                Άρθρα για αυτή την Υπηρεσία
+              </h3>
+            </div>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
               {relatedArticles.slice(0, 3).map((a) => (
                 <ArticleCard key={a.slug} article={a} />
               ))}
             </div>
-          </div>
+          </section>
         )}
       </div>
     </div>

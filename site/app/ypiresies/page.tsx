@@ -14,54 +14,43 @@ export default function ServicesPage() {
   const services = getAllServices();
 
   return (
-    <div>
+    <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
       {/* Header */}
-      <div
-        className="pt-14 pb-12"
-        style={{
-          background:
-            "linear-gradient(135deg, color-mix(in srgb, var(--color-terra) 8%, var(--color-cream)), var(--color-cream))",
-        }}
-      >
-        <div className="max-w-4xl mx-auto px-5">
-          <p className="text-xs uppercase tracking-widest text-[var(--color-terra)] font-medium mb-3">
-            Πώς Μπορώ να Βοηθήσω
-          </p>
-          <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4">
-            Υπηρεσίες Εκπαίδευσης
-          </h1>
-          <p className="text-lg text-[var(--color-muted)] leading-relaxed max-w-2xl">
-            Κάθε σκύλος είναι διαφορετικός. Κάθε πρόγραμμα σχεδιάζεται για
-            τον συγκεκριμένο σκύλο, στο συγκεκριμένο περιβάλλον, με τον
-            συγκεκριμένο τρόπο ζωής σου.
-          </p>
-        </div>
-      </div>
+      <header className="mb-14 pb-8 border-b border-[var(--color-sandDark)]">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-terra)] mb-2">
+          Εξατομικευμένα Προγράμματα
+        </p>
+        <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] mb-4">
+          Υπηρεσίες Εκπαίδευσης & Συμβουλευτικής
+        </h1>
+        <p className="text-base md:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
+          Κάθε σκύλος και κάθε κηδεμόνας έχουν διαφορετικούς ρυθμούς και ανάγκες. Τα προγράμματα
+          υλοποιούνται στο φυσικό περιβάλλον του σκύλου: στο σπίτι, στην πολυκατοικία και στη γειτονιά.
+        </p>
+      </header>
 
       {/* Services list */}
-      <div className="max-w-4xl mx-auto px-5 py-14 space-y-5">
+      <div className="space-y-4 mb-16">
         {services.map((s) => (
           <ServiceCard key={s.slug} service={s} />
         ))}
       </div>
 
-      {/* CTA */}
-      <section className="bg-[var(--color-sand)] py-14">
-        <div className="max-w-2xl mx-auto px-5 text-center">
-          <h2 className="font-heading text-3xl text-[var(--color-brown)] mb-4">
-            Δεν Ξέρεις Από Πού να Ξεκινήσεις;
-          </h2>
-          <p className="text-[var(--color-muted)] leading-relaxed mb-7">
-            Γράψε μου. Μαζί θα βρούμε τι χρειάζεται ο σκύλος σου και ποιο
-            πρόγραμμα ταιριάζει στην καθημερινή σου.
-          </p>
-          <Link
-            href="/o-alexandros#epikoinonia"
-            className="inline-flex items-center gap-2 bg-[var(--color-amber)] text-white font-medium px-7 py-3.5 rounded-full hover:bg-[var(--color-amberDark)] transition-colors"
-          >
-            Επικοινώνησε <ArrowRight size={16} />
-          </Link>
-        </div>
+      {/* Direct Contact Callout */}
+      <section className="bg-[var(--color-sand)]/60 border border-[var(--color-sandDark)] p-8 sm:p-12 text-center max-w-2xl mx-auto">
+        <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)] mb-3">
+          Δεν είστε σίγουροι από πού να ξεκινήσετε;
+        </h2>
+        <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed mb-6 font-light">
+          Περιγράψτε μου συνοπτικά την καθημερινότητα και τις προκλήσεις με τον σκύλο σας.
+          Μαζί θα αξιολογήσουμε ποια προσέγγιση είναι η πιο αποτελεσματική.
+        </p>
+        <Link
+          href="/o-alexandros#epikoinonia"
+          className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-6 py-3 hover:bg-[var(--color-brownMid)] transition-colors"
+        >
+          Επικοινωνία με τον Αλέξανδρο <ArrowRight size={14} />
+        </Link>
       </section>
     </div>
   );
