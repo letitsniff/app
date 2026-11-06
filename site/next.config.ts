@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import fs from "fs";
 import path from "path";
+import { execFileSync } from "child_process";
 
 function getRootDir(): string {
   const cwd = process.cwd();
@@ -16,6 +17,15 @@ function getRootDir(): string {
 function syncBlogImages(): void {
   try {
     const rootDir = getRootDir();
+    const scriptPath = path.join(rootDir, "site", "scripts", "optimize-images.mjs");
+    if (fs.existsSync(scriptPath)) {
+      execFileSync(process.execPath, [scriptPath], {
+        stdio: "inherit",
+        env: { ...process.env, ROOT_DIR: rootDir },
+      });
+      return;
+    }
+
     const blogDir = path.join(rootDir, "docs", "blog");
     const publicImagesDir = path.join(rootDir, "site", "public", "images");
 
@@ -44,11 +54,11 @@ function syncBlogImages(): void {
       }
     }
   } catch (err) {
-    console.error("Error syncing blog images in next.config.ts:", err);
+    console.error("Error syncing and optimizing blog images in next.config.ts:", err);
   }
 }
 
-// Ensure images are copied to public/ before Next.js compiles or starts dev server
+// Ensure images are copied and optimized to public/ before Next.js compiles or starts dev server
 syncBlogImages();
 
 const nextConfig: NextConfig = {
