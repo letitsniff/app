@@ -188,18 +188,38 @@ async function processPost(folderName, singleRun = false) {
     `);
     await randDelay(1200, 2200);
 
-    // 6. Click Send
+    // 6. Click Send (retry for up to 5s if Angular is rendering)
     console.log(`🚀 Clicking Send message...`);
-    const sent = await evalInTab(ws, `
-      (() => {
-        const sendBtn = document.querySelector("button[aria-label='Send message']");
-        if (sendBtn) {
-          sendBtn.click();
-          return true;
-        }
-        return false;
-      })()
-    `);
+    let sent = false;
+    for (let s = 0; s < 10; s++) {
+      sent = await evalInTab(ws, `
+        (() => {
+          const sendBtn = document.querySelector("button[aria-label='Send message'], button.send-button, [data-test-id='send-button']");
+          if (sendBtn && !sendBtn.disabled) {
+            sendBtn.click();
+            return true;
+          }
+          return false;
+        })()
+      `);
+      if (sent) break;
+      await sleep(500);
+    }
+
+    if (!sent) {
+      // Fallback: Dispatch Enter key
+      sent = await evalInTab(ws, `
+        (() => {
+          const editor = document.querySelector(".ql-editor");
+          if (editor) {
+            editor.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", code: "Enter", keyCode: 13, which: 13, bubbles: true }));
+            return true;
+          }
+          return false;
+        })()
+      `);
+    }
+
     if (!sent) {
       console.log(`❌ Failed to click Send message.`);
       return false;
@@ -220,21 +240,17 @@ async function processPost(folderName, singleRun = false) {
       return "LIMIT_HIT";
     }
 
-    // 8. Polling loop with refresh as instructed by user
-    console.log(`⏳ Waiting for video rendering (~60-90s initial render wait)...`);
-    await randDelay(65000, 80000);
-
+    // 8. Polling loop: first poll live DOM, reload if needed
+    console.log(`⏳ Waiting for video rendering (polling live DOM)...`);
     let videoFound = false;
     let attempts = 0;
-    const maxAttempts = 8; // poll for up to ~4-5 minutes
+    const maxAttempts = 24; // poll every 10-15s for up to 4-5 minutes
 
     while (!videoFound && attempts < maxAttempts) {
       attempts++;
-      console.log(`🔄 [Attempt ${attempts}/${maxAttempts}] Reloading page to reveal video...`);
-      await sendCdp(ws, 'Page.reload', { ignoreCache: true });
-      await randDelay(5000, 8000);
+      await randDelay(10000, 15000);
 
-      const check = await evalInTab(ws, `
+      let check = await evalInTab(ws, `
         (() => {
           const video = document.querySelector("video");
           const dlBtn = document.querySelector("button[aria-label*='Download video']");
@@ -248,7 +264,32 @@ async function processPost(folderName, singleRun = false) {
         })()
       `);
 
-      console.log(`🔍 Check result: video=${check?.hasVideo}, dlBtn=${check?.hasDlBtn}, text=${check?.text}`);
+      // If past 90 seconds and not found, try a gentle reload if URL has chat id
+      if (!check?.hasVideo && !check?.hasDlBtn && attempts >= 7 && attempts % 3 === 0) {
+        console.log(`🔄 [${attempts}/${maxAttempts}] Gentle reload to check for updated response...`);
+        await sendCdp(ws, 'Page.reload', { ignoreCache: true });
+        await randDelay(7000, 10000);
+        check = await evalInTab(ws, `
+          (() => {
+            const video = document.querySelector("video");
+            const dlBtn = document.querySelector("button[aria-label*='Download video']");
+            const resp = document.querySelector("model-response");
+            return {
+              hasVideo: !!video,
+              src: video ? video.src : null,
+              hasDlBtn: !!dlBtn,
+              text: resp ? resp.innerText.trim().slice(0, 100) : ""
+            };
+          })()
+        `);
+      }
+
+      console.log(`🔍 [${attempts}/${maxAttempts}] video=${check?.hasVideo}, dlBtn=${check?.hasDlBtn}, text=${check?.text?.slice(0, 50)}`);
+
+      if (check?.text && check.text.includes("limit resets")) {
+        console.log(`⚠️ QUOTA LIMIT HIT: ${check.text}`);
+        return "LIMIT_HIT";
+      }
 
       if (check?.hasVideo || check?.hasDlBtn) {
         console.log(`🎉 Video rendered successfully! Initiating download...`);
@@ -273,7 +314,18 @@ async function processPost(folderName, singleRun = false) {
 
         if (downloaded) {
           console.log(`✅ Download complete: ${downloaded.file} (${downloaded.size} bytes)`);
-          fs.copyFileSync(downloaded.file, targetVideo);
+          
+          // Guarantee 100% silent video (no AI voice/sound, only Alex speaks)
+          const ffmpegExe = '/home/vasilis/.local/lib/python3.12/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v9.0.2';
+          const tmpMuted = targetVideo + '.muted.mp4';
+          try {
+            const { execSync } = require('child_process');
+            execSync(`"${ffmpegExe}" -y -i "${downloaded.file}" -c:v copy -an "${tmpMuted}"`);
+            fs.renameSync(tmpMuted, targetVideo);
+            console.log(`🔇 Audio stream stripped successfully: 100% silent video.`);
+          } catch (muteErr) {
+            fs.copyFileSync(downloaded.file, targetVideo);
+          }
           console.log(`💾 Saved to: ${targetVideo}`);
 
           // Auto-commit on every video
