@@ -70,7 +70,7 @@ export default async function ArticlePage({ params }: Props) {
               <span>/</span>
               {category && (
                 <Link
-                  href={`/blog#${category.slug}`}
+                  href={`/blog/enotita/${category.slug}/`}
                   className="hover:text-[var(--color-brown)] transition-colors line-clamp-1"
                 >
                   {category.title}
@@ -194,9 +194,12 @@ export default async function ArticlePage({ params }: Props) {
                   <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
                     Περισσότερα στην ενότητα
                   </p>
-                  <h4 className="font-heading text-sm text-[var(--color-brown)] mb-3">
-                    {category.title}
-                  </h4>
+                  <Link
+                    href={`/blog/enotita/${category.slug}/`}
+                    className="font-heading text-sm text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors block mb-3"
+                  >
+                    {category.title} →
+                  </Link>
                   <ul className="space-y-3 text-xs">
                     {category.articles.map((a) => (
                       <li key={a.slug}>

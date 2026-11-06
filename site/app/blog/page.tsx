@@ -1,121 +1,184 @@
 import type { Metadata } from "next";
-import { getAllCategories } from "@/lib/content";
+import Link from "next/link";
+import { Compass, Layers } from "lucide-react";
+import {
+  getAllCategories,
+  getAllArticles,
+  THEMATIC_CLUSTERS,
+  type Article,
+} from "@/lib/content";
 import ArticleCard from "@/components/ArticleCard";
-import { CATEGORY_COLORS } from "@/lib/content";
-import { getImageVariants } from "@/lib/images";
+import CategoryCard from "@/components/CategoryCard";
 
 export const metadata: Metadata = {
-  title: "Άρθρα & Οδηγοί",
+  title: "Βιβλιοθήκη Άρθρων & Οδηγών Εκπαίδευσης",
   description:
-    "Βιβλιοθήκη άρθρων για θετική εκπαίδευση σκύλων στην Αθήνα — βόλτα, αντιδραστικότητα, κουτάβια, υιοθεσία και πολλά άλλα.",
+    "Οργανωμένη βιβλιοθήκη θετικής εκπαίδευσης σκύλων στην Αθήνα — 18 θεματικοί πυλώνες χωρισμένοι σε 4 μεγάλες ενότητες για τη βόλτα, το διαμέρισμα, την αντιδραστικότητα, το κουτάβι και την υιοθεσία.",
 };
 
 export default function BlogPage() {
   const categories = getAllCategories();
-  const totalArticles = categories.reduce((s, c) => s + c.articles.length, 0);
+  const allArticles = getAllArticles();
+  const totalArticles = allArticles.length;
+
+  // Curated featured article (Urban walk philosophy)
+  const featuredArticle =
+    categories.find((c) => c.number === 1)?.articles[0] ?? allArticles[0];
+
+  // Secondary highlights from core pillars (Puppy hub and Reactivity)
+  const candidateHighlights = [
+    categories.find((c) => c.number === 4)?.articles[0],
+    categories.find((c) => c.number === 3)?.articles[0],
+  ];
+  const highlightArticles = candidateHighlights.filter(
+    (a): a is Article => Boolean(a && a.slug !== featuredArticle?.slug)
+  );
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
-      {/* Page header */}
+      {/* ── Page Header ───────────────────────────────────── */}
       <header className="mb-14 pb-8 border-b border-[var(--color-sandDark)]">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-2">
-          Βιβλιοθήκη Γνώσης · {totalArticles} Άρθρα
+          Βιβλιοθήκη Γνώσης · 18 Θεματικές Ενότητες · {totalArticles} Άρθρα
         </p>
         <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] mb-4">
           Άρθρα & Πρακτικοί Οδηγοί
         </h1>
         <p className="text-base md:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          Απαντήσεις, οδηγίες και συμπεριφορική ανάλυση για την καθημερινότητα με έναν σκύλο στην Αθήνα —
-          τεκμηριωμένα, ανθρώπινα και με σεβασμό.
+          Απαντήσεις, συμπεριφορική ανάλυση και επιστημονική γνώση για την καθημερινότητα με τον σκύλο
+          στην Αθήνα — οργανωμένα σε 4 θεματικές ομπρέλες.
         </p>
 
-        {/* Quick jump anchor bar */}
-        <div className="mt-8 pt-6 border-t border-[var(--color-sand)] flex flex-wrap gap-2 text-xs">
-          <span className="text-[var(--color-mutedLight)] self-center mr-1">Ενότητες:</span>
-          {categories.map((cat) => (
-            <a
-              key={cat.slug}
-              href={`#${cat.slug}`}
-              className="px-2.5 py-1 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] hover:border-[var(--color-amber)] hover:text-[var(--color-amber)] transition-colors"
-            >
-              {String(cat.number).padStart(2, "0")}. {cat.title.split("&")[0].trim()}
-            </a>
-          ))}
+        {/* Macro-Cluster Quick Jump Bar */}
+        <div className="mt-8 pt-6 border-t border-[var(--color-sand)]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] block mb-3">
+            Περιήγηση ανά Θεματική Ομπρέλα:
+          </span>
+          <div className="flex flex-wrap gap-2 text-xs">
+            {THEMATIC_CLUSTERS.map((cluster, idx) => (
+              <a
+                key={cluster.id}
+                href={`#${cluster.id}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] hover:border-[var(--color-amber)] hover:text-[var(--color-amber)] transition-colors"
+              >
+                <span className="font-mono font-bold text-[var(--color-amber)]">
+                  0{idx + 1}.
+                </span>
+                <span>{cluster.title}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </header>
 
-      {/* Categories and their articles */}
-      <div className="space-y-20">
-        {categories.map((cat, catIndex) => {
-          const color = CATEGORY_COLORS[cat.number] ?? "#C4852A";
-          const catVariants = getImageVariants(cat.coverImage);
+      {/* ── Featured & Popular Guides ──────────────────────── */}
+      {featuredArticle && (
+        <section className="mb-20 pb-16 border-b border-[var(--color-sandDark)]">
+          <div className="flex items-center justify-between mb-8 pb-3 border-b border-[var(--color-sandDark)]/60">
+            <div className="flex items-center gap-2">
+              <Compass size={16} className="text-[var(--color-amber)]" />
+              <h2 className="font-heading text-2xl text-[var(--color-brown)]">
+                Προτεινόμενο Ανάγνωσμα
+              </h2>
+            </div>
+            <span className="text-xs uppercase tracking-wider text-[var(--color-mutedLight)] font-mono">
+              Editorial Pick
+            </span>
+          </div>
+
+          <ArticleCard article={featuredArticle} featured={true} priority={true} />
+
+          {highlightArticles.length > 0 && (
+            <div className="grid sm:grid-cols-2 gap-8 mt-8 pt-8 border-t border-[var(--color-sand)]">
+              {highlightArticles.map((a) => (
+                <ArticleCard key={a.slug} article={a} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ── Thematic Clusters (Macro-Nesting) ───────────────── */}
+      <div className="space-y-24">
+        {THEMATIC_CLUSTERS.map((cluster, clusterIdx) => {
+          const clusterCategories = cluster.pillarNumbers
+            .map((num) => categories.find((c) => c.number === num))
+            .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+          const clusterArticlesCount = clusterCategories.reduce(
+            (sum, c) => sum + c.articles.length,
+            0
+          );
+
           return (
-            <section key={cat.slug} id={cat.slug} className="scroll-mt-20">
-              {/* Category header */}
-              <div
-                className="border-l-4 pl-4 sm:pl-6 pb-2 mb-8"
-                style={{ borderColor: color }}
-              >
-                <div className="flex items-center gap-3 mb-1">
-                  <span
-                    className="text-xs font-mono font-bold tracking-wider"
-                    style={{ color }}
-                  >
-                    ΕΝΟΤΗΤΑ {String(cat.number).padStart(2, "0")}
-                  </span>
-                  <span className="text-xs text-[var(--color-mutedLight)]">
-                    · {cat.articles.length} {cat.articles.length === 1 ? "άρθρο" : "άρθρα"}
+            <section
+              key={cluster.id}
+              id={cluster.id}
+              className="scroll-mt-20 pt-2"
+            >
+              {/* Cluster Heading */}
+              <div className="border-b-2 border-[var(--color-brown)] pb-4 mb-8">
+                <div className="flex items-center justify-between gap-4 mb-2">
+                  <div className="flex items-center gap-2">
+                    <Layers size={14} className="text-[var(--color-amber)]" />
+                    <span className="text-xs font-mono font-bold tracking-widest uppercase text-[var(--color-amber)]">
+                      ΘΕΜΑΤΙΚΗ ΟΜΠΡΕΛΑ 0{clusterIdx + 1}
+                    </span>
+                  </div>
+                  <span className="text-xs text-[var(--color-mutedLight)] font-mono">
+                    {clusterCategories.length} ενότητες · {clusterArticlesCount} οδηγοί
                   </span>
                 </div>
-                <h2 className="font-heading text-2xl md:text-3xl text-[var(--color-brown)] mb-2">
-                  {cat.title}
+
+                <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)] mb-2">
+                  {cluster.title}
                 </h2>
-                {cat.intro && (
-                  <p className="text-sm text-[var(--color-muted)] max-w-3xl leading-relaxed">
-                    {cat.intro}
-                  </p>
-                )}
+                <p className="text-sm text-[var(--color-muted)] max-w-2xl leading-relaxed">
+                  {cluster.tagline}
+                </p>
               </div>
 
-              {/* Category cover banner if present */}
-              {cat.coverImage && (
-                <div className="mb-8 overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/40 aspect-[16/9] w-full">
-                  <picture>
-                    {catVariants?.card && (
-                      <source type="image/webp" srcSet={catVariants.card} />
-                    )}
-                    <img
-                      src={cat.coverImage}
-                      alt={cat.title}
-                      width={1376}
-                      height={768}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
-                  </picture>
-                </div>
-              )}
-
-              {/* Articles grid */}
-              {cat.articles.length > 0 ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {cat.articles.map((a, aIndex) => (
-                    <ArticleCard
-                      key={a.slug}
-                      article={a}
-                      priority={catIndex === 0 && aIndex < 3}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-[var(--color-muted)] italic py-4">
-                  Τα άρθρα αυτής της ενότητας ανανεώνονται σύντομα.
-                </p>
-              )}
+              {/* Grid of Pillar Cards in this Cluster */}
+              <div className="grid sm:grid-cols-2 gap-6">
+                {clusterCategories.map((category) => (
+                  <CategoryCard
+                    key={category.slug}
+                    category={category}
+                    showCover={true}
+                  />
+                ))}
+              </div>
             </section>
           );
         })}
+      </div>
+
+      {/* ── Bottom Help & Contact Bar ─────────────────────── */}
+      <div className="mt-24 pt-12 border-t border-[var(--color-sandDark)] text-center">
+        <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-2 font-semibold">
+          Χρειάζεστε εξατομικευμένη καθοδήγηση;
+        </p>
+        <h3 className="font-heading text-2xl text-[var(--color-brown)] mb-4">
+          Συνεδρίες Θετικής Εκπαίδευσης στην Αθήνα
+        </h3>
+        <p className="text-sm text-[var(--color-muted)] max-w-xl mx-auto mb-6">
+          Κάθε σκύλος είναι μοναδικός. Δείτε τις διαθέσιμες υπηρεσίες ή επικοινωνήστε απευθείας με τον
+          Αλέξανδρο για κατ’ οίκον αξιολόγηση.
+        </p>
+        <div className="flex flex-wrap justify-center gap-4 text-xs font-semibold">
+          <Link
+            href="/ypiresies"
+            className="px-5 py-2.5 bg-[var(--color-brown)] text-white hover:bg-[var(--color-brownLight)] transition-colors"
+          >
+            Δείτε τις Υπηρεσίες Εκπαίδευσης
+          </Link>
+          <Link
+            href="/o-alexandros"
+            className="px-5 py-2.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brown)] hover:border-[var(--color-amber)] hover:text-[var(--color-amber)] transition-colors"
+          >
+            Γνωρίστε τον Αλέξανδρο
+          </Link>
+        </div>
       </div>
     </div>
   );

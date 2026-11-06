@@ -395,6 +395,55 @@ export function getCategoryBySlug(slug: string): Category | undefined {
   return getAllCategories().find((c) => c.slug === slug);
 }
 
+// ─── Thematic Clusters (Macro-Nesting) ───────────────────────────────────────
+
+export interface ThematicCluster {
+  id: string;
+  title: string;
+  tagline: string;
+  pillarNumbers: number[];
+}
+
+export const THEMATIC_CLUSTERS: ThematicCluster[] = [
+  {
+    id: "astiki-zoi",
+    title: "Αστική Ζωή & Καθημερινότητα",
+    tagline: "Βόλτα, πολυκατοικία, μετακινήσεις και πάρκα στην πόλη",
+    pillarNumbers: [1, 2, 8, 17],
+  },
+  {
+    id: "symperifora-psychologia",
+    title: "Συμπεριφορά, Επικοινωνία & Ψυχολογία",
+    tagline: "Αντιδραστικότητα, φόβοι, γλώσσα σώματος και η ψυχολογία του κηδεμόνα",
+    pillarNumbers: [3, 10, 12, 13, 18],
+  },
+  {
+    id: "stadia-zois-yiothesia",
+    title: "Στάδια Ζωής & Υιοθεσία",
+    tagline: "Από το κουτάβι και την υιοθεσία έως την τρίτη ηλικία και τα ένστικτα φυλών",
+    pillarNumbers: [4, 14, 15, 9, 11],
+  },
+  {
+    id: "ekpaidefsi-frontida",
+    title: "Εκπαίδευση, Φροντίδα & Εξοπλισμός",
+    tagline: "Θετική προσέγγιση, συνεργατική φροντίδα, παιδιά και επιλογή εξοπλισμού",
+    pillarNumbers: [5, 6, 7, 16],
+  },
+];
+
+export function getClusterByPillarNumber(pillarNum: number): ThematicCluster | undefined {
+  return THEMATIC_CLUSTERS.find((c) => c.pillarNumbers.includes(pillarNum));
+}
+
+export function getCategoriesByClusterId(clusterId: string): Category[] {
+  const cluster = THEMATIC_CLUSTERS.find((c) => c.id === clusterId);
+  if (!cluster) return [];
+  const all = getAllCategories();
+  return cluster.pillarNumbers
+    .map((num) => all.find((c) => c.number === num))
+    .filter((c): c is Category => Boolean(c));
+}
+
 // ─── Category color map ───────────────────────────────────────────────────────
 
 export const CATEGORY_COLORS: Record<number, string> = {
