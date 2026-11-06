@@ -150,6 +150,7 @@ export interface Article {
   categorySlug: string;
   categoryTitle: string;
   categoryNumber: number;
+  categoryColor: string;
   macroNumber?: number;
   legacyNumber?: number;
   readingTime: string;
@@ -173,117 +174,35 @@ export interface Category {
   color: string;
 }
 
-// ─── Slug & Color Maps ───────────────────────────────────────────────────────
-
-export const PILLAR_SLUG_BY_TITLE: Record<string, string> = {
-  "Η Φιλοσοφία \"Let It Sniff\" & Αστική Βόλτα": "filosofia-let-it-sniff-astiki-volta",
-  "Η Φιλοσοφία Let It Sniff & Αστική Βόλτα": "filosofia-let-it-sniff-astiki-volta",
-  "Φιλοσοφία Let It Sniff & Αστική Βόλτα": "filosofia-let-it-sniff-astiki-volta",
-  "Ζωή στην Πολυκατοικία & Διαχείριση Άγχους": "zoi-stin-polykatoikia-diacheirisi-agchous",
-  "Ταξίδια, Μετακινήσεις στην Αθήνα & Διακοπές": "taxidia-metakiniseis-stin-athina-diakopes",
-  "Πάρκα Σκύλων, Dog Walkers & Κοινωνική Ζωή στην Πόλη": "parka-skylon-dog-walkers-koinoniki-zoi",
-  "Αντιδραστικότητα, Φοβίες & Ερεθίσματα της Πόλης": "antidrastikotita-fovies-erethismata-polis",
-  "«Παράξενες» Συμπεριφορές & Καθημερινά Αινίγματα": "paraxenes-symperifores-kathimerina-ainigmata",
-  "Παράξενες Συμπεριφορές & Καθημερινά Αινίγματα": "paraxenes-symperifores-kathimerina-ainigmata",
-  "Πώς Εκφράζονται τα Σκυλιά (Γλώσσα Σώματος & Σήματα Ηρεμίας)": "pos-ekfrazontai-ta-skylia-glossa-somatos",
-  "Πώς Εκφράζονται τα Σκυλιά (Γλώσσα Σώματος)": "pos-ekfrazontai-ta-skylia-glossa-somatos",
-  "Φωνητική Έκφραση & Επικοινωνία Μεταξύ Σκύλων (Dog-to-Dog)": "fonitiki-ekfrasi-epikoinonia-metaxy-skylon",
-  "Φωνητική Έκφραση & Επικοινωνία Μεταξύ Σκύλων": "fonitiki-ekfrasi-epikoinonia-metaxy-skylon",
-  "Η Ψυχολογία του Κηδεμόνα στην Πόλη": "i-psychologia-tou-kidemona-stin-poli",
-  "Ψυχολογία του Κηδεμόνα στην Πόλη": "i-psychologia-tou-kidemona-stin-poli",
-  "Κουτάβι στο Διαμέρισμα (Puppy Hub)": "koutavi-sto-diamerisma-puppy-hub",
-  "Φυλές (Ράτσες), Ημίαιμα & Γενετικά Ένστικτα στο Διαμέρισμα": "fyles-imiaima-genetika-enstikta-diamerisma",
-  "Φυλές, Ημίαιμα & Γενετικά Ένστικτα στο Διαμέρισμα": "fyles-imiaima-genetika-enstikta-diamerisma",
-  "Ηλικία, Υγεία, Ορμόνες & Συμπεριφορά": "ilikia-ygeia-ormones-symperifora",
-  "Πριν την Υιοθεσία (Επιλογή Σκύλου & Προετοιμασία)": "prin-tin-yiothesia-epilogi-skylou-proetoimasia",
-  "Η Μετάβαση μετά την Υιοθεσία (Αποσυμπίεση & Δέσιμο)": "metavasi-meta-tin-yiothesia-aposympiesi-desimo",
-  "Μετάβαση μετά την Υιοθεσία (Αποσυμπίεση & Δέσιμο)": "metavasi-meta-tin-yiothesia-aposympiesi-desimo",
-  "Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων": "epistimi-thetiki-ekpaidefsi-katarripsi-mython",
-  "Συνεργατική Φροντίδα, Κτηνίατρος & Grooming (Cooperative Care)": "synergatiki-frontida-ktiniatros-grooming",
-  "Συνεργατική Φροντίδα, Κτηνίατρος & Grooming": "synergatiki-frontida-ktiniatros-grooming",
-  "Οικογένεια, Μωρά, Παιδιά & Πολλά Κατοικίδια": "oikogeneia-mora-paidia-polla-katoikidia",
-  "Εξοπλισμός, Λιχουδιές & Αισθητηριακός Πλούτος": "exoplismos-lixoudies-aisthitiriakos-ploutos",
-};
-
-export const PILLAR_SLUGS: Record<number, string> = {
-  1:  "filosofia-let-it-sniff-astiki-volta",
-  2:  "zoi-stin-polykatoikia-diacheirisi-agchous",
-  3:  "antidrastikotita-fovies-erethismata-polis",
-  4:  "koutavi-sto-diamerisma-puppy-hub",
-  5:  "epistimi-thetiki-ekpaidefsi-katarripsi-mython",
-  6:  "synergatiki-frontida-ktiniatros-grooming",
-  7:  "oikogeneia-mora-paidia-polla-katoikidia",
-  8:  "taxidia-metakiniseis-stin-athina-diakopes",
-  9:  "fyles-imiaima-genetika-enstikta-diamerisma",
-  10: "paraxenes-symperifores-kathimerina-ainigmata",
-  11: "ilikia-ygeia-ormones-symperifora",
-  12: "pos-ekfrazontai-ta-skylia-glossa-somatos",
-  13: "fonitiki-ekfrasi-epikoinonia-metaxy-skylon",
-  14: "prin-tin-yiothesia-epilogi-skylou-proetoimasia",
-  15: "metavasi-meta-tin-yiothesia-aposympiesi-desimo",
-  16: "exoplismos-lixoudies-aisthitiriakos-ploutos",
-  17: "parka-skylon-dog-walkers-koinoniki-zoi",
-  18: "i-psychologia-tou-kidemona-stin-poli",
-};
+// ─── Dynamic Helpers ─────────────────────────────────────────────────────────
 
 export function categorySlug(numOrTitle: number | string): string {
+  const all = getAllCategories();
   if (typeof numOrTitle === "number") {
-    return PILLAR_SLUGS[numOrTitle] ?? `pillar-${String(numOrTitle).padStart(2, "0")}`;
+    const found = all.find((c) => c.number === numOrTitle);
+    return found ? found.slug : `pillar-${String(numOrTitle).padStart(2, "0")}`;
   }
-  return PILLAR_SLUG_BY_TITLE[numOrTitle] ?? slugifyGreek(numOrTitle);
+  const found = all.find((c) => c.title === numOrTitle);
+  return found ? found.slug : slugifyGreek(numOrTitle);
 }
 
-export const CATEGORY_COLORS: Record<string | number, string> = {
-  // Slug-based
-  "filosofia-let-it-sniff-astiki-volta": "#C4852A",
-  "zoi-stin-polykatoikia-diacheirisi-agchous": "#C4522A",
-  "taxidia-metakiniseis-stin-athina-diakopes": "#3A6B9B",
-  "parka-skylon-dog-walkers-koinoniki-zoi": "#2E7A9B",
-
-  "antidrastikotita-fovies-erethismata-polis": "#A83228",
-  "paraxenes-symperifores-kathimerina-ainigmata": "#B85C20",
-  "pos-ekfrazontai-ta-skylia-glossa-somatos": "#3D5C38",
-  "fonitiki-ekfrasi-epikoinonia-metaxy-skylon": "#2E4D7A",
-  "i-psychologia-tou-kidemona-stin-poli": "#4D3D7A",
-
-  "koutavi-sto-diamerisma-puppy-hub": "#5A7A54",
-  "fyles-imiaima-genetika-enstikta-diamerisma": "#6B4D9B",
-  "ilikia-ygeia-ormones-symperifora": "#7A2E4A",
-  "prin-tin-yiothesia-epilogi-skylou-proetoimasia": "#9B7A2E",
-  "metavasi-meta-tin-yiothesia-aposympiesi-desimo": "#3D7A5C",
-
-  "epistimi-thetiki-ekpaidefsi-katarripsi-mython": "#6B7C3A",
-  "synergatiki-frontida-ktiniatros-grooming": "#2E7D7A",
-  "oikogeneia-mora-paidia-polla-katoikidia": "#9B4D6B",
-  "exoplismos-lixoudies-aisthitiriakos-ploutos": "#7A5C2E",
-
-  // Legacy numbers (1..18)
-  1:  "#C4852A",
-  2:  "#C4522A",
-  3:  "#A83228",
-  4:  "#5A7A54",
-  5:  "#6B7C3A",
-  6:  "#2E7D7A",
-  7:  "#9B4D6B",
-  8:  "#3A6B9B",
-  9:  "#6B4D9B",
-  10: "#B85C20",
-  11: "#7A2E4A",
-  12: "#3D5C38",
-  13: "#2E4D7A",
-  14: "#9B7A2E",
-  15: "#3D7A5C",
-  16: "#7A5C2E",
-  17: "#2E7A9B",
-  18: "#4D3D7A",
-};
-
-const PALETTE = [
-  "#C4852A", "#C4522A", "#A83228", "#5A7A54", "#6B7C3A",
-  "#2E7D7A", "#9B4D6B", "#3A6B9B", "#6B4D9B", "#B85C20",
-  "#7A2E4A", "#3D5C38", "#2E4D7A", "#9B7A2E", "#3D7A5C",
-  "#7A5C2E", "#2E7A9B", "#4D3D7A",
-];
+/**
+ * Dynamic map for backwards compatibility: reads color directly from category documents.
+ */
+export const CATEGORY_COLORS: Record<string | number, string> = new Proxy(
+  {},
+  {
+    get(_target, prop: string) {
+      if (typeof prop !== "string") return "#C4852A";
+      const categories = getAllCategories();
+      const found = categories.find(
+        (c) => c.slug === prop || String(c.number) === prop
+      );
+      if (found) return found.color;
+      return "#C4852A";
+    },
+  }
+);
 
 function extractTitle(raw: string): string {
   const m = raw.match(/^#\s+\**(.+?)\**\s*$/m);
@@ -298,9 +217,26 @@ function extractField(raw: string, field: string): string {
 }
 
 function extractSlug(raw: string): string {
+  const directSlug = extractField(raw, "Slug");
+  if (directSlug) return directSlug.trim().toLowerCase();
+
   const url = extractField(raw, "Προτεινόμενο URL");
   if (url) {
-    return url.replace(/^\/blog\//, "").replace(/\/$/, "");
+    return url
+      .replace(/^https?:\/\/[^\/]+/i, "")
+      .replace(/^\/blog\/enotita\//, "")
+      .replace(/^\/blog[/#]?/, "")
+      .replace(/^#/, "")
+      .replace(/\/$/, "")
+      .trim();
+  }
+  return "";
+}
+
+function extractColor(raw: string): string {
+  const c = extractField(raw, "Χρώμα") || extractField(raw, "Color");
+  if (c && /^#?[a-fA-F0-9]{3,8}$/.test(c.trim())) {
+    return c.trim().startsWith("#") ? c.trim() : `#${c.trim()}`;
   }
   return "";
 }
@@ -386,6 +322,9 @@ function cleanMarkdownForDisplay(raw: string, coverImage?: string): string {
     .replace(/\*\*Κατηγορία:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Προτεινόμενο URL:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Χρόνος ανάγνωσης:\*\*[^\n]+\n?/g, "")
+    .replace(/\*\*Χρώμα:\*\*[^\n]+\n?/g, "")
+    .replace(/\*\*Color:\*\*[^\n]+\n?/g, "")
+    .replace(/\*\*Slug:\*\*[^\n]+\n?/g, "")
     .replace(/^##\s*\\?---\s*$/gm, "");
 
   return cleaned.trim();
@@ -477,6 +416,8 @@ function loadCategories(): Category[] {
     let relatedService: string[] = [];
     let intro = "";
     let coverImage: string | undefined = undefined;
+    let categorySlugFromDoc = "";
+    let colorFromDoc = "";
 
     const imagesPath = path.join(dirPath, "images");
     let descriptions: Record<string, string> = {};
@@ -487,6 +428,8 @@ function loadCategories(): Category[] {
       const titleMatch = introRaw.match(/^#\s+\**Πυλώνας \d+:\s*(.+?)\**\s*$/m);
       if (titleMatch) categoryTitle = titleMatch[1].trim();
       relatedService = extractRelatedServices(introRaw);
+      categorySlugFromDoc = extractSlug(introRaw);
+      colorFromDoc = extractColor(introRaw);
 
       // Extract cover image from pillar intro (e.g. ![...](./images/pillar_01_cover.jpg))
       coverImage = extractImage(introRaw);
@@ -507,8 +450,8 @@ function loadCategories(): Category[] {
       if (introMatch) intro = introMatch[1].replace(/\*([^*]+)\*/g, "$1").trim();
     }
 
-    const slug = PILLAR_SLUG_BY_TITLE[categoryTitle] ?? slugifyGreek(categoryTitle);
-    const color = CATEGORY_COLORS[slug] ?? CATEGORY_COLORS[categoryTitle] ?? PALETTE[idx % PALETTE.length];
+    const slug = categorySlugFromDoc || slugifyGreek(categoryTitle);
+    const color = colorFromDoc || "#C4852A";
 
     // Read article files (not 00.)
     const articleFiles = files.filter((f) => /^\d{2,}\./.test(f) && !/^00\./.test(f));
@@ -548,6 +491,7 @@ function loadCategories(): Category[] {
         categorySlug: slug,
         categoryTitle,
         categoryNumber: num,
+        categoryColor: color,
         macroNumber: pInfo.macroNum,
         readingTime,
         excerpt,
@@ -612,6 +556,7 @@ export interface ThematicCategory {
   number: number;
   title: string;
   tagline: string;
+  color?: string;
   pillarNumbers: number[];
 }
 
@@ -627,13 +572,6 @@ export function loadMacroCategories(): ThematicCategory[] {
 
   const macros: ThematicCategory[] = [];
 
-  const idMap: Record<number, string> = {
-    1: "astiki-zoi",
-    2: "symperifora-psychologia",
-    3: "stadia-zois-yiothesia",
-    4: "ekpaidefsi-frontida",
-  };
-
   for (const top of topEntries) {
     const topPath = path.join(BLOG_DIR, top.name);
     const subEntries = fs
@@ -646,11 +584,15 @@ export function loadMacroCategories(): ThematicCategory[] {
     const macroTitle = top.name.replace(/^\d{2}\s+-\s+/, "");
 
     let tagline = "";
+    let macroSlug = "";
+    let macroColor = "";
     const macroIndex = path.join(topPath, "index.md");
     if (fs.existsSync(macroIndex)) {
       const raw = fs.readFileSync(macroIndex, "utf-8");
       const m = raw.match(/\*\*Εισαγωγή:\*\*\s*([^\n]+)/);
       if (m) tagline = m[1].replace(/\*([^*]+)\*/g, "$1").trim();
+      macroSlug = extractSlug(raw);
+      macroColor = extractColor(raw);
     }
 
     const pillarNumbers = subEntries
@@ -661,10 +603,11 @@ export function loadMacroCategories(): ThematicCategory[] {
       .filter((n) => n > 0);
 
     macros.push({
-      id: idMap[macroNum] ?? slugifyGreek(macroTitle),
+      id: macroSlug || slugifyGreek(macroTitle),
       number: macroNum,
       title: macroTitle,
       tagline,
+      color: macroColor || "#C4852A",
       pillarNumbers,
     });
   }

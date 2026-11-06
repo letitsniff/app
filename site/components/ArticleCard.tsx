@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Clock } from "lucide-react";
 import type { Article } from "@/lib/content";
-import { CATEGORY_COLORS } from "@/lib/content";
 import { getImageVariants } from "@/lib/images";
 
 interface Props {
@@ -15,7 +14,7 @@ export default function ArticleCard({
   featured = false,
   priority = false,
 }: Props) {
-  const color = CATEGORY_COLORS[article.categorySlug] ?? CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
+  const color = article.categoryColor || "#C4852A";
   const variants = getImageVariants(article.coverImage);
 
   if (featured) {

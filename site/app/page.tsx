@@ -3,7 +3,6 @@ import { ArrowRight, BookOpen } from "lucide-react";
 import {
   getAllCategories,
   THEMATIC_CLUSTERS,
-  CATEGORY_COLORS,
 } from "@/lib/content";
 import { getAllServices } from "@/lib/services";
 import { getImageVariants } from "@/lib/images";
@@ -175,7 +174,7 @@ export default function HomePage() {
                   {/* Pillars in this category */}
                   <ul className="space-y-2 mb-6 pt-4 border-t border-[var(--color-sand)] text-xs">
                     {clusterCategories.map((cat) => {
-                      const color = cat.color ?? CATEGORY_COLORS[cat.slug] ?? CATEGORY_COLORS[cat.number] ?? "#C4852A";
+                      const color = cat.color || "#C4852A";
                       return (
                         <li key={cat.slug}>
                           <Link

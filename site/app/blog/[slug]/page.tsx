@@ -6,7 +6,6 @@ import {
   getAllArticles,
   getArticleBySlug,
   getCategoryBySlug,
-  CATEGORY_COLORS,
 } from "@/lib/content";
 import { getServiceBySlug } from "@/lib/services";
 import Prose from "@/components/Prose";
@@ -41,7 +40,7 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
 
   const category = getCategoryBySlug(article.categorySlug);
-  const color = CATEGORY_COLORS[article.categorySlug] ?? CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
+  const color = category?.color || article.categoryColor || "#C4852A";
 
   // Related articles (same category, excluding current)
   const related = (category?.articles ?? [])

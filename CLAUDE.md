@@ -49,8 +49,15 @@ letitsniff/
   - `**Προτεινόμενο URL:**` → SEO slug e.g. `/blog/my-slug`
   - `**Χρόνος ανάγνωσης:**` → reading time e.g. `3 λεπτά`
 - Pillar intro files (`00. Εισαγωγή...`) contain category metadata:
+  - `**Προτεινόμενο URL:**` → e.g. `/blog/enotita/filosofia-let-it-sniff-astiki-volta`
+  - `**Χρώμα:**` → pillar accent color e.g. `#C4852A`
   - `**Συνδεδεμένη Υπηρεσία:**` → e.g. `/ypiresies/astiki-symviosi-ypakoi`
   - `**Εισαγωγή:**` → short category summary
+- Macro category files (`docs/blog/[NN] - [Macro Name]/index.md`) contain:
+  - `**Προτεινόμενο URL:**` → e.g. `/blog#astiki-zoi`
+  - `**Slug:**` → e.g. `astiki-zoi`
+  - `**Χρώμα:**` → macro accent color e.g. `#C4852A`
+  - `**Εισαγωγή:**` → short macro summary
 - Services live in `docs/services/[slug].md` with inline metadata:
   - `**Τίτλος:**`, `**Υπότιτλος:**`, `**Tagline:**`, `**Εικονίδιο:**`, `**Σειρά:**`
 

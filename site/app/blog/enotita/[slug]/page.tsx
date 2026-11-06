@@ -5,7 +5,6 @@ import { ArrowLeft, ArrowRight, BookOpen, Layers } from "lucide-react";
 import {
   getAllCategories,
   getCategoryBySlug,
-  CATEGORY_COLORS,
   THEMATIC_CATEGORIES,
 } from "@/lib/content";
 import { getServiceBySlug } from "@/lib/services";
@@ -65,7 +64,7 @@ export default async function EnotitaPage({ params }: Props) {
   const nextCategory =
     currentIndex < allCategories.length - 1 ? allCategories[currentIndex + 1] : undefined;
 
-  const color = category.color ?? CATEGORY_COLORS[category.slug] ?? CATEGORY_COLORS[category.number] ?? "#C4852A";
+  const color = category.color || "#C4852A";
   const cluster = THEMATIC_CATEGORIES.find((c) => c.number === category.macroNumber);
   const catVariants = getImageVariants(category.coverImage);
 
