@@ -32,47 +32,50 @@ def list_folder_json(folder_id):
     except Exception:
         return []
 
-def get_or_create_folder(name, parent_id):
+def get_or_create_folder(name, parent_id, verbose=True):
     items = list_folder_json(parent_id)
     for it in items:
         if it.get("name") == name and it.get("mimeType") == "application/vnd.google-apps.folder":
             return it.get("id")
     
     # Create folder
-    print(f"📁 Creating folder '{name}' on Google Drive (parent: {parent_id})...")
+    if verbose:
+        print(f"📁 Creating folder '{name}' on Google Drive (parent: {parent_id})...")
     res = run_gdrive("mutate", "mkdir", name, "--parent", parent_id)
     if res.returncode != 0:
-        print(f"❌ Error creating folder '{name}': {res.stderr.strip()}", file=sys.stderr)
+        if verbose:
+            print(f"❌ Error creating folder '{name}': {res.stderr.strip()}", file=sys.stderr)
         return None
     
     m = re.search(r"ID:\s*([a-zA-Z0-9_-]+)", res.stdout)
     if m:
         return m.group(1)
     
-    # Fallback to re-listing
     items = list_folder_json(parent_id)
     for it in items:
         if it.get("name") == name and it.get("mimeType") == "application/vnd.google-apps.folder":
             return it.get("id")
     return None
 
-def upload_file(local_path, parent_id):
+def upload_file(local_path, parent_id, verbose=True):
     filename = local_path.name
-    print(f"⬆️  Uploading: {filename} -> Drive folder {parent_id}")
+    if verbose:
+        print(f"⬆️  Uploading: {filename} -> Drive folder {parent_id}")
     res = run_gdrive("mutate", "upload", str(local_path), "--parent", parent_id)
     if res.returncode != 0:
-        print(f"❌ Failed to upload {filename}: {res.stderr.strip()}", file=sys.stderr)
+        if verbose:
+            print(f"❌ Failed to upload {filename}: {res.stderr.strip()}", file=sys.stderr)
         return None
     m = re.search(r"ID:\s*([a-zA-Z0-9_-]+)", res.stdout)
     if m:
         return m.group(1)
     return None
 
-def main():
-    print("🐾 Let It Sniff — Image Sync to Google Drive")
-    print(f"Scanning local images in {DOCS_DIR / 'blog'}...")
+def sync_images(verbose=True):
+    if verbose:
+        print("🐾 Let It Sniff — Image Sync to Google Drive")
+        print(f"Scanning local images in {DOCS_DIR / 'blog'}...")
 
-    # Load drive_state if exists
     state = {}
     if STATE_FILE.exists():
         try:
@@ -91,7 +94,9 @@ def main():
             break
     
     if not blog_folder_id:
-        sys.exit(f"❌ Could not find '{BLOG_FOLDER_NAME}' folder under root {ROOT_FOLDER_ID}")
+        if verbose:
+            print(f"❌ Could not find '{BLOG_FOLDER_NAME}' folder under root {ROOT_FOLDER_ID}")
+        return 0, 0
 
     # 2. Get all pillars on Drive
     pillar_items = list_folder_json(blog_folder_id)
@@ -103,7 +108,7 @@ def main():
     # 3. Scan local pillars
     local_blog_dir = DOCS_DIR / "blog"
     if not local_blog_dir.exists():
-        sys.exit(f"❌ {local_blog_dir} does not exist.")
+        return 0, 0
 
     uploaded_count = 0
     skipped_count = 0
@@ -118,27 +123,21 @@ def main():
         pillar_name = pillar_dir.name
         pillar_drive_id = drive_pillars.get(pillar_name)
         if not pillar_drive_id:
-            # Try fuzzy match if accents or formatting differ
             for d_name, d_id in drive_pillars.items():
                 if d_name.startswith(pillar_name[:2]):
                     pillar_drive_id = d_id
                     break
 
         if not pillar_drive_id:
-            print(f"⚠️  Could not find pillar '{pillar_name}' on Google Drive. Skipping its images.")
             continue
 
-        # Get or create 'images' folder on Drive inside this pillar
-        images_folder_id = get_or_create_folder("images", pillar_drive_id)
+        images_folder_id = get_or_create_folder("images", pillar_drive_id, verbose=verbose)
         if not images_folder_id:
-            print(f"⚠️  Could not access or create 'images' folder for '{pillar_name}'.")
             continue
 
-        # List existing files in this Drive images folder
         drive_images = list_folder_json(images_folder_id)
         existing_names = {it.get("name"): it for it in drive_images}
 
-        # Scan local image files
         for img_file in sorted(images_dir.iterdir()):
             if not img_file.is_file():
                 continue
@@ -147,11 +146,9 @@ def main():
 
             rel_path = f"blog/{pillar_name}/images/{img_file.name}"
             
-            # Check if file already exists on Drive
             if img_file.name in existing_names:
                 drive_it = existing_names[img_file.name]
                 drive_id = drive_it.get("id")
-                # Record in state if missing
                 if rel_path not in tracked_files:
                     tracked_files[rel_path] = {
                         "id": drive_id,
@@ -161,8 +158,7 @@ def main():
                 skipped_count += 1
                 continue
 
-            # Upload missing image
-            new_id = upload_file(img_file, images_folder_id)
+            new_id = upload_file(img_file, images_folder_id, verbose=True)
             if new_id:
                 uploaded_count += 1
                 tracked_files[rel_path] = {
@@ -171,11 +167,14 @@ def main():
                     "mimeType": "image/jpeg"
                 }
 
-    # Save state
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2, ensure_ascii=False)
+    if uploaded_count > 0:
+        with open(STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, indent=2, ensure_ascii=False)
 
-    print(f"\n📊 Image Sync Finished: {uploaded_count} uploaded, {skipped_count} already existed on Drive.")
+    if verbose or uploaded_count > 0:
+        print(f"📊 Image Sync: {uploaded_count} uploaded, {skipped_count} up-to-date on Drive.")
+
+    return uploaded_count, skipped_count
 
 if __name__ == "__main__":
-    main()
+    sync_images(verbose=True)

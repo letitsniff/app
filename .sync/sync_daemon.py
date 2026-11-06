@@ -9,6 +9,10 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
 WORKSPACE_DIR = "/home/vasilis/Projects/letitsniff"
+sys.path.insert(0, WORKSPACE_DIR)
+
+from scripts.sync_images_to_drive import sync_images
+
 DOCS_DIR = os.path.join(WORKSPACE_DIR, "docs")
 SYNC_DIR = os.path.join(WORKSPACE_DIR, ".sync")
 STATE_FILE = os.path.join(SYNC_DIR, "sync_state.json")
@@ -84,11 +88,7 @@ def save_state(state):
     os.replace(temp_state, STATE_FILE)
 
 def scan_drive_tree():
-    """
-    Scans Google Drive fast using ThreadPoolExecutor.
-    Returns:
-      dict of rel_path -> item dict (with drive_id, mimeType, modifiedTime, etc.)
-    """
+    """Scans Google Drive fast using ThreadPoolExecutor."""
     files = {}
 
     root_items = list_drive_folder(ROOT_FOLDER_ID)
@@ -182,33 +182,8 @@ def scan_drive_tree():
 
     return files
 
-def upload_local_images():
-    """Checks for newly generated/committed local images and uploads them to Drive."""
-    blog_dir = os.path.join(DOCS_DIR, "blog")
-    if not os.path.exists(blog_dir):
-        return
-
-    # Check pillars that have an images directory
-    for p_name in os.listdir(blog_dir):
-        p_path = os.path.join(blog_dir, p_name)
-        img_dir = os.path.join(p_path, "images")
-        if not os.path.isdir(img_dir):
-            continue
-
-        local_images = [f for f in os.listdir(img_dir) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
-        if not local_images:
-            continue
-
-        # Run sync_images_to_drive if needed or let the script handle it
-        # (This is lightweight since sync_images_to_drive is fast and cached)
-
-def sync_one_way():
-    """
-    SYNC LOGIC:
-    - Google Docs -> docs/ strictly one-way for markdown articles.
-    - docs/blog/*/images/* -> Google Drive for article images.
-    - NEVER deletes local images.
-    """
+def sync_from_drive():
+    """Pulls new or modified docs from Google Drive to docs/."""
     state = load_state()
     tracked_files = state.setdefault("files", {})
 
@@ -277,12 +252,25 @@ def sync_one_way():
     state["last_sync"] = time.time()
     save_state(state)
 
-if __name__ == "__main__":
-    interval = 15
-    print(f"📥 Let It Sniff Sync Daemon started (polling interval: {interval}s).")
+def run_sync_loop(interval=15):
+    print(f"🐾 Let It Sniff Sync Daemon started (polling interval: {interval}s).")
+    print(f"   ⬆️  Laptop -> Drive: Auto-uploads any generated/committed images in docs/blog/*/images/*")
+    print(f"   ⬇️  Drive -> Laptop: Pulls articles updated by Alex in Google Docs")
+
     while True:
+        # Step 1: Upload any local images from Laptop -> Drive
         try:
-            sync_one_way()
+            sync_images(verbose=False)
         except Exception as e:
-            print(f"Sync error: {e}", file=sys.stderr)
+            print(f"⚠️  Image upload error: {e}", file=sys.stderr)
+
+        # Step 2: Pull any Google Docs updates from Drive -> Laptop
+        try:
+            sync_from_drive()
+        except Exception as e:
+            print(f"⚠️  Drive pull error: {e}", file=sys.stderr)
+
         time.sleep(interval)
+
+if __name__ == "__main__":
+    run_sync_loop(interval=15)
