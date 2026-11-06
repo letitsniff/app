@@ -79,7 +79,7 @@ export default function BlogPage() {
 
               {/* Category cover banner if present */}
               {cat.coverImage && (
-                <div className="mb-8 overflow-hidden bg-[var(--color-sand)] max-h-64 border border-[var(--color-sandDark)]/40">
+                <div className="mb-8 overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/40 aspect-[16/9] w-full">
                   <picture>
                     {catVariants?.card && (
                       <source type="image/webp" srcSet={catVariants.card} />
@@ -87,8 +87,8 @@ export default function BlogPage() {
                     <img
                       src={cat.coverImage}
                       alt={cat.title}
-                      width={1200}
-                      height={400}
+                      width={1376}
+                      height={768}
                       loading="lazy"
                       decoding="async"
                       className="w-full h-full object-cover"

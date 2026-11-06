@@ -125,7 +125,7 @@ export default async function ArticlePage({ params }: Props) {
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    className="w-full aspect-[16/9] md:aspect-[21/10] object-cover"
+                    className="w-full aspect-[16/9] object-cover"
                   />
                 </picture>
               </div>
