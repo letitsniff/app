@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
 import {
   getAllCategories,
+  getAllArticles,
   THEMATIC_CLUSTERS,
 } from "@/lib/content";
 import { getAllServices } from "@/lib/services";
@@ -10,6 +11,7 @@ import ServiceCard from "@/components/ServiceCard";
 
 export default function HomePage() {
   const categories = getAllCategories();
+  const allArticles = getAllArticles();
   const services = getAllServices();
 
   const heroImage = getImageVariants("/images/hero-home.jpg");
@@ -130,7 +132,7 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-[var(--color-sandDark)]">
           <div>
             <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-1">
-              Βιβλιοθήκη Γνώσης · 18 Πυλώνες · 104 Οδηγοί
+              Βιβλιοθήκη Γνώσης · {categories.length} Θεματικοί Πυλώνες · {allArticles.length} Οδηγοί
             </p>
             <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl text-[var(--color-brown)]">
               Εξερευνήστε ανά Θεματική Ενότητα

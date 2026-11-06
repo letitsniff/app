@@ -54,8 +54,6 @@ def sync_markdown_to_drive(verbose=True):
 
     tasks = []
     for md_file in md_files:
-        if md_file.name == "index.md":
-            continue
         local_rel = str(md_file.relative_to(DOCS_DIR))
         rel_path = map_local_rel_to_drive_rel(local_rel)
         if not rel_path:

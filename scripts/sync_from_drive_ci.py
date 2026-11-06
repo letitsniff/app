@@ -178,9 +178,31 @@ def export_file(service, item_id, mime, dest_path):
     if dest_path.name.endswith(".md"):
         sanitize_markdown(dest_path)
 
+def get_or_create_folder_ci(service, name, parent_id):
+    items = list_folder_contents(service, parent_id)
+    for it in items:
+        if it.get("name") == name and it.get("mimeType") == "application/vnd.google-apps.folder":
+            return it.get("id")
+    folder_metadata = {
+        "name": name,
+        "mimeType": "application/vnd.google-apps.folder",
+        "parents": [parent_id]
+    }
+    folder = service.files().create(body=folder_metadata, fields="id").execute()
+    return folder.get("id")
+
+def resolve_drive_folder_ci(service, rel_dir):
+    parts = Path(rel_dir).parts
+    current_id = ROOT_FOLDER_ID
+    for part in parts:
+        current_id = get_or_create_folder_ci(service, part, current_id)
+        if not current_id:
+            return None
+    return current_id
+
 def upload_local_images_to_drive(service):
     """
-    Finds any local images in docs/blog/*/images/* and uploads
+    Finds any local images in docs/blog/**/images/* and uploads
     any missing images to Google Drive.
     """
     from googleapiclient.http import MediaFileUpload
@@ -189,42 +211,14 @@ def upload_local_images_to_drive(service):
     if not local_blog_dir.exists():
         return
 
-    # 1. Locate blog folder on Drive
-    root_items = list_folder_contents(service, ROOT_FOLDER_ID)
-    blog_folder = next((it for it in root_items if it.get("name") == "blog" and it.get("mimeType") == "application/vnd.google-apps.folder"), None)
-    if not blog_folder:
-        return
-
-    # 2. Get pillars on Drive
-    drive_pillars = {it.get("name"): it.get("id") for it in list_folder_contents(service, blog_folder["id"]) if it.get("mimeType") == "application/vnd.google-apps.folder"}
-
     uploaded_count = 0
 
     for images_dir in sorted(local_blog_dir.glob("**/images")):
-        pillar_dir = images_dir.parent
-        pillar_name = pillar_dir.name
-        pillar_id = drive_pillars.get(pillar_name)
-        if not pillar_id:
-            for d_name, d_id in drive_pillars.items():
-                if d_name.startswith(pillar_name[:2]):
-                    pillar_id = d_id
-                    break
-        if not pillar_id:
+        rel_dir = str(images_dir.relative_to(DOCS_DIR))
+        images_folder_id = resolve_drive_folder_ci(service, rel_dir)
+        if not images_folder_id:
             continue
 
-        # Check or create 'images' folder on Drive
-        pillar_items = list_folder_contents(service, pillar_id)
-        images_folder = next((it for it in pillar_items if it.get("name") == "images" and it.get("mimeType") == "application/vnd.google-apps.folder"), None)
-        if not images_folder:
-            print(f"📁 Creating 'images' folder in Drive pillar: {pillar_name}")
-            folder_metadata = {
-                "name": "images",
-                "mimeType": "application/vnd.google-apps.folder",
-                "parents": [pillar_id]
-            }
-            images_folder = service.files().create(body=folder_metadata, fields="id").execute()
-
-        images_folder_id = images_folder.get("id")
         drive_images = {it.get("name"): it for it in list_folder_contents(service, images_folder_id)}
 
         for img_path in sorted(images_dir.iterdir()):
@@ -234,7 +228,7 @@ def upload_local_images_to_drive(service):
                 continue
 
             if img_path.name not in drive_images:
-                print(f"⬆️  [SYNC -> DRIVE] Uploading image: {pillar_name}/images/{img_path.name}")
+                print(f"⬆️  [SYNC -> DRIVE] Uploading image: {rel_dir}/{img_path.name}")
                 mimetype = "image/png" if img_path.suffix.lower() == ".png" else "image/jpeg"
                 file_metadata = {
                     "name": img_path.name,
@@ -262,7 +256,7 @@ def save_state(state):
         json.dump(state, f, indent=2, ensure_ascii=False)
 
 sys.path.insert(0, str(WORKSPACE_DIR / ".sync"))
-from path_mapper import map_drive_rel_to_local_rel, map_local_rel_to_drive_rel, DRIVE_TO_LOCAL_PILLAR, LOCAL_TO_DRIVE_PILLAR
+from path_mapper import map_drive_rel_to_local_rel, map_local_rel_to_drive_rel
 
 def main():
     print(f"Connecting to Google Drive (Root Folder: {ROOT_FOLDER_ID})...")

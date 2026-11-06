@@ -11,8 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 WORKSPACE_DIR = "/home/vasilis/Projects/letitsniff"
 DOCS_DIR = os.path.join(WORKSPACE_DIR, "docs")
 SYNC_DIR = os.path.join(WORKSPACE_DIR, ".sync")
-STATE_FILE = os.path.join(SYNC_DIR, "sync_state.json")
-DRIVE_STATE_FILE = os.path.join(SYNC_DIR, "drive_state.json")
+STATE_FILE = os.path.join(SYNC_DIR, "drive_state.json")
 ROOT_FOLDER_ID = "1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi"
 IGNORE_FOLDERS = {"blogold", "old", "archive", "backup", "trash", ".trash"}
 
@@ -20,17 +19,7 @@ sys.path.insert(0, WORKSPACE_DIR)
 sys.path.insert(0, SYNC_DIR)
 
 from scripts.sync_images_to_drive import sync_images
-from path_mapper import map_drive_rel_to_local_rel, map_local_rel_to_drive_rel, DRIVE_TO_LOCAL_PILLAR, LOCAL_TO_DRIVE_PILLAR
-
-def md5_file(filepath):
-    try:
-        h = hashlib.md5()
-        with open(filepath, "rb") as f:
-            for chunk in iter(lambda: f.read(65536), b""):
-                h.update(chunk)
-        return h.hexdigest()
-    except Exception:
-        return None
+from path_mapper import map_drive_rel_to_local_rel, map_local_rel_to_drive_rel
 
 def run_gdrive(*args):
     cmd = ["gdrive"] + list(args)
@@ -48,10 +37,10 @@ def list_drive_folder(folder_id):
 
 def get_shared_images_map():
     """Builds a lookup of {drive_file_id: filename} for all images in the shared folders."""
-    if not os.path.exists(DRIVE_STATE_FILE):
+    if not os.path.exists(STATE_FILE):
         return {}
     try:
-        with open(DRIVE_STATE_FILE, "r", encoding="utf-8") as f:
+        with open(STATE_FILE, "r", encoding="utf-8") as f:
             state = json.load(f)
         id_to_filename = {}
         for rel_path, info in state.get("files", {}).items():
@@ -126,13 +115,10 @@ def load_state():
                 raw_files = data.get("files", {})
                 for k, v in raw_files.items():
                     normalized_files[normalize_rel_path(k)] = v
-                return {
-                    "files": normalized_files,
-                    "last_sync": data.get("last_sync", 0)
-                }
+                return {"files": normalized_files}
         except Exception:
             pass
-    return {"files": {}, "last_sync": 0}
+    return {"files": {}}
 
 def save_state(state):
     os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
@@ -142,98 +128,33 @@ def save_state(state):
     os.replace(temp_state, STATE_FILE)
 
 def scan_drive_tree():
-    """Scans Google Drive fast using ThreadPoolExecutor."""
+    """Recursively scans all files in Google Drive from ROOT_FOLDER_ID."""
     files = {}
 
-    root_items = list_drive_folder(ROOT_FOLDER_ID)
-    top_folders = []
-    for it in root_items:
-        name = it.get("name")
-        mime = it.get("mimeType")
-        item_id = it.get("id")
-        if mime == "application/vnd.google-apps.folder":
-            if name.lower() in IGNORE_FOLDERS:
-                continue
-            top_folders.append((name, item_id))
-        elif mime == "application/vnd.google-apps.document":
-            rel_name = name if name.endswith(".md") else f"{name}.md"
-            files[rel_name] = it
-        else:
-            files[name] = it
-
-    # Scan level 1 (e.g. blog, services)
-    level2_folders = []
-    def scan_level1(folder_tuple):
-        rel_dir, f_id = folder_tuple
-        sub_items = list_drive_folder(f_id)
-        local_f = []
-        local_files = []
-        for it in sub_items:
-            s_name = it.get("name")
-            s_mime = it.get("mimeType")
-            s_id = it.get("id")
-            if s_mime == "application/vnd.google-apps.folder":
-                if s_name.lower() in IGNORE_FOLDERS:
+    def scan_recursive(folder_id, current_rel):
+        items = list_drive_folder(folder_id)
+        sub_folders = []
+        for it in items:
+            name = it.get("name")
+            mime = it.get("mimeType")
+            if mime == "application/vnd.google-apps.folder":
+                if name.lower() in IGNORE_FOLDERS:
                     continue
-                s_rel = os.path.join(rel_dir, s_name)
-                local_f.append((s_rel, s_id))
-            elif s_mime == "application/vnd.google-apps.document":
-                rel_name = s_name if s_name.endswith(".md") else f"{s_name}.md"
-                s_rel = os.path.join(rel_dir, rel_name)
-                local_files.append((s_rel, it))
+                sub_rel = os.path.join(current_rel, name) if current_rel else name
+                sub_folders.append((it.get("id"), sub_rel))
+            elif mime == "application/vnd.google-apps.document":
+                rel_name = name if name.endswith(".md") else f"{name}.md"
+                f_rel = os.path.join(current_rel, rel_name) if current_rel else rel_name
+                files[f_rel] = it
             else:
-                s_rel = os.path.join(rel_dir, s_name)
-                local_files.append((s_rel, it))
-        return local_f, local_files
+                f_rel = os.path.join(current_rel, name) if current_rel else name
+                files[f_rel] = it
 
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        for local_f, local_files in ex.map(scan_level1, top_folders):
-            level2_folders.extend(local_f)
-            for r_file, it in local_files:
-                files[r_file] = it
+        if sub_folders:
+            with ThreadPoolExecutor(max_workers=min(10, len(sub_folders))) as ex:
+                ex.map(lambda t: scan_recursive(t[0], t[1]), sub_folders)
 
-    # Scan level 2 (e.g. blog/01 - ..., which may have images/)
-    def scan_level2(folder_tuple):
-        rel_dir, f_id = folder_tuple
-        sub_items = list_drive_folder(f_id)
-        local_f = []
-        local_files = []
-        for it in sub_items:
-            s_name = it.get("name")
-            s_mime = it.get("mimeType")
-            s_id = it.get("id")
-            if s_mime == "application/vnd.google-apps.folder":
-                if s_name.lower() in IGNORE_FOLDERS:
-                    continue
-                s_rel = os.path.join(rel_dir, s_name)
-                local_f.append((s_rel, s_id))
-            elif s_mime == "application/vnd.google-apps.document":
-                rel_name = s_name if s_name.endswith(".md") else f"{s_name}.md"
-                s_rel = os.path.join(rel_dir, rel_name)
-                local_files.append((s_rel, it))
-            else:
-                s_rel = os.path.join(rel_dir, s_name)
-                local_files.append((s_rel, it))
-        return local_f, local_files
-
-    with ThreadPoolExecutor(max_workers=10) as ex:
-        for local_f, local_files in ex.map(scan_level2, level2_folders):
-            for r_dir, f_id in local_f:
-                # Scan level 3 (e.g. images/)
-                l3_items = list_drive_folder(f_id)
-                for it in l3_items:
-                    s_name = it.get("name")
-                    s_mime = it.get("mimeType")
-                    if s_mime == "application/vnd.google-apps.document":
-                        rel_name = s_name if s_name.endswith(".md") else f"{s_name}.md"
-                    else:
-                        rel_name = s_name
-                    it_rel = os.path.join(r_dir, rel_name)
-                    if s_mime != "application/vnd.google-apps.folder":
-                        files[it_rel] = it
-            for r_file, it in local_files:
-                files[r_file] = it
-
+    scan_recursive(ROOT_FOLDER_ID, "")
     return files
 
 def sync_from_drive():
@@ -258,7 +179,7 @@ def sync_from_drive():
         if not os.path.exists(local_dest):
             needs_pull = True
             print(f"⬇️  [DRIVE -> LOCAL] Pulling new file: {rel_path}")
-        elif record and record.get("drive_modified") != r_mod:
+        elif record and (record.get("modifiedTime") != r_mod and record.get("drive_modified") != r_mod):
             needs_pull = True
             print(f"⬇️  [DRIVE -> LOCAL] Updating modified file: {rel_path}")
         elif not record:
@@ -275,11 +196,9 @@ def sync_from_drive():
 
             if os.path.exists(local_dest):
                 tracked_files[rel_path] = {
-                    "drive_id": drive_id,
-                    "mime": mime,
-                    "drive_modified": r_mod,
-                    "local_mtime": os.path.getmtime(local_dest),
-                    "hash": md5_file(local_dest)
+                    "id": drive_id,
+                    "modifiedTime": r_mod,
+                    "mimeType": mime
                 }
 
     # 2. Clean up local files that were removed from Google Drive (NEVER delete images or index.md)
@@ -304,7 +223,6 @@ def sync_from_drive():
             except Exception:
                 pass
 
-    state["last_sync"] = time.time()
     save_state(state)
 
 def run_sync_loop(interval=15):
@@ -328,4 +246,10 @@ def run_sync_loop(interval=15):
         time.sleep(interval)
 
 if __name__ == "__main__":
-    run_sync_loop(interval=15)
+    if "--once" in sys.argv:
+        print("🐾 Running single sync iteration...")
+        sync_images(verbose=True)
+        sync_from_drive()
+        print("✅ Single sync complete.")
+    else:
+        run_sync_loop(interval=15)

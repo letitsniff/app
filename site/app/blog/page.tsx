@@ -11,7 +11,7 @@ import CategoryCard from "@/components/CategoryCard";
 export const metadata: Metadata = {
   title: "Βιβλιοθήκη Άρθρων & Οδηγών Εκπαίδευσης",
   description:
-    "Οργανωμένη βιβλιοθήκη θετικής εκπαίδευσης σκύλων στην Αθήνα — 18 θεματικοί πυλώνες χωρισμένοι σε 4 μεγάλες ενότητες για τη βόλτα, το διαμέρισμα, την αντιδραστικότητα, το κουτάβι και την υιοθεσία.",
+    "Οργανωμένη βιβλιοθήκη θετικής εκπαίδευσης σκύλων στην Αθήνα — θεματικοί οδηγοί και άρθρα για τη βόλτα, το διαμέρισμα, την αντιδραστικότητα, το κουτάβι και την υιοθεσία.",
 };
 
 export default function BlogPage() {
@@ -24,14 +24,14 @@ export default function BlogPage() {
       {/* ── Page Header ───────────────────────────────────── */}
       <header className="mb-14 pb-8 border-b border-[var(--color-sandDark)]">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-2">
-          Βιβλιοθήκη Γνώσης · 18 Θεματικές Ενότητες · {totalArticles} Άρθρα
+          Βιβλιοθήκη Γνώσης · {categories.length} Θεματικές Ενότητες · {totalArticles} Άρθρα
         </p>
         <h1 className="font-heading text-4xl md:text-5xl text-[var(--color-brown)] mb-4">
           Άρθρα & Πρακτικοί Οδηγοί
         </h1>
         <p className="text-base md:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
           Απαντήσεις, συμπεριφορική ανάλυση και επιστημονική γνώση για την καθημερινότητα με τον σκύλο
-          στην Αθήνα — οργανωμένα σε 4 θεματικές ενότητες.
+          στην Αθήνα — οργανωμένα σε θεματικές ενότητες.
         </p>
 
         {/* Macro-Category Quick Jump Bar */}
