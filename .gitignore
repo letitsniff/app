@@ -6,6 +6,7 @@ node_modules
 # Next.js build output
 .next/
 out/
+site/public/images/
 
 # Sync metadata and tokens
 .sync/token.json

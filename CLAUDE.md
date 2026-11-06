@@ -145,6 +145,7 @@ letitsniff/
 ### 5. Images
 - Preserve existing illustrations and their references when fixing text. Do not generate or replace images unless the task includes image work.
 - Store article images in the pillar's `images/` directory. Follow existing names such as `p04_01_puppy_potty_training.jpg`; pillar covers use `pillar_04_cover.jpg`.
+- **Single Source of Truth:** `docs/blog/[NN] - [Pillar Name]/images/` is the sole source of truth in Git. `site/public/images/` is a build artifact (ignored in `.gitignore`) automatically populated on-the-fly at build/dev time by `site/next.config.ts` and `site/lib/content.ts`. Never commit files in `site/public/images/`.
 - Filenames must be unique across the entire blog: the loader copies assets into the shared `site/public/images/` directory by basename.
 - When generating an illustration, inspect nearby images and match the established editorial style. Depict safe handling consistent with the article; do not illustrate force or unsafe child–dog contact as recommended practice.
 - Save and inspect the actual image before referencing it. If no image is available, omit the image line rather than adding a broken link or claiming an image exists.
@@ -153,6 +154,11 @@ letitsniff/
 ```markdown
 ![Εκπαίδευση τουαλέτας κουταβιού σε διαμέρισμα](./images/p04_01_puppy_potty_training.jpg)
 ```
+or with a direct Google Drive link:
+```markdown
+![Εκπαίδευση τουαλέτας κουταβιού σε διαμέρισμα](https://drive.google.com/file/d/<FILE_ID>/view)
+```
+Drive links are automatically resolved to local static assets at build time in both local and CI environments.
 
 - Keep source assets in `docs/blog/.../images/`; do not edit only the copied public asset or generated `site/out/` files.
 
@@ -248,15 +254,16 @@ The Next.js content loader (`site/lib/content.ts`) extracts this cover to displa
 ### 6. Build, Verification & Image Sync
 After modifying Markdown files and adding images:
 1. Run `cd site && pnpm build`.
-2. The custom content loader in `site/lib/content.ts` will:
-   - Synchronize all files from `docs/blog/*/images/*` into `site/public/images/`.
+2. `next.config.ts` and `site/lib/content.ts` will:
+   - Synchronize all files from `docs/blog/*/images/*` into `site/public/images/` automatically on-the-fly.
+   - Automatically resolve any Google Drive image URLs (`drive.google.com/file/d/<id>` / `lh3.googleusercontent.com/d/<id>`) to the local `/images/<filename>` asset using `.sync/drive_state.json`.
    - Extract the top image link to populate article heroes and social card metadata.
 3. Verify that Next.js static export finishes cleanly with 0 errors (all routes generated).
 
 ### 7. Version Control & Continuous Deployment
-1. Stage modified articles and copied images:
+1. Stage modified articles and source images (never stage `site/public/images/`, which is ignored):
    ```bash
-   git add "docs/blog/[NN] - [Pillar Name]" site/public/images/p[PP]*
+   git add "docs/blog/[NN] - [Pillar Name]"
    ```
 2. Commit with descriptive semantic message:
    ```bash
@@ -266,7 +273,7 @@ After modifying Markdown files and adding images:
    ```bash
    git push origin main
    ```
-   Pushing to `main` automatically triggers `.github/workflows/deploy.yml` on GitHub Actions to deploy to production (`https://letitsniff.gr`).
+   Pushing to `main` automatically triggers `.github/workflows/deploy.yml` on GitHub Actions to deploy to production (`https://letitsniff.gr`). In CI, `site/public/images/` is populated automatically during `pnpm build` before exporting static files to GitHub Pages.
 
 ### 8. Handling API Rate Limits & Quotas
 - If an image generator subagent encounters `429 RESOURCE_EXHAUSTED` (e.g., on `gemini-3.1-flash-image`):
@@ -278,6 +285,11 @@ After modifying Markdown files and adding images:
 ## Google Drive Synchronization Architecture
 - **Markdown Articles (One-Way):** Google Drive / Google Docs ➔ GitHub Repository `docs/` ➔ Live Site. Articles are never pushed from git to Google Drive, preserving Google Docs as Alex's primary content editor.
 - **Article Images (Git ➔ Drive):** Generated and committed images in `docs/blog/[Pillar]/images/*` are automatically synced and uploaded to the matching `images` folder inside that pillar on Google Drive.
+- **No Base64 / Drive Links to Local Assets:**
+  - Google Docs exported markdowns are sanitized in CI and locally to eliminate all inline base64 blobs.
+  - Alex or editors can paste direct Google Drive image links (`https://drive.google.com/file/d/<id>/view` or `https://lh3.googleusercontent.com/d/<id>`).
+  - At build time (both locally and in CI), `site/lib/content.ts` cross-references `.sync/drive_state.json` and automatically rewrites Drive links to local static `/images/<filename>` assets. Unsynced IDs fall back gracefully to Google's image CDN.
+- **Build-Time Public Asset Population:** `site/public/images/` is excluded from git tracking. `site/next.config.ts` and `site/lib/content.ts` automatically populate `site/public/images/` from `docs/blog/*/images/` in < 100ms whenever Next.js starts or builds.
 - **Root Folder ID:** `1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi` (`letitsniff.gr - Πυλώνες Περιεχομένου`)
 - **CI Sync Workflow (`.github/workflows/sync-from-drive.yml`):**
   - **Triggers:**
