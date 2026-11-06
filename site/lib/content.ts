@@ -34,6 +34,7 @@ function syncImages(): void {
         if (fs.existsSync(imagesPath)) {
           const files = fs.readdirSync(imagesPath);
           for (const file of files) {
+            if (!/\.(jpe?g|png|webp|avif|svg)$/i.test(file)) continue;
             const src = path.join(imagesPath, file);
             const dest = path.join(PUBLIC_IMAGES_DIR, file);
             if (fs.statSync(src).isFile()) {
@@ -237,6 +238,7 @@ function loadCategories(): Category[] {
       if (!coverImage && fs.existsSync(imagesPath)) {
         const numPadded = String(num).padStart(2, "0");
         const found = fs.readdirSync(imagesPath).find((f) =>
+          /\.(jpe?g|png|webp|avif|svg)$/i.test(f) &&
           new RegExp(`^pillar_${numPadded}`, "i").test(f)
         );
         if (found && fs.existsSync(path.join(PUBLIC_IMAGES_DIR, found))) {
@@ -266,8 +268,9 @@ function loadCategories(): Category[] {
         if (afNumMatch) {
           const artNum = afNumMatch[1];
           const found = fs.readdirSync(imagesPath).find((f) =>
-            new RegExp(`^(article_${artNum}|${artNum}[._-]|p0?${num}_0?${artNum})`, "i").test(f) ||
-            f.toLowerCase().includes(slug)
+            /\.(jpe?g|png|webp|avif|svg)$/i.test(f) &&
+            (new RegExp(`^(article_${artNum}|${artNum}[._-]|p0?${num}_0?${artNum})`, "i").test(f) ||
+            f.toLowerCase().includes(slug))
           );
           if (found && fs.existsSync(path.join(PUBLIC_IMAGES_DIR, found))) {
             articleCover = `/images/${found}`;
