@@ -62,14 +62,14 @@ def sync_markdown_to_drive(verbose=True):
         with open(md_file, "r", encoding="utf-8") as f:
             local_content = f.read()
 
-        # Convert local relative paths to Google Drive links for Drive upload
+        # Convert local relative paths to Google Drive direct image links for Drive upload
         def to_drive_link(match):
             alt = match.group(1)
             raw_url = match.group(2).strip("<> ")
             fname = os.path.basename(raw_url)
             drive_id = filename_to_drive_id.get(fname)
             if drive_id:
-                return f"![{alt}](https://drive.google.com/file/d/{drive_id}/view)"
+                return f"![{alt}](https://lh3.googleusercontent.com/d/{drive_id})"
             return match.group(0)
 
         drive_ready_content = re.sub(r"!\[(.*?)\]\((.*?)\)", to_drive_link, local_content)
