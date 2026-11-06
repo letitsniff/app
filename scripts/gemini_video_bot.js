@@ -108,7 +108,10 @@ async function processPost(folderName, singleRun = false) {
     console.log(`⚠️ [${folderName}] Could not parse prompt codeblock.`);
     return false;
   }
-  const promptText = m[1].trim();
+  let promptText = m[1].trim();
+  if (!promptText.includes("no voice")) {
+    promptText += " Audio direction: Completely silent video, no voice, no talking, no human speech, no dialogue, no narration, no vocal sounds, mute audio.";
+  }
 
   console.log(`\n======================================================`);
   console.log(`🚀 Starting generation for: ${folderName}`);
