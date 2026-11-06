@@ -26,8 +26,6 @@ export interface Service {
   htmlContent: string;
   icon: string; // emoji or icon name
   image?: string;
-  price?: string;
-  duration?: string;
   pillars: number[]; // linked pillar numbers
 }
 
@@ -91,8 +89,6 @@ function parseServiceMetadata(raw: string, slug: string): Service {
       image = `/images/${slug}.jpg`;
     }
   }
-  const price = yamlData.price || extractField(raw, ["Τιμή", "Price", "price"]) || undefined;
-  const duration = yamlData.duration || extractField(raw, ["Διάρκεια", "Duration", "duration"]) || undefined;
   const pillarsRaw = yamlData.pillars || extractField(raw, ["Πυλώνες", "Pillars", "pillars"]);
   const pillars = pillarsRaw
     ? pillarsRaw.split(",").map((s) => parseInt(s.trim(), 10)).filter((n) => !isNaN(n))
@@ -109,8 +105,6 @@ function parseServiceMetadata(raw: string, slug: string): Service {
     description,
     icon,
     image,
-    price,
-    duration,
     pillars,
     htmlContent,
   };

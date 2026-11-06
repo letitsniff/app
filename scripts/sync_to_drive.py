@@ -50,7 +50,10 @@ def sync_markdown_to_drive(verbose=True):
         print(f"📊 Loaded {len(filename_to_drive_id)} shared images from drive_state.json")
 
     blog_dir = DOCS_DIR / "blog"
+    services_dir = DOCS_DIR / "services"
     md_files = sorted(blog_dir.glob("**/*.md"))
+    if services_dir.exists():
+        md_files += sorted(services_dir.glob("*.md"))
 
     tasks = []
     for md_file in md_files:

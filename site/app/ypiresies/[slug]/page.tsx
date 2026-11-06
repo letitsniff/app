@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Clock, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getAllServices, getServiceBySlug } from "@/lib/services";
 import { getAllCategories } from "@/lib/content";
 import { getImageVariants } from "@/lib/images";
@@ -59,11 +59,6 @@ export default async function ServicePage({ params }: Props) {
           </p>
 
           <div className="flex flex-wrap items-center gap-4 text-xs mb-8">
-            {service.duration && (
-              <span className="inline-flex items-center gap-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] px-3 py-1.5">
-                <Clock size={13} /> {service.duration}
-              </span>
-            )}
             <Link
               href="/o-alexandros#epikoinonia"
               className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
@@ -98,18 +93,6 @@ export default async function ServicePage({ params }: Props) {
           </main>
 
           <aside className="mt-14 lg:mt-0 space-y-6 lg:sticky lg:top-20">
-            {/* Price info */}
-            {service.price && (
-              <div className="bg-white border-l-4 border-[var(--color-terra)] border-y border-r border-[var(--color-sandDark)]/70 p-5">
-                <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-1">
-                  Τιμολόγηση
-                </p>
-                <p className="font-heading text-lg text-[var(--color-brown)]">
-                  {service.price}
-                </p>
-              </div>
-            )}
-
             {/* Direct CTA */}
             <div className="bg-[var(--color-brown)] text-white p-6">
               <h3 className="font-heading text-lg text-white mb-2">

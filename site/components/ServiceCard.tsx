@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Service } from "@/lib/services";
-import { Clock, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getImageVariants } from "@/lib/images";
 
 interface Props {
@@ -83,12 +83,6 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
               <h3 className="font-heading text-xl sm:text-2xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug">
                 {service.title}
               </h3>
-              {service.duration && (
-                <span className="hidden md:inline-flex items-center gap-1.5 text-xs text-[var(--color-mutedLight)] bg-[var(--color-cream)] border border-[var(--color-sand)] px-2.5 py-1 flex-shrink-0">
-                  <Clock size={12} />
-                  {service.duration}
-                </span>
-              )}
             </div>
             <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-2xl mb-4">
               {service.tagline}
@@ -99,12 +93,6 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
               <span>Μάθετε περισσότερα</span>
               <ArrowRight size={13} />
             </span>
-            {service.duration && (
-              <span className="md:hidden inline-flex items-center gap-1 text-[var(--color-mutedLight)] font-normal normal-case">
-                <Clock size={12} />
-                {service.duration}
-              </span>
-            )}
           </div>
         </div>
       </div>
