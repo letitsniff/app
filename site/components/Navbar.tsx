@@ -45,13 +45,11 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  // Close menu on route change (React-recommended pattern: adjust state during render)
-  if (pathname !== prevPathname) {
-    setPrevPathname(pathname);
+  // Close menu on route change
+  useEffect(() => {
     setOpen(false);
-  }
+  }, [pathname]);
 
   // Subtle border on scroll
   useEffect(() => {
@@ -60,21 +58,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Prevent background scrolling when menu is open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
   return (
     <header
-      className={`sticky top-0 z-50 transition-[border-color] duration-200 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b ${
+      className={`sticky top-0 z-50 transition-[border-color] duration-200 bg-[var(--color-cream)] border-b ${
         scrolled || open
           ? "border-[var(--color-sandDark)]"
           : "border-transparent"
@@ -86,6 +72,7 @@ export default function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-2 font-heading text-lg text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors"
+            onClick={() => setOpen(false)}
           >
             <PawMark />
             <span>Let It Sniff</span>
@@ -123,8 +110,9 @@ export default function Navbar() {
 
         {/* Mobile toggle button */}
         <button
+          type="button"
           className="md:hidden p-2 -mr-2 text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors focus:outline-none"
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
           aria-expanded={open}
         >
@@ -132,10 +120,10 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile Drawer (Structured, touch-friendly, cleanly bounded) */}
+      {/* Mobile Dropdown Panel — natural flow, never traps layout */}
       {open && (
-        <div className="md:hidden fixed inset-x-0 top-14 bottom-0 bg-[var(--color-cream)] z-40 flex flex-col justify-between overflow-y-auto border-t border-[var(--color-sandDark)]">
-          <div className="px-5 py-6 space-y-3">
+        <div className="md:hidden bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+          <div className="space-y-3">
             <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-mutedLight)] mb-2">
               Μενού Πλοήγησης
             </p>
@@ -156,7 +144,7 @@ export default function Navbar() {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span
-                      className={`font-heading text-xl ${
+                      className={`font-heading text-lg ${
                         isActive
                           ? "text-[var(--color-brown)] font-bold"
                           : "text-[var(--color-brown)]"
@@ -180,7 +168,7 @@ export default function Navbar() {
               );
             })}
 
-            <div className="pt-3">
+            <div className="pt-2">
               <Link
                 href="/o-alexandros#epikoinonia"
                 className="flex items-center justify-center gap-2 w-full bg-[var(--color-brown)] text-white font-medium py-3.5 text-sm hover:bg-[var(--color-brownMid)] transition-colors"
@@ -191,8 +179,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Quick contact bottom bar */}
-          <div className="p-5 border-t border-[var(--color-sandDark)]/70 bg-[var(--color-sand)]/30 text-xs text-[var(--color-muted)] flex items-center justify-between">
+          <div className="mt-6 pt-4 border-t border-[var(--color-sandDark)]/70 text-xs text-[var(--color-muted)] flex items-center justify-between">
             <span>Αθήνα & Αττική</span>
             <a
               href="mailto:info@letitsniff.gr"
