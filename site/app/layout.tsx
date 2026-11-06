@@ -15,6 +15,13 @@ export const metadata: Metadata = {
     siteName: "Let It Sniff",
     locale: "el_GR",
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png" }],
+  },
 };
 
 export default function RootLayout({
