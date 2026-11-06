@@ -41,7 +41,7 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
 
   const category = getCategoryBySlug(article.categorySlug);
-  const color = CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
+  const color = CATEGORY_COLORS[article.categorySlug] ?? CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
 
   // Related articles (same category, excluding current)
   const related = (category?.articles ?? [])

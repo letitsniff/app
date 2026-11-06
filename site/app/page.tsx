@@ -146,10 +146,8 @@ export default function HomePage() {
         </div>
 
         <div className="grid sm:grid-cols-2 gap-6">
-          {THEMATIC_CLUSTERS.map((cluster, idx) => {
-            const clusterCategories = cluster.pillarNumbers
-              .map((num) => categories.find((c) => c.number === num))
-              .filter((c): c is NonNullable<typeof c> => Boolean(c));
+          {THEMATIC_CLUSTERS.map((cluster) => {
+            const clusterCategories = categories.filter((c) => c.macroNumber === cluster.number);
 
             return (
               <div
@@ -159,7 +157,7 @@ export default function HomePage() {
                 <div>
                   <div className="flex items-center justify-between gap-4 mb-3">
                     <span className="text-xs font-mono font-bold tracking-wider text-[var(--color-amber)]">
-                      ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ 0{idx + 1}
+                      {`ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ ${String(cluster.number).padStart(2, "0")}`}
                     </span>
                     <span className="text-xs text-[var(--color-mutedLight)]">
                       {clusterCategories.length} πυλώνες
@@ -177,7 +175,7 @@ export default function HomePage() {
                   {/* Pillars in this category */}
                   <ul className="space-y-2 mb-6 pt-4 border-t border-[var(--color-sand)] text-xs">
                     {clusterCategories.map((cat) => {
-                      const color = CATEGORY_COLORS[cat.number] ?? "#C4852A";
+                      const color = cat.color ?? CATEGORY_COLORS[cat.slug] ?? CATEGORY_COLORS[cat.number] ?? "#C4852A";
                       return (
                         <li key={cat.slug}>
                           <Link

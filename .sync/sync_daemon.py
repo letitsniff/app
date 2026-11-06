@@ -9,10 +9,6 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
 WORKSPACE_DIR = "/home/vasilis/Projects/letitsniff"
-sys.path.insert(0, WORKSPACE_DIR)
-
-from scripts.sync_images_to_drive import sync_images
-
 DOCS_DIR = os.path.join(WORKSPACE_DIR, "docs")
 SYNC_DIR = os.path.join(WORKSPACE_DIR, ".sync")
 STATE_FILE = os.path.join(SYNC_DIR, "sync_state.json")
@@ -20,38 +16,11 @@ DRIVE_STATE_FILE = os.path.join(SYNC_DIR, "drive_state.json")
 ROOT_FOLDER_ID = "1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi"
 IGNORE_FOLDERS = {"blogold", "old", "archive", "backup", "trash", ".trash"}
 
-MACRO_CATEGORIES_MAP = {
-    1: "01 - Αστική Ζωή & Καθημερινότητα",
-    2: "01 - Αστική Ζωή & Καθημερινότητα",
-    8: "01 - Αστική Ζωή & Καθημερινότητα",
-    17: "01 - Αστική Ζωή & Καθημερινότητα",
-    3: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
-    10: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
-    12: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
-    13: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
-    18: "02 - Συμπεριφορά, Επικοινωνία & Ψυχολογία",
-    4: "03 - Στάδια Ζωής & Υιοθεσία",
-    9: "03 - Στάδια Ζωής & Υιοθεσία",
-    11: "03 - Στάδια Ζωής & Υιοθεσία",
-    14: "03 - Στάδια Ζωής & Υιοθεσία",
-    15: "03 - Στάδια Ζωής & Υιοθεσία",
-    5: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
-    6: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
-    7: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
-    16: "04 - Εκπαίδευση, Φροντίδα & Εξοπλισμός",
-}
+sys.path.insert(0, WORKSPACE_DIR)
+sys.path.insert(0, SYNC_DIR)
 
-def map_drive_rel_to_local_rel(rel_path):
-    parts = rel_path.split(os.sep)
-    if len(parts) >= 2 and parts[0] == "blog":
-        m = re.match(r"^(\d{2})\s+-", parts[1])
-        if m:
-            num = int(m.group(1))
-            if num in MACRO_CATEGORIES_MAP:
-                macro_dir = MACRO_CATEGORIES_MAP[num]
-                if parts[1] != macro_dir:
-                    return os.path.join("blog", macro_dir, *parts[1:])
-    return rel_path
+from scripts.sync_images_to_drive import sync_images
+from path_mapper import map_drive_rel_to_local_rel, map_local_rel_to_drive_rel, DRIVE_TO_LOCAL_PILLAR, LOCAL_TO_DRIVE_PILLAR
 
 def md5_file(filepath):
     try:

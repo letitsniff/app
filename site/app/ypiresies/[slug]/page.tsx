@@ -29,10 +29,10 @@ export default async function ServicePage({ params }: Props) {
   const service = getServiceBySlug(slug);
   if (!service) notFound();
 
-  // Find related articles (from linked pillars)
+  // Find related articles (from linked categories)
   const categories = getAllCategories();
   const relatedArticles = categories
-    .filter((c) => service.pillars.includes(c.number))
+    .filter((c) => c.relatedService.includes(service.slug))
     .flatMap((c) => c.articles.slice(0, 1));
 
   const imageVariants = getImageVariants(service.image);

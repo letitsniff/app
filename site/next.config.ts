@@ -51,12 +51,22 @@ function syncBlogImages(): void {
       }
     };
 
-    if (fs.existsSync(blogDir)) {
-      const dirs = fs.readdirSync(blogDir, { withFileTypes: true });
-      for (const dir of dirs) {
-        if (!dir.isDirectory()) continue;
-        copyFrom(path.join(blogDir, dir.name, "images"));
+    const copyImagesRecursively = (dir: string) => {
+      if (!fs.existsSync(dir)) return;
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          if (entry.name === "images") {
+            copyFrom(path.join(dir, entry.name));
+          } else {
+            copyImagesRecursively(path.join(dir, entry.name));
+          }
+        }
       }
+    };
+
+    if (fs.existsSync(blogDir)) {
+      copyImagesRecursively(blogDir);
     }
     copyFrom(servicesImagesDir);
     copyFrom(siteImagesDir);

@@ -13,6 +13,9 @@ import re
 from pathlib import Path
 
 WORKSPACE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(WORKSPACE_DIR / ".sync"))
+from path_mapper import LOCAL_TO_DRIVE_PILLAR, map_local_rel_to_drive_rel
+
 DOCS_DIR = WORKSPACE_DIR / "docs"
 STATE_FILE = WORKSPACE_DIR / ".sync" / "drive_state.json"
 ROOT_FOLDER_ID = "1oNgHqLRswU0GSE9e8XFTyf9j-dGlotbi"
@@ -117,12 +120,15 @@ def sync_images(verbose=True):
     for images_dir in images_dirs:
         pillar_dir = images_dir.parent
         pillar_name = pillar_dir.name
-        pillar_drive_id = drive_pillars.get(pillar_name)
-        if not pillar_drive_id:
-            for d_name, d_id in drive_pillars.items():
-                if d_name.startswith(pillar_name[:2]):
-                    pillar_drive_id = d_id
-                    break
+        macro_name = pillar_dir.parent.name
+
+        drive_info = LOCAL_TO_DRIVE_PILLAR.get((macro_name, pillar_name))
+        if drive_info:
+            drive_pillar_name, _ = drive_info
+            pillar_drive_id = drive_pillars.get(drive_pillar_name)
+        else:
+            drive_pillar_name = pillar_name
+            pillar_drive_id = drive_pillars.get(pillar_name)
 
         if not pillar_drive_id:
             continue
@@ -140,7 +146,7 @@ def sync_images(verbose=True):
             if img_file.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp", ".svg", ".avif"}:
                 continue
 
-            rel_path = f"blog/{pillar_name}/images/{img_file.name}"
+            rel_path = f"blog/{drive_pillar_name}/images/{img_file.name}"
             
             if img_file.name in existing_names:
                 drive_it = existing_names[img_file.name]

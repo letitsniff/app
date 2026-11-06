@@ -29,9 +29,17 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('scripts/sync_from_drive_ci.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install Google API dependencies
         run: |
-          pip install --no-cache-dir google-api-python-client google-auth
+          pip install google-api-python-client google-auth
 
       - name: Sync docs from Google Drive
         env:

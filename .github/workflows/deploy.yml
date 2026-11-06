@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "docs/**"
+      - "site/**"
+      - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
 permissions:
@@ -25,7 +29,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          package_json_file: site/package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -33,6 +37,22 @@ jobs:
           node-version: 22
           cache: "pnpm"
           cache-dependency-path: site/pnpm-lock.yaml
+
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: site/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('site/pnpm-lock.yaml') }}-${{ hashFiles('site/app/**/*', 'site/components/**/*', 'site/lib/**/*', 'docs/**/*.md') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('site/pnpm-lock.yaml') }}-
+
+      - name: Restore optimized images cache
+        uses: actions/cache@v4
+        with:
+          path: site/public/images
+          key: ${{ runner.os }}-images-${{ hashFiles('docs/**/images/*') }}
+          restore-keys: |
+            ${{ runner.os }}-images-
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5

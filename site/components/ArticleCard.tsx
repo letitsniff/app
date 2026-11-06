@@ -15,7 +15,7 @@ export default function ArticleCard({
   featured = false,
   priority = false,
 }: Props) {
-  const color = CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
+  const color = CATEGORY_COLORS[article.categorySlug] ?? CATEGORY_COLORS[article.categoryNumber] ?? "#C4852A";
   const variants = getImageVariants(article.coverImage);
 
   if (featured) {

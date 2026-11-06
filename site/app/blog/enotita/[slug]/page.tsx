@@ -6,7 +6,7 @@ import {
   getAllCategories,
   getCategoryBySlug,
   CATEGORY_COLORS,
-  getClusterByPillarNumber,
+  THEMATIC_CATEGORIES,
 } from "@/lib/content";
 import { getServiceBySlug } from "@/lib/services";
 import { getImageVariants } from "@/lib/images";
@@ -17,11 +17,20 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateStaticParams() {
   const categories = getAllCategories();
   const params: { slug: string }[] = [];
+  const seen = new Set<string>();
+
   for (const c of categories) {
-    params.push({ slug: c.slug });
-    const legacy = `pillar-${String(c.number).padStart(2, "0")}`;
-    if (legacy !== c.slug) {
-      params.push({ slug: legacy });
+    const candidates = [
+      c.slug,
+      c.slug.replace(/^i-/, ""),
+      `pillar-${String(c.number).padStart(2, "0")}`,
+      `enotita-${c.macroNumber}-${c.number}`,
+    ];
+    for (const s of candidates) {
+      if (s && !seen.has(s)) {
+        seen.add(s);
+        params.push({ slug: s });
+      }
     }
   }
   return params;
@@ -56,8 +65,8 @@ export default async function EnotitaPage({ params }: Props) {
   const nextCategory =
     currentIndex < allCategories.length - 1 ? allCategories[currentIndex + 1] : undefined;
 
-  const color = CATEGORY_COLORS[category.number] ?? "#C4852A";
-  const cluster = getClusterByPillarNumber(category.number);
+  const color = category.color ?? CATEGORY_COLORS[category.slug] ?? CATEGORY_COLORS[category.number] ?? "#C4852A";
+  const cluster = THEMATIC_CATEGORIES.find((c) => c.number === category.macroNumber);
   const catVariants = getImageVariants(category.coverImage);
 
   // Connected service if any

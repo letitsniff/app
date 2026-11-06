@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function CategoryCard({ category, showCover = false }: Props) {
-  const color = CATEGORY_COLORS[category.number] ?? "#C4852A";
+  const color = category.color ?? CATEGORY_COLORS[category.slug] ?? CATEGORY_COLORS[category.number] ?? "#C4852A";
   const catVariants = showCover && category.coverImage ? getImageVariants(category.coverImage) : null;
 
   return (

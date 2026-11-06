@@ -119,6 +119,29 @@ function syncImages(): void {
   }
 }
 
+// ─── Greek to ASCII Slugifier ────────────────────────────────────────────────
+
+export function slugifyGreek(text: string): string {
+  let s = text.toLowerCase();
+  s = s.replace(/ου/g, "ou").replace(/ού/g, "ou");
+  s = s.replace(/αυ(?=[θκξπστφχψ]|\s|$)/g, "af").replace(/αυ/g, "av");
+  s = s.replace(/ευ(?=[θκξπστφχψ]|\s|$)/g, "ef").replace(/ευ/g, "ev");
+  s = s.replace(/μπ/g, "mp").replace(/ντ/g, "nt").replace(/γκ/g, "gk");
+
+  const map: Record<string, string> = {
+    "α": "a", "ά": "a", "β": "v", "γ": "g", "δ": "d", "ε": "e", "έ": "e",
+    "ζ": "z", "η": "i", "ή": "i", "θ": "th", "ι": "i", "ί": "i", "ϊ": "i", "ΐ": "i",
+    "κ": "k", "λ": "l", "μ": "m", "ν": "n", "ξ": "x", "ο": "o", "ό": "o",
+    "π": "p", "ρ": "r", "σ": "s", "ς": "s", "τ": "t", "υ": "y", "ύ": "y", "ϋ": "y", "ΰ": "y",
+    "φ": "f", "χ": "ch", "ψ": "ps", "ω": "o", "ώ": "o"
+  };
+
+  return s
+    .replace(/[α-ωά-ώϊΐϋΰ]/g, (c) => map[c] || c)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface Article {
@@ -127,6 +150,8 @@ export interface Article {
   categorySlug: string;
   categoryTitle: string;
   categoryNumber: number;
+  macroNumber?: number;
+  legacyNumber?: number;
   readingTime: string;
   excerpt: string;
   htmlContent: string;
@@ -137,14 +162,48 @@ export interface Article {
 export interface Category {
   slug: string;
   number: number;
+  legacyNumber?: number;
+  macroNumber: number;
+  macroTitle: string;
   title: string;
   intro: string;
   relatedService: string[];
   articles: Article[];
   coverImage?: string;
+  color: string;
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Slug & Color Maps ───────────────────────────────────────────────────────
+
+export const PILLAR_SLUG_BY_TITLE: Record<string, string> = {
+  "Η Φιλοσοφία \"Let It Sniff\" & Αστική Βόλτα": "filosofia-let-it-sniff-astiki-volta",
+  "Η Φιλοσοφία Let It Sniff & Αστική Βόλτα": "filosofia-let-it-sniff-astiki-volta",
+  "Φιλοσοφία Let It Sniff & Αστική Βόλτα": "filosofia-let-it-sniff-astiki-volta",
+  "Ζωή στην Πολυκατοικία & Διαχείριση Άγχους": "zoi-stin-polykatoikia-diacheirisi-agchous",
+  "Ταξίδια, Μετακινήσεις στην Αθήνα & Διακοπές": "taxidia-metakiniseis-stin-athina-diakopes",
+  "Πάρκα Σκύλων, Dog Walkers & Κοινωνική Ζωή στην Πόλη": "parka-skylon-dog-walkers-koinoniki-zoi",
+  "Αντιδραστικότητα, Φοβίες & Ερεθίσματα της Πόλης": "antidrastikotita-fovies-erethismata-polis",
+  "«Παράξενες» Συμπεριφορές & Καθημερινά Αινίγματα": "paraxenes-symperifores-kathimerina-ainigmata",
+  "Παράξενες Συμπεριφορές & Καθημερινά Αινίγματα": "paraxenes-symperifores-kathimerina-ainigmata",
+  "Πώς Εκφράζονται τα Σκυλιά (Γλώσσα Σώματος & Σήματα Ηρεμίας)": "pos-ekfrazontai-ta-skylia-glossa-somatos",
+  "Πώς Εκφράζονται τα Σκυλιά (Γλώσσα Σώματος)": "pos-ekfrazontai-ta-skylia-glossa-somatos",
+  "Φωνητική Έκφραση & Επικοινωνία Μεταξύ Σκύλων (Dog-to-Dog)": "fonitiki-ekfrasi-epikoinonia-metaxy-skylon",
+  "Φωνητική Έκφραση & Επικοινωνία Μεταξύ Σκύλων": "fonitiki-ekfrasi-epikoinonia-metaxy-skylon",
+  "Η Ψυχολογία του Κηδεμόνα στην Πόλη": "i-psychologia-tou-kidemona-stin-poli",
+  "Ψυχολογία του Κηδεμόνα στην Πόλη": "i-psychologia-tou-kidemona-stin-poli",
+  "Κουτάβι στο Διαμέρισμα (Puppy Hub)": "koutavi-sto-diamerisma-puppy-hub",
+  "Φυλές (Ράτσες), Ημίαιμα & Γενετικά Ένστικτα στο Διαμέρισμα": "fyles-imiaima-genetika-enstikta-diamerisma",
+  "Φυλές, Ημίαιμα & Γενετικά Ένστικτα στο Διαμέρισμα": "fyles-imiaima-genetika-enstikta-diamerisma",
+  "Ηλικία, Υγεία, Ορμόνες & Συμπεριφορά": "ilikia-ygeia-ormones-symperifora",
+  "Πριν την Υιοθεσία (Επιλογή Σκύλου & Προετοιμασία)": "prin-tin-yiothesia-epilogi-skylou-proetoimasia",
+  "Η Μετάβαση μετά την Υιοθεσία (Αποσυμπίεση & Δέσιμο)": "metavasi-meta-tin-yiothesia-aposympiesi-desimo",
+  "Μετάβαση μετά την Υιοθεσία (Αποσυμπίεση & Δέσιμο)": "metavasi-meta-tin-yiothesia-aposympiesi-desimo",
+  "Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων": "epistimi-thetiki-ekpaidefsi-katarripsi-mython",
+  "Συνεργατική Φροντίδα, Κτηνίατρος & Grooming (Cooperative Care)": "synergatiki-frontida-ktiniatros-grooming",
+  "Συνεργατική Φροντίδα, Κτηνίατρος & Grooming": "synergatiki-frontida-ktiniatros-grooming",
+  "Οικογένεια, Μωρά, Παιδιά & Πολλά Κατοικίδια": "oikogeneia-mora-paidia-polla-katoikidia",
+  "Εξοπλισμός, Λιχουδιές & Αισθητηριακός Πλούτος": "exoplismos-lixoudies-aisthitiriakos-ploutos",
+};
 
 export const PILLAR_SLUGS: Record<number, string> = {
   1:  "filosofia-let-it-sniff-astiki-volta",
@@ -167,22 +226,73 @@ export const PILLAR_SLUGS: Record<number, string> = {
   18: "i-psychologia-tou-kidemona-stin-poli",
 };
 
-export function categorySlug(num: number): string {
-  return PILLAR_SLUGS[num] ?? `pillar-${String(num).padStart(2, "0")}`;
+export function categorySlug(numOrTitle: number | string): string {
+  if (typeof numOrTitle === "number") {
+    return PILLAR_SLUGS[numOrTitle] ?? `pillar-${String(numOrTitle).padStart(2, "0")}`;
+  }
+  return PILLAR_SLUG_BY_TITLE[numOrTitle] ?? slugifyGreek(numOrTitle);
 }
 
+export const CATEGORY_COLORS: Record<string | number, string> = {
+  // Slug-based
+  "filosofia-let-it-sniff-astiki-volta": "#C4852A",
+  "zoi-stin-polykatoikia-diacheirisi-agchous": "#C4522A",
+  "taxidia-metakiniseis-stin-athina-diakopes": "#3A6B9B",
+  "parka-skylon-dog-walkers-koinoniki-zoi": "#2E7A9B",
+
+  "antidrastikotita-fovies-erethismata-polis": "#A83228",
+  "paraxenes-symperifores-kathimerina-ainigmata": "#B85C20",
+  "pos-ekfrazontai-ta-skylia-glossa-somatos": "#3D5C38",
+  "fonitiki-ekfrasi-epikoinonia-metaxy-skylon": "#2E4D7A",
+  "i-psychologia-tou-kidemona-stin-poli": "#4D3D7A",
+
+  "koutavi-sto-diamerisma-puppy-hub": "#5A7A54",
+  "fyles-imiaima-genetika-enstikta-diamerisma": "#6B4D9B",
+  "ilikia-ygeia-ormones-symperifora": "#7A2E4A",
+  "prin-tin-yiothesia-epilogi-skylou-proetoimasia": "#9B7A2E",
+  "metavasi-meta-tin-yiothesia-aposympiesi-desimo": "#3D7A5C",
+
+  "epistimi-thetiki-ekpaidefsi-katarripsi-mython": "#6B7C3A",
+  "synergatiki-frontida-ktiniatros-grooming": "#2E7D7A",
+  "oikogeneia-mora-paidia-polla-katoikidia": "#9B4D6B",
+  "exoplismos-lixoudies-aisthitiriakos-ploutos": "#7A5C2E",
+
+  // Legacy numbers (1..18)
+  1:  "#C4852A",
+  2:  "#C4522A",
+  3:  "#A83228",
+  4:  "#5A7A54",
+  5:  "#6B7C3A",
+  6:  "#2E7D7A",
+  7:  "#9B4D6B",
+  8:  "#3A6B9B",
+  9:  "#6B4D9B",
+  10: "#B85C20",
+  11: "#7A2E4A",
+  12: "#3D5C38",
+  13: "#2E4D7A",
+  14: "#9B7A2E",
+  15: "#3D7A5C",
+  16: "#7A5C2E",
+  17: "#2E7A9B",
+  18: "#4D3D7A",
+};
+
+const PALETTE = [
+  "#C4852A", "#C4522A", "#A83228", "#5A7A54", "#6B7C3A",
+  "#2E7D7A", "#9B4D6B", "#3A6B9B", "#6B4D9B", "#B85C20",
+  "#7A2E4A", "#3D5C38", "#2E4D7A", "#9B7A2E", "#3D7A5C",
+  "#7A5C2E", "#2E7A9B", "#4D3D7A",
+];
+
 function extractTitle(raw: string): string {
-  // Match first # heading, strip bold markers and backslash escapes
   const m = raw.match(/^#\s+\**(.+?)\**\s*$/m);
   if (!m) return "Untitled";
   return m[1].replace(/\\\./g, ".").replace(/\\/g, "").trim();
 }
 
 function extractField(raw: string, field: string): string {
-  const regex = new RegExp(
-    `\\*\\*${field}:\\*\\*\\s*([^\\n]+)`,
-    "u"
-  );
+  const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*([^\\n]+)`, "u");
   const m = raw.match(regex);
   return m ? m[1].trim() : "";
 }
@@ -252,16 +362,16 @@ function extractExcerptFromBody(cleanedMarkdown: string, length = 160): string {
 function cleanMarkdownForDisplay(raw: string, coverImage?: string): string {
   let cleaned = raw;
 
-  // 1. Remove the first H1 header (it is already rendered by the page layout)
+  // 1. Remove the first H1 header (rendered by page layout)
   cleaned = cleaned.replace(/^#\s+[^\n]+\n*/m, "");
 
-  // 2. Rewrite all markdown image URLs (resolving Drive links and relative paths to /images/)
+  // 2. Rewrite all markdown image URLs
   cleaned = cleaned.replace(
     /!\[(.*?)\]\(([^\)]+)\)/g,
     (_, alt, url) => `![${alt}](${resolveImageUrl(url)})`
   );
 
-  // 3. If a cover image exists, remove its occurrence at the top of the post to prevent duplicates
+  // 3. Prevent duplicate cover image at top
   if (coverImage) {
     const filename = coverImage.split("/").pop();
     if (filename) {
@@ -271,7 +381,7 @@ function cleanMarkdownForDisplay(raw: string, coverImage?: string): string {
     }
   }
 
-  // 4. Remove inline metadata lines and separators
+  // 4. Remove inline metadata lines
   cleaned = cleaned
     .replace(/\*\*Κατηγορία:\*\*[^\n]+\n?/g, "")
     .replace(/\*\*Προτεινόμενο URL:\*\*[^\n]+\n?/g, "")
@@ -287,6 +397,8 @@ interface PillarDirInfo {
   dirPath: string;
   dirName: string;
   num: number;
+  macroNum: number;
+  macroTitle: string;
 }
 
 function getPillarDirectories(blogDir: string): PillarDirInfo[] {
@@ -300,6 +412,10 @@ function getPillarDirectories(blogDir: string): PillarDirInfo[] {
 
   for (const top of topEntries) {
     const topPath = path.join(blogDir, top.name);
+    const macroNumMatch = top.name.match(/^(\d{2})/);
+    const macroNum = macroNumMatch ? parseInt(macroNumMatch[1], 10) : 0;
+    const macroTitle = top.name.replace(/^\d{2}\s+-\s+/, "");
+
     // Check if this top folder is a Macro Category containing pillar subdirectories
     const subEntries = fs
       .readdirSync(topPath, { withFileTypes: true })
@@ -310,24 +426,33 @@ function getPillarDirectories(blogDir: string): PillarDirInfo[] {
       for (const sub of subEntries) {
         const numMatch = sub.name.match(/^(\d{2})/);
         if (!numMatch) continue;
+        const subNum = parseInt(numMatch[1], 10);
         results.push({
           dirPath: path.join(topPath, sub.name),
           dirName: sub.name,
-          num: parseInt(numMatch[1], 10),
+          num: subNum,
+          macroNum,
+          macroTitle,
         });
       }
     } else {
       const numMatch = top.name.match(/^(\d{2})/);
       if (!numMatch) continue;
+      const num = parseInt(numMatch[1], 10);
       results.push({
         dirPath: topPath,
         dirName: top.name,
-        num: parseInt(numMatch[1], 10),
+        num,
+        macroNum: 0,
+        macroTitle: "",
       });
     }
   }
 
-  return results.sort((a, b) => a.num - b.num);
+  return results.sort((a, b) => {
+    if (a.macroNum !== b.macroNum) return a.macroNum - b.macroNum;
+    return a.num - b.num;
+  });
 }
 
 function loadCategories(): Category[] {
@@ -338,7 +463,8 @@ function loadCategories(): Category[] {
   const pillarDirs = getPillarDirectories(BLOG_DIR);
   const categories: Category[] = [];
 
-  for (const pInfo of pillarDirs) {
+  for (let idx = 0; idx < pillarDirs.length; idx++) {
+    const pInfo = pillarDirs[idx];
     const num = pInfo.num;
     const dirPath = pInfo.dirPath;
     const dir = pInfo.dirName;
@@ -353,7 +479,6 @@ function loadCategories(): Category[] {
     let coverImage: string | undefined = undefined;
 
     const imagesPath = path.join(dirPath, "images");
-
     let descriptions: Record<string, string> = {};
 
     if (introFile) {
@@ -368,10 +493,9 @@ function loadCategories(): Category[] {
 
       // If not in markdown, check if pillar_XX_cover.* exists in images folder
       if (!coverImage && fs.existsSync(imagesPath)) {
-        const numPadded = String(num).padStart(2, "0");
         const found = fs.readdirSync(imagesPath).find((f) =>
           /\.(jpe?g|png|webp|avif|svg)$/i.test(f) &&
-          new RegExp(`^pillar_${numPadded}`, "i").test(f)
+          /^(pillar|cover)/i.test(f)
         );
         if (found && fs.existsSync(path.join(PUBLIC_IMAGES_DIR, found))) {
           coverImage = `/images/${found}`;
@@ -383,6 +507,9 @@ function loadCategories(): Category[] {
       if (introMatch) intro = introMatch[1].replace(/\*([^*]+)\*/g, "$1").trim();
     }
 
+    const slug = PILLAR_SLUG_BY_TITLE[categoryTitle] ?? slugifyGreek(categoryTitle);
+    const color = CATEGORY_COLORS[slug] ?? CATEGORY_COLORS[categoryTitle] ?? PALETTE[idx % PALETTE.length];
+
     // Read article files (not 00.)
     const articleFiles = files.filter((f) => /^\d{2,}\./.test(f) && !/^00\./.test(f));
     const articles: Article[] = [];
@@ -390,10 +517,9 @@ function loadCategories(): Category[] {
     for (const af of articleFiles) {
       const raw = fs.readFileSync(path.join(dirPath, af), "utf-8");
       const title = extractTitle(raw);
-      const slug = extractSlug(raw) || af.replace(/\.md$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const artSlug = extractSlug(raw) || af.replace(/\.md$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const readingTime = extractField(raw, "Χρόνος ανάγνωσης") || "3 λεπτά";
 
-      // Article gets its OWN image from markdown or matching convention in images folder
       let articleCover = extractImage(raw);
       if (!articleCover && fs.existsSync(imagesPath)) {
         const afNumMatch = af.match(/^(\d{2})/);
@@ -402,7 +528,7 @@ function loadCategories(): Category[] {
           const found = fs.readdirSync(imagesPath).find((f) =>
             /\.(jpe?g|png|webp|avif|svg)$/i.test(f) &&
             (new RegExp(`^(article_${artNum}|${artNum}[._-]|p0?${num}_0?${artNum})`, "i").test(f) ||
-            f.toLowerCase().includes(slug))
+            f.toLowerCase().includes(artSlug))
           );
           if (found && fs.existsSync(path.join(PUBLIC_IMAGES_DIR, found))) {
             articleCover = `/images/${found}`;
@@ -410,20 +536,19 @@ function loadCategories(): Category[] {
         }
       }
 
-      // Clean markdown, stripping H1 and cover image to prevent duplicates on the article page
       const cleaned = cleanMarkdownForDisplay(raw, articleCover);
       const html = marked.parse(cleaned) as string;
 
-      // Prefer handcrafted TOC description from pillar intro, otherwise extract clean text from body
-      const tocExcerpt = descriptions[slug];
+      const tocExcerpt = descriptions[artSlug];
       const excerpt = tocExcerpt || extractExcerptFromBody(cleaned);
 
       articles.push({
-        slug,
+        slug: artSlug,
         title,
-        categorySlug: categorySlug(num),
+        categorySlug: slug,
         categoryTitle,
         categoryNumber: num,
+        macroNumber: pInfo.macroNum,
         readingTime,
         excerpt,
         htmlContent: html,
@@ -433,13 +558,16 @@ function loadCategories(): Category[] {
     }
 
     categories.push({
-      slug: categorySlug(num),
+      slug,
       number: num,
+      macroNumber: pInfo.macroNum,
+      macroTitle: pInfo.macroTitle,
       title: categoryTitle,
       intro,
       relatedService,
       articles,
       coverImage,
+      color,
     });
   }
 
@@ -467,9 +595,13 @@ export function getArticleBySlug(slug: string): Article | undefined {
 
 export function getCategoryBySlug(slug: string): Category | undefined {
   const all = getAllCategories();
+  const clean = slug.toLowerCase().replace(/\/$/, "");
   return (
-    all.find((c) => c.slug === slug) ||
-    all.find((c) => `pillar-${String(c.number).padStart(2, "0")}` === slug)
+    all.find((c) => c.slug === clean) ||
+    all.find((c) => c.slug.replace(/^i-/, "") === clean.replace(/^i-/, "")) ||
+    all.find((c) => `pillar-${String(c.number).padStart(2, "0")}` === clean) ||
+    all.find((c) => `enotita-${c.macroNumber}-${c.number}` === clean) ||
+    all.find((c) => String(c.number) === clean)
   );
 }
 
@@ -509,105 +641,54 @@ export function loadMacroCategories(): ThematicCategory[] {
       .filter((e) => e.isDirectory() && /^\d{2}\s+-/.test(e.name))
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (subEntries.length > 0) {
-      const macroNumMatch = top.name.match(/^(\d{2})/);
-      const macroNum = macroNumMatch ? parseInt(macroNumMatch[1], 10) : 0;
-      const macroTitle = top.name.replace(/^\d{2}\s+-\s+/, "");
+    const macroNumMatch = top.name.match(/^(\d{2})/);
+    const macroNum = macroNumMatch ? parseInt(macroNumMatch[1], 10) : 0;
+    const macroTitle = top.name.replace(/^\d{2}\s+-\s+/, "");
 
-      let tagline = "";
-      const macroIndex = path.join(topPath, "index.md");
-      if (fs.existsSync(macroIndex)) {
-        const raw = fs.readFileSync(macroIndex, "utf-8");
-        const m = raw.match(/\*\*Εισαγωγή:\*\*\s*([^\n]+)/);
-        if (m) tagline = m[1].trim();
-      }
-
-      const pillarNumbers = subEntries
-        .map((e) => {
-          const m = e.name.match(/^(\d{2})/);
-          return m ? parseInt(m[1], 10) : 0;
-        })
-        .filter((n) => n > 0);
-
-      macros.push({
-        id: idMap[macroNum] ?? `enotita-${macroNum}`,
-        number: macroNum,
-        title: macroTitle,
-        tagline,
-        pillarNumbers,
-      });
+    let tagline = "";
+    const macroIndex = path.join(topPath, "index.md");
+    if (fs.existsSync(macroIndex)) {
+      const raw = fs.readFileSync(macroIndex, "utf-8");
+      const m = raw.match(/\*\*Εισαγωγή:\*\*\s*([^\n]+)/);
+      if (m) tagline = m[1].replace(/\*([^*]+)\*/g, "$1").trim();
     }
+
+    const pillarNumbers = subEntries
+      .map((e) => {
+        const m = e.name.match(/^(\d{2})/);
+        return m ? parseInt(m[1], 10) : 0;
+      })
+      .filter((n) => n > 0);
+
+    macros.push({
+      id: idMap[macroNum] ?? slugifyGreek(macroTitle),
+      number: macroNum,
+      title: macroTitle,
+      tagline,
+      pillarNumbers,
+    });
   }
 
-  if (macros.length > 0) return macros;
-
-  return [
-    {
-      id: "astiki-zoi",
-      number: 1,
-      title: "Αστική Ζωή & Καθημερινότητα",
-      tagline: "Βόλτα, πολυκατοικία, μετακινήσεις και πάρκα στην πόλη",
-      pillarNumbers: [1, 2, 8, 17],
-    },
-    {
-      id: "symperifora-psychologia",
-      number: 2,
-      title: "Συμπεριφορά, Επικοινωνία & Ψυχολογία",
-      tagline: "Αντιδραστικότητα, φόβοι, γλώσσα σώματος και η ψυχολογία του κηδεμόνα",
-      pillarNumbers: [3, 10, 12, 13, 18],
-    },
-    {
-      id: "stadia-zois-yiothesia",
-      number: 3,
-      title: "Στάδια Ζωής & Υιοθεσία",
-      tagline: "Από το κουτάβι και την υιοθεσία έως την τρίτη ηλικία και τα ένστικτα φυλών",
-      pillarNumbers: [4, 9, 11, 14, 15],
-    },
-    {
-      id: "ekpaidefsi-frontida",
-      number: 4,
-      title: "Εκπαίδευση, Φροντίδα & Εξοπλισμός",
-      tagline: "Θετική προσέγγιση, συνεργατική φροντίδα, παιδιά και επιλογή εξοπλισμού",
-      pillarNumbers: [5, 6, 7, 16],
-    },
-  ];
+  return macros;
 }
 
 export const THEMATIC_CATEGORIES: ThematicCategory[] = loadMacroCategories();
 export const THEMATIC_CLUSTERS = THEMATIC_CATEGORIES;
 
-export function getClusterByPillarNumber(pillarNum: number): ThematicCategory | undefined {
+export function getClusterByPillarNumber(pillarNum: number, macroNum?: number): ThematicCategory | undefined {
+  if (macroNum !== undefined) {
+    return THEMATIC_CATEGORIES.find((c) => c.number === macroNum);
+  }
   return THEMATIC_CATEGORIES.find((c) => c.pillarNumbers.includes(pillarNum));
+}
+
+export function getClusterByCategory(category: Category): ThematicCategory | undefined {
+  return THEMATIC_CATEGORIES.find((c) => c.number === category.macroNumber);
 }
 
 export function getCategoriesByClusterId(clusterId: string): Category[] {
   const cat = THEMATIC_CATEGORIES.find((c) => c.id === clusterId);
   if (!cat) return [];
   const all = getAllCategories();
-  return cat.pillarNumbers
-    .map((num) => all.find((c) => c.number === num))
-    .filter((c): c is Category => Boolean(c));
+  return all.filter((c) => c.macroNumber === cat.number);
 }
-
-// ─── Category color map ───────────────────────────────────────────────────────
-
-export const CATEGORY_COLORS: Record<number, string> = {
-  1:  "#C4852A",
-  2:  "#C4522A",
-  3:  "#A83228",
-  4:  "#5A7A54",
-  5:  "#6B7C3A",
-  6:  "#2E7D7A",
-  7:  "#9B4D6B",
-  8:  "#3A6B9B",
-  9:  "#6B4D9B",
-  10: "#B85C20",
-  11: "#7A2E4A",
-  12: "#3D5C38",
-  13: "#2E4D7A",
-  14: "#9B7A2E",
-  15: "#3D7A5C",
-  16: "#7A5C2E",
-  17: "#2E7A9B",
-  18: "#4D3D7A",
-};

@@ -27,6 +27,16 @@ async function optimizeImages() {
     fs.mkdirSync(PUBLIC_IMAGES_DIR, { recursive: true });
   }
 
+  const manifestPath = path.join(PUBLIC_IMAGES_DIR, ".manifest.json");
+  let manifest = {};
+  if (fs.existsSync(manifestPath)) {
+    try {
+      manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+    } catch {
+      manifest = {};
+    }
+  }
+
   const tasks = [];
 
   // Helper to collect tasks from an images directory
@@ -88,42 +98,52 @@ async function optimizeImages() {
     await Promise.all(
       chunk.map(async (task) => {
         const srcStat = fs.statSync(task.srcPath);
-
-        // 1. Copy original master file if missing or outdated
-        if (!fs.existsSync(task.destOrig) || srcStat.mtimeMs > fs.statSync(task.destOrig).mtimeMs) {
-          fs.copyFileSync(task.srcPath, task.destOrig);
-        }
-
-        // 2. Check if WebP derivatives already exist and are fresh
+        const origExists = fs.existsSync(task.destOrig);
         const cardExists = fs.existsSync(task.destCard);
         const heroExists = fs.existsSync(task.destHero);
 
         const cardFresh = cardExists && fs.statSync(task.destCard).mtimeMs >= srcStat.mtimeMs;
         const heroFresh = heroExists && fs.statSync(task.destHero).mtimeMs >= srcStat.mtimeMs;
+        const cached = manifest[task.file];
 
-        if (cardFresh && heroFresh) {
+        const isFresh =
+          origExists &&
+          cardExists &&
+          heroExists &&
+          ((cached && cached.size === srcStat.size) || (cardFresh && heroFresh));
+
+        if (isFresh) {
+          if (!cached || cached.size !== srcStat.size) {
+            manifest[task.file] = { size: srcStat.size };
+          }
           skippedCount++;
           return;
         }
 
-        // 3. Generate derivatives using sharp
+        // 1. Copy original master file if missing or outdated
+        if (!origExists || srcStat.mtimeMs > fs.statSync(task.destOrig).mtimeMs || (cached && cached.size !== srcStat.size)) {
+          fs.copyFileSync(task.srcPath, task.destOrig);
+        }
+
+        // 2. Check and generate derivatives using sharp
         try {
           const inputBuffer = fs.readFileSync(task.srcPath);
 
-          if (!cardFresh) {
+          if (!cardFresh || (cached && cached.size !== srcStat.size)) {
             await sharp(inputBuffer, { failOn: "none" })
               .resize({ width: 720, withoutEnlargement: true })
               .webp({ quality: 80, effort: 4 })
               .toFile(task.destCard);
           }
 
-          if (!heroFresh) {
+          if (!heroFresh || (cached && cached.size !== srcStat.size)) {
             await sharp(inputBuffer, { failOn: "none" })
               .resize({ width: 1400, withoutEnlargement: true })
               .webp({ quality: 82, effort: 4 })
               .toFile(task.destHero);
           }
 
+          manifest[task.file] = { size: srcStat.size };
           processedCount++;
           const origSize = srcStat.size;
           const cardSize = fs.statSync(task.destCard).size;
@@ -133,6 +153,12 @@ async function optimizeImages() {
         }
       })
     );
+  }
+
+  try {
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Failed to write image manifest:", err);
   }
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);

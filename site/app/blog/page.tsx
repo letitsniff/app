@@ -40,14 +40,14 @@ export default function BlogPage() {
             Περιήγηση ανά Θεματική Ενότητα:
           </span>
           <div className="flex flex-wrap gap-2 text-xs">
-            {THEMATIC_CLUSTERS.map((cluster, idx) => (
+            {THEMATIC_CLUSTERS.map((cluster) => (
               <a
                 key={cluster.id}
                 href={`#${cluster.id}`}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[var(--color-sandDark)] text-[var(--color-brownMid)] hover:border-[var(--color-amber)] hover:text-[var(--color-amber)] transition-colors"
               >
                 <span className="font-mono font-bold text-[var(--color-amber)]">
-                  0{idx + 1}.
+                  {String(cluster.number).padStart(2, "0")}.
                 </span>
                 <span>{cluster.title}</span>
               </a>
@@ -58,10 +58,8 @@ export default function BlogPage() {
 
       {/* ── Thematic Categories ─────────────────────────────── */}
       <div className="space-y-24">
-        {THEMATIC_CLUSTERS.map((cluster, clusterIdx) => {
-          const clusterCategories = cluster.pillarNumbers
-            .map((num) => categories.find((c) => c.number === num))
-            .filter((c): c is NonNullable<typeof c> => Boolean(c));
+        {THEMATIC_CLUSTERS.map((cluster) => {
+          const clusterCategories = categories.filter((c) => c.macroNumber === cluster.number);
 
           const clusterArticlesCount = clusterCategories.reduce(
             (sum, c) => sum + c.articles.length,
@@ -80,7 +78,7 @@ export default function BlogPage() {
                   <div className="flex items-center gap-2">
                     <Layers size={14} className="text-[var(--color-amber)]" />
                     <span className="text-xs font-mono font-bold tracking-widest uppercase text-[var(--color-amber)]">
-                      ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ 0{clusterIdx + 1}
+                      {`ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ ${String(cluster.number).padStart(2, "0")}`}
                     </span>
                   </div>
                   <span className="text-xs text-[var(--color-mutedLight)] font-mono">

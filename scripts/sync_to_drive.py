@@ -23,7 +23,9 @@ DOCS_DIR = WORKSPACE_DIR / "docs"
 STATE_FILE = WORKSPACE_DIR / ".sync" / "drive_state.json"
 
 sys.path.insert(0, str(WORKSPACE_DIR))
+sys.path.insert(0, str(WORKSPACE_DIR / ".sync"))
 from scripts.sync_images_to_drive import sync_images
+from path_mapper import map_local_rel_to_drive_rel
 
 def run_cmd(*args):
     return subprocess.run(list(args), capture_output=True, text=True)
@@ -54,7 +56,10 @@ def sync_markdown_to_drive(verbose=True):
     for md_file in md_files:
         if md_file.name == "index.md":
             continue
-        rel_path = f"blog/{md_file.parent.name}/{md_file.name}"
+        local_rel = str(md_file.relative_to(DOCS_DIR))
+        rel_path = map_local_rel_to_drive_rel(local_rel)
+        if not rel_path:
+            continue
         doc_info = tracked_files.get(rel_path)
         if not doc_info or not doc_info.get("id"):
             continue
