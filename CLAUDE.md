@@ -293,8 +293,10 @@ After modifying Markdown files and adding images:
     - Sanitizes markdown exports by removing inline base64 image strings.
     - When changes are detected: commits changes, pushes to `main`, and dispatches `.github/workflows/deploy.yml`.
 - **Local Scripts & Daemon:**
-  - `python3 scripts/sync_images_to_drive.py`: Uploads all local article images to Google Drive.
-  - `.sync/sync_daemon.py`: Background daemon keeping local `docs/` and Drive in sync.
+  - `systemctl --user status letitsniff-sync`: Native systemd user background service actively syncing laptop <-> Google Drive.
+  - `journalctl --user -u letitsniff-sync -f`: Live logs of the sync service.
+  - `python3 scripts/sync_images_to_drive.py`: Standalone upload script for article images.
+  - `.sync/sync_daemon.py`: Python daemon script executed by the systemd service.
 
 ## URL & Route Structure
 - `/` — Homepage
