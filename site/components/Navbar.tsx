@@ -2,12 +2,25 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, X, ArrowRight, Mail } from "lucide-react";
 
 const NAV_LINKS = [
-  { href: "/blog", label: "Άρθρα" },
-  { href: "/ypiresies", label: "Υπηρεσίες" },
-  { href: "/o-alexandros", label: "Ο Αλέξανδρος" },
+  {
+    href: "/blog",
+    label: "Άρθρα & Οδηγοί",
+    desc: "18 ενότητες, 100+ οδηγοί θετικής εκπαίδευσης",
+  },
+  {
+    href: "/ypiresies",
+    label: "Υπηρεσίες",
+    desc: "Προγράμματα κατ' οίκον & στην πόλη",
+  },
+  {
+    href: "/o-alexandros",
+    label: "Ο Αλέξανδρος",
+    desc: "Φιλοσοφία, αρχές & επικοινωνία",
+  },
 ];
 
 function PawMark() {
@@ -31,15 +44,27 @@ function PawMark() {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
+  // Close menu on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Subtle border on scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Prevent background scrolling when menu is open
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
     return () => {
       document.body.style.overflow = "";
     };
@@ -48,13 +73,13 @@ export default function Navbar() {
   return (
     <header
       className={`sticky top-0 z-50 transition-[border-color] duration-200 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b ${
-        scrolled
+        scrolled || open
           ? "border-[var(--color-sandDark)]"
           : "border-transparent"
       }`}
     >
       <nav className="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
-        {/* Logo + nav links — left-aligned together */}
+        {/* Logo + desktop nav links */}
         <div className="flex items-center gap-8">
           <Link
             href="/"
@@ -65,56 +90,115 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-sm text-[var(--color-muted)] hover:text-[var(--color-brown)] transition-colors"
-              >
-                {l.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((l) => {
+              const isActive =
+                pathname === l.href ||
+                (l.href !== "/" && pathname.startsWith(l.href));
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`text-sm transition-colors ${
+                    isActive
+                      ? "text-[var(--color-brown)] font-semibold border-b-2 border-[var(--color-amber)] pb-0.5"
+                      : "text-[var(--color-muted)] hover:text-[var(--color-brown)]"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
-        {/* CTA — right-aligned */}
+        {/* CTA — desktop right-aligned */}
         <Link
           href="/o-alexandros#epikoinonia"
-          className="hidden md:inline-flex bg-[var(--color-brown)] text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-[var(--color-brownMid)] transition-colors"
+          className="hidden md:inline-flex bg-[var(--color-brown)] text-white text-xs font-semibold uppercase tracking-wider px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
         >
           Επικοινωνία
         </Link>
 
-        {/* Mobile toggle */}
+        {/* Mobile toggle button */}
         <button
-          className="md:hidden p-2 text-[var(--color-brown)]"
+          className="md:hidden p-2 -mr-2 text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors focus:outline-none"
           onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
+          aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
+          aria-expanded={open}
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </nav>
 
-      {/* Mobile full-screen overlay */}
+      {/* Mobile Drawer (Structured, touch-friendly, cleanly bounded) */}
       {open && (
-        <div className="md:hidden fixed inset-0 top-14 bg-[var(--color-cream)] z-40 flex flex-col items-center justify-center gap-8">
-          {NAV_LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="font-heading text-2xl text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors"
-              onClick={() => setOpen(false)}
+        <div className="md:hidden fixed inset-x-0 top-14 bottom-0 bg-[var(--color-cream)] z-40 flex flex-col justify-between overflow-y-auto border-t border-[var(--color-sandDark)]">
+          <div className="px-5 py-6 space-y-3">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-mutedLight)] mb-2">
+              Μενού Πλοήγησης
+            </p>
+            {NAV_LINKS.map((l) => {
+              const isActive =
+                pathname === l.href ||
+                (l.href !== "/" && pathname.startsWith(l.href));
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`block p-4 border transition-colors ${
+                    isActive
+                      ? "bg-white border-l-4 border-l-[var(--color-amber)] border-y-[var(--color-sandDark)]/60 border-r-[var(--color-sandDark)]/60"
+                      : "bg-white/70 border-[var(--color-sandDark)]/60 hover:bg-white"
+                  }`}
+                  onClick={() => setOpen(false)}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span
+                      className={`font-heading text-xl ${
+                        isActive
+                          ? "text-[var(--color-brown)] font-bold"
+                          : "text-[var(--color-brown)]"
+                      }`}
+                    >
+                      {l.label}
+                    </span>
+                    <ArrowRight
+                      size={16}
+                      className={
+                        isActive
+                          ? "text-[var(--color-amber)]"
+                          : "text-[var(--color-mutedLight)]"
+                      }
+                    />
+                  </div>
+                  <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+                    {l.desc}
+                  </p>
+                </Link>
+              );
+            })}
+
+            <div className="pt-3">
+              <Link
+                href="/o-alexandros#epikoinonia"
+                className="flex items-center justify-center gap-2 w-full bg-[var(--color-brown)] text-white font-medium py-3.5 text-sm hover:bg-[var(--color-brownMid)] transition-colors"
+                onClick={() => setOpen(false)}
+              >
+                Επικοινωνία με τον Αλέξανδρο <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick contact bottom bar */}
+          <div className="p-5 border-t border-[var(--color-sandDark)]/70 bg-[var(--color-sand)]/30 text-xs text-[var(--color-muted)] flex items-center justify-between">
+            <span>Αθήνα & Αττική</span>
+            <a
+              href="mailto:info@letitsniff.gr"
+              className="flex items-center gap-1.5 text-[var(--color-brown)] font-medium hover:text-[var(--color-amber)]"
             >
-              {l.label}
-            </Link>
-          ))}
-          <Link
-            href="/o-alexandros#epikoinonia"
-            className="bg-[var(--color-brown)] text-white font-medium px-6 py-3 rounded-full hover:bg-[var(--color-brownMid)] transition-colors mt-4"
-            onClick={() => setOpen(false)}
-          >
-            Επικοινωνία
-          </Link>
+              <Mail size={13} /> info@letitsniff.gr
+            </a>
+          </div>
         </div>
       )}
     </header>
