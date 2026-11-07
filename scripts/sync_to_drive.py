@@ -15,6 +15,7 @@ import json
 import re
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -100,9 +101,17 @@ def sync_markdown_to_drive(verbose=True):
             temp_path = tf.name
 
         try:
-            res = run_cmd("gdrive", "mutate", "update", doc_id, temp_path, "--mime-type", "text/markdown")
-            if res.returncode != 0:
+            res = None
+            for attempt in range(4):
+                res = run_cmd("gdrive", "mutate", "update", doc_id, temp_path, "--mime-type", "text/markdown")
+                if res.returncode == 0:
+                    break
+                if "RATE_LIMIT_EXCEEDED" in res.stderr or "403" in res.stderr or "429" in res.stderr:
+                    time.sleep(2 ** attempt + 1.5)
+                    continue
                 return False, rel_path, res.stderr.strip()
+            else:
+                return False, rel_path, res.stderr.strip() if res else "Unknown error"
 
             # Retrieve updated modifiedTime
             info_res = run_cmd("gdrive", "readonly", "info", doc_id, "--json")
@@ -119,7 +128,7 @@ def sync_markdown_to_drive(verbose=True):
             if os.path.exists(temp_path):
                 os.remove(temp_path)
 
-    with ThreadPoolExecutor(max_workers=6) as executor:
+    with ThreadPoolExecutor(max_workers=3) as executor:
         future_to_task = {executor.submit(update_single_doc, t): t for t in tasks}
         for future in as_completed(future_to_task):
             task = future_to_task[future]
