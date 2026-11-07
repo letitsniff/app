@@ -76,11 +76,11 @@ export default function ArticleCard({
   return (
     <Link
       href={`/blog/${article.slug}/`}
-      className="group flex flex-col justify-between border-t border-[var(--color-sandDark)] pt-4 transition-colors"
+      className="group flex flex-col justify-between border-t border-[var(--color-sandDark)]/60 pt-6 pb-2 transition-all"
     >
       <div>
         {article.coverImage && (
-          <div className="overflow-hidden bg-[var(--color-sand)] mb-4">
+          <div className="overflow-hidden bg-[var(--color-sand)] mb-4 rounded-sm border border-[var(--color-sandDark)]/40">
             <picture>
               {variants?.card && (
                 <source type="image/webp" srcSet={variants.card} />
@@ -93,7 +93,7 @@ export default function ArticleCard({
                 loading={priority ? "eager" : "lazy"}
                 fetchPriority={priority ? "high" : "low"}
                 decoding="async"
-                className="w-full aspect-[16/10] object-cover transition-opacity duration-300 group-hover:opacity-90"
+                className="w-full aspect-[16/10] object-cover transition-transform duration-500 group-hover:scale-105"
               />
             </picture>
           </div>
@@ -104,7 +104,7 @@ export default function ArticleCard({
         >
           {article.categoryTitle}
         </span>
-        <h3 className="font-heading text-lg md:text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-2 break-words">
+        <h3 className="font-heading text-lg md:text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-3 break-words">
           {article.title}
         </h3>
         <p className="text-sm text-[var(--color-muted)] leading-relaxed line-clamp-2 mb-4">
@@ -112,7 +112,7 @@ export default function ArticleCard({
         </p>
       </div>
 
-      <div className="flex items-center gap-1.5 text-xs text-[var(--color-mutedLight)] mt-auto pt-2">
+      <div className="flex items-center gap-1.5 text-xs text-[var(--color-mutedLight)] mt-auto pt-3 border-t border-[var(--color-sand)]/50">
         <Clock size={12} />
         <span>{article.readingTime}</span>
       </div>

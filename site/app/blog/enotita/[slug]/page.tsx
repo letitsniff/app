@@ -78,7 +78,7 @@ export default async function EnotitaPage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* ── Page Header ─────────────────────────────────── */}
-      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-8 pb-8 sm:pt-12 sm:pb-10">
+      <header className="border-b border-[var(--color-sandDark)]/60 bg-[var(--color-cream)] pt-12 pb-12 sm:pt-16 sm:pb-14">
         <div className="max-w-4xl mx-auto px-5">
           {/* Breadcrumb navigation */}
           <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6 min-w-0">
@@ -98,7 +98,7 @@ export default async function EnotitaPage({ params }: Props) {
           {/* Pillar badge & cluster */}
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 mb-4">
             <span
-              className="text-xs font-mono font-bold tracking-wider px-2.5 py-1 bg-white border"
+              className="text-xs font-mono font-bold tracking-wider px-2.5 py-1 bg-white border rounded-xs"
               style={{ color, borderColor: `${color}40` }}
             >
               {ui.pillarBadge} {String(category.number).padStart(2, "0")}
@@ -109,7 +109,7 @@ export default async function EnotitaPage({ params }: Props) {
                 {cluster.title}
               </span>
             )}
-            <span className="text-xs text-[var(--color-mutedLight)]">
+            <span className="text-xs text-[var(--color-mutedLight)] font-mono">
               · {category.articles.length} {category.articles.length === 1 ? ui.guideSingleSuffix : ui.guideCountSuffix}
             </span>
           </div>
@@ -119,7 +119,7 @@ export default async function EnotitaPage({ params }: Props) {
           </h1>
 
           {category.intro && (
-            <p className="text-base sm:text-lg text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6">
+            <p className="text-base sm:text-lg text-[var(--color-muted)] leading-relaxed max-w-2xl mb-8 font-light">
               {category.intro}
             </p>
           )}
@@ -135,7 +135,7 @@ export default async function EnotitaPage({ params }: Props) {
                   <Link
                     key={srv.slug}
                     href={`/ypiresies/${srv.slug}/`}
-                    className="inline-flex items-center gap-1.5 font-semibold text-[var(--color-amber)] hover:text-[var(--color-brown)] bg-white px-3 py-1.5 border border-[var(--color-sandDark)] transition-colors"
+                    className="inline-flex items-center gap-1.5 font-semibold text-[var(--color-amber)] hover:text-[var(--color-brown)] bg-white px-3.5 py-2 border border-[var(--color-sandDark)]/70 hover:shadow-xs rounded-sm transition-all"
                   >
                     <span>{srv.title}</span>
                     <ArrowRight size={12} />
@@ -148,10 +148,10 @@ export default async function EnotitaPage({ params }: Props) {
       </header>
 
       {/* ── Content Container ───────────────────────────── */}
-      <div className="max-w-4xl mx-auto px-5 py-12">
+      <div className="max-w-4xl mx-auto px-5 py-14 sm:py-20">
         {/* Cover Image */}
         {category.coverImage && (
-          <div className="mb-14 overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)] aspect-[16/9] w-full">
+          <div className="mb-14 overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/60 aspect-[16/9] w-full rounded-sm shadow-sm">
             <picture>
               {catVariants?.card && (
                 <source type="image/webp" srcSet={catVariants.card} />
@@ -171,11 +171,11 @@ export default async function EnotitaPage({ params }: Props) {
         )}
 
         {/* Articles Section */}
-        <section className="mb-16">
-          <div className="flex items-baseline justify-between mb-8 pb-3 border-b border-[var(--color-sandDark)]">
+        <section className="mb-20">
+          <div className="flex items-baseline justify-between mb-10 pb-4 border-b border-[var(--color-sandDark)]/60">
             <div className="flex items-center gap-2">
               <BookOpen size={16} className="text-[var(--color-amber)]" />
-              <h2 className="font-heading text-2xl text-[var(--color-brown)]">
+              <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)]">
                 {ui.clusterContents}
               </h2>
             </div>
@@ -185,7 +185,7 @@ export default async function EnotitaPage({ params }: Props) {
           </div>
 
           {category.articles.length > 0 ? (
-            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+            <div className="grid sm:grid-cols-2 gap-8 md:gap-10">
               {category.articles.map((article, idx) => (
                 <ArticleCard
                   key={article.slug}
@@ -202,16 +202,16 @@ export default async function EnotitaPage({ params }: Props) {
         </section>
 
         {/* ── Pillar Navigation (Prev / Next) ──────────────── */}
-        <nav className="pt-10 border-t border-[var(--color-sandDark)] grid sm:grid-cols-2 gap-4">
+        <nav className="pt-12 border-t border-[var(--color-sandDark)]/60 grid sm:grid-cols-2 gap-5">
           {prevCategory ? (
             <Link
               href={`/blog/enotita/${prevCategory.slug}/`}
-              className="group block p-4 bg-white border border-[var(--color-sandDark)]/60 hover:border-[var(--color-sandDark)] transition-colors text-left"
+              className="group block p-5 bg-white border border-[var(--color-sandDark)]/60 hover:border-[var(--color-amber)] hover:shadow-xs rounded-sm transition-all text-left"
             >
               <span className="inline-flex items-center gap-1 text-xs text-[var(--color-mutedLight)] group-hover:text-[var(--color-amber)] transition-colors mb-1 font-mono">
                 <ArrowLeft size={12} /> {ui.prevPillar}
               </span>
-              <p className="font-heading text-sm text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors line-clamp-1">
+              <p className="font-heading text-base text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors line-clamp-1">
                 {String(prevCategory.number).padStart(2, "0")}. {prevCategory.title}
               </p>
             </Link>
@@ -222,12 +222,12 @@ export default async function EnotitaPage({ params }: Props) {
           {nextCategory && (
             <Link
               href={`/blog/enotita/${nextCategory.slug}/`}
-              className="group block p-4 bg-white border border-[var(--color-sandDark)]/60 hover:border-[var(--color-sandDark)] transition-colors text-right sm:col-start-2"
+              className="group block p-5 bg-white border border-[var(--color-sandDark)]/60 hover:border-[var(--color-amber)] hover:shadow-xs rounded-sm transition-all text-right sm:col-start-2"
             >
               <span className="inline-flex items-center justify-end gap-1 text-xs text-[var(--color-mutedLight)] group-hover:text-[var(--color-amber)] transition-colors mb-1 font-mono">
                 {ui.nextPillar} <ArrowRight size={12} />
               </span>
-              <p className="font-heading text-sm text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors line-clamp-1">
+              <p className="font-heading text-base text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors line-clamp-1">
                 {String(nextCategory.number).padStart(2, "0")}. {nextCategory.title}
               </p>
             </Link>
@@ -235,7 +235,7 @@ export default async function EnotitaPage({ params }: Props) {
         </nav>
 
         {/* Return to Library Link */}
-        <div className="mt-8 text-center">
+        <div className="mt-12 text-center">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)] hover:text-[var(--color-brown)] transition-colors"

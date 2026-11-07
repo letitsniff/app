@@ -62,7 +62,7 @@ export default async function ArticlePage({ params }: Props) {
 
       <article className="min-h-screen">
         {/* ── Editorial Header ────────────────────────────── */}
-        <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-8 pb-8 sm:pt-12 sm:pb-10">
+        <header className="border-b border-[var(--color-sandDark)]/60 bg-[var(--color-cream)] pt-12 pb-10 sm:pt-16 sm:pb-14">
           <div className="max-w-4xl mx-auto px-5">
             {/* Breadcrumb navigation */}
             <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6 min-w-0">
@@ -82,8 +82,8 @@ export default async function ArticlePage({ params }: Props) {
 
             <div className="flex items-center gap-2 mb-3">
               <span
-                className="text-xs font-semibold tracking-wider uppercase"
-                style={{ color }}
+                className="text-xs font-semibold tracking-wider uppercase px-2 py-0.5 rounded-xs"
+                style={{ color, backgroundColor: `${color}15` }}
               >
                 {article.categoryTitle}
               </span>
@@ -93,7 +93,7 @@ export default async function ArticlePage({ params }: Props) {
               {article.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--color-muted)] pt-4 border-t border-[var(--color-sand)]">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--color-muted)] pt-5 border-t border-[var(--color-sand)]/70">
               <span className="flex items-center gap-1.5 font-medium shrink-0">
                 <Clock size={13} /> {article.readingTime}
               </span>
@@ -109,8 +109,8 @@ export default async function ArticlePage({ params }: Props) {
         {article.coverImage && (() => {
           const variants = getImageVariants(article.coverImage);
           return (
-            <div className="max-w-4xl mx-auto px-5 pt-8">
-              <div className="overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/60">
+            <div className="max-w-4xl mx-auto px-5 pt-10 sm:pt-12">
+              <div className="overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/60 rounded-sm shadow-sm">
                 <picture>
                   {variants?.card && variants?.hero && (
                     <source
@@ -136,7 +136,7 @@ export default async function ArticlePage({ params }: Props) {
         })()}
 
         {/* ── Content & Editorial Sidebar ─────────────────── */}
-        <div className="max-w-5xl mx-auto px-5 py-8 sm:py-12 md:py-16">
+        <div className="max-w-5xl mx-auto px-5 py-12 sm:py-16 md:py-24">
           <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-16 items-start">
             {/* Article Prose */}
             <main className="min-w-0 w-full">
@@ -144,19 +144,16 @@ export default async function ArticlePage({ params }: Props) {
             </main>
 
             {/* Sticky Sidebar */}
-            <aside className="mt-14 lg:mt-0 space-y-8 lg:sticky lg:top-20">
+            <aside className="mt-16 lg:mt-0 space-y-8 lg:sticky lg:top-20">
               {/* Contextual Consultation Box */}
-              <div
-                className="bg-white border-l-4 p-6 border-y border-r border-[var(--color-sandDark)]/70"
-                style={{ borderLeftColor: color }}
-              >
-                <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-2">
+              <div className="bg-white border border-[var(--color-sandDark)]/60 p-6 sm:p-7 rounded-sm shadow-xs">
+                <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-2">
                   {consultationBox.kicker}
                 </p>
                 <h3 className="font-heading text-lg text-[var(--color-brown)] mb-3">
                   {consultationBox.title}
                 </h3>
-                <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-5">
+                <p className="text-xs sm:text-sm text-[var(--color-muted)] leading-relaxed mb-5">
                   {consultationBox.text}
                 </p>
                 <Link
@@ -169,7 +166,7 @@ export default async function ArticlePage({ params }: Props) {
 
               {/* Related Service */}
               {relatedService && (
-                <div className="bg-[var(--color-sand)]/40 border border-[var(--color-sandDark)] p-6">
+                <div className="bg-[var(--color-sand)]/30 border border-[var(--color-sandDark)]/60 p-6 sm:p-7 rounded-sm">
                   <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
                     {ui.relatedService}
                   </p>
@@ -191,13 +188,13 @@ export default async function ArticlePage({ params }: Props) {
 
               {/* In the same category */}
               {category && category.articles.length > 1 && (
-                <div className="pt-6 border-t border-[var(--color-sandDark)]">
+                <div className="pt-8 border-t border-[var(--color-sandDark)]/60">
                   <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
                     {ui.moreInCategory}
                   </p>
                   <Link
                     href={`/blog/enotita/${category.slug}/`}
-                    className="font-heading text-sm text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors block mb-3"
+                    className="font-heading text-sm text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors block mb-4"
                   >
                     {category.title} →
                   </Link>
@@ -224,16 +221,16 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Related articles at bottom */}
           {related.length > 0 && (
-            <section className="mt-20 pt-10 border-t border-[var(--color-sandDark)]">
-              <div className="mb-8">
+            <section className="mt-24 pt-14 border-t border-[var(--color-sandDark)]/60">
+              <div className="mb-10">
                 <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
                   {ui.continueReading}
                 </p>
-                <h3 className="font-heading text-2xl text-[var(--color-brown)]">
+                <h3 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)]">
                   {ui.relatedArticles}
                 </h3>
               </div>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10">
                 {related.map((a) => (
                   <ArticleCard key={a.slug} article={a} />
                 ))}

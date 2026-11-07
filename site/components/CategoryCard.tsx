@@ -17,12 +17,11 @@ export default function CategoryCard({ category, showCover = false }: Props) {
   return (
     <Link
       href={`/blog/enotita/${category.slug}/`}
-      className="group flex flex-col justify-between bg-white border-l-4 transition-colors border-y border-r border-[var(--color-sandDark)]/60 hover:border-r-[var(--color-sandDark)]"
-      style={{ borderLeftColor: color }}
+      className="group flex flex-col justify-between bg-white border border-[var(--color-sandDark)]/60 hover:border-[var(--color-amber)] hover:shadow-md transition-all duration-300 rounded-sm overflow-hidden"
     >
       <div>
         {showCover && category.coverImage && (
-          <div className="overflow-hidden bg-[var(--color-sand)] aspect-[16/9] w-full border-b border-[var(--color-sand)]">
+          <div className="overflow-hidden bg-[var(--color-sand)] aspect-[16/9] w-full border-b border-[var(--color-sandDark)]/50">
             <picture>
               {catVariants?.card && (
                 <source type="image/webp" srcSet={catVariants.card} />
@@ -34,41 +33,41 @@ export default function CategoryCard({ category, showCover = false }: Props) {
                 height={768}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </picture>
           </div>
         )}
 
-        <div className="p-5 sm:p-6 min-w-0">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-2">
+        <div className="p-6 sm:p-7 min-w-0">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-3">
             <span
-              className="text-xs font-mono font-bold tracking-wider"
-              style={{ color }}
+              className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded-xs"
+              style={{ color, backgroundColor: `${color}15` }}
             >
               {ui.pillarBadge} {String(category.number).padStart(2, "0")}
             </span>
-            <span className="text-xs text-[var(--color-mutedLight)] font-medium">
+            <span className="text-xs text-[var(--color-mutedLight)] font-medium font-mono">
               {category.articles.length} {category.articles.length === 1 ? ui.articleSingleSuffix : ui.articleCountSuffix}
             </span>
           </div>
 
-          <h3 className="font-heading text-lg sm:text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-2 break-words">
+          <h3 className="font-heading text-xl sm:text-2xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-3 break-words">
             {category.title}
           </h3>
 
           {category.intro && (
-            <p className="text-sm text-[var(--color-muted)] leading-relaxed line-clamp-2">
+            <p className="text-sm text-[var(--color-muted)] leading-relaxed line-clamp-3">
               {category.intro}
             </p>
           )}
         </div>
       </div>
 
-      <div className="px-5 sm:px-6 pb-5 pt-0">
-        <div className="pt-3 border-t border-[var(--color-sand)] flex items-center justify-between text-xs font-semibold text-[var(--color-brownMid)] group-hover:text-[var(--color-amber)] transition-colors">
+      <div className="px-6 pb-6 sm:px-7 sm:pb-7 pt-0">
+        <div className="pt-4 border-t border-[var(--color-sand)]/70 flex items-center justify-between text-xs font-semibold text-[var(--color-brownMid)] group-hover:text-[var(--color-amber)] transition-colors">
           <span>{ui.exploreCluster}</span>
-          <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+          <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
     </Link>

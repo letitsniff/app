@@ -11,8 +11,8 @@ export default function Footer({ settings }: FooterProps) {
   const copyright = global.copyright.replace("{year}", String(year));
 
   return (
-    <footer className="border-t border-[var(--color-sandDark)] mt-20">
-      <div className="max-w-5xl mx-auto px-5 py-10">
+    <footer className="border-t border-[var(--color-sandDark)]/60 mt-28 md:mt-36">
+      <div className="max-w-5xl mx-auto px-5 py-14">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <p className="font-heading text-lg text-[var(--color-brown)] mb-1">

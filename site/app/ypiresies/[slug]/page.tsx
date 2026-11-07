@@ -43,7 +43,7 @@ export default async function ServicePage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-8 pb-8 sm:pt-12 sm:pb-12">
+      <header className="border-b border-[var(--color-sandDark)]/60 bg-[var(--color-cream)] pt-12 pb-12 sm:pt-16 sm:pb-16">
         <div className="max-w-4xl mx-auto px-5">
           <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6 min-w-0">
             <Link href="/ypiresies" className="hover:text-[var(--color-brown)] transition-colors shrink-0">
@@ -53,25 +53,25 @@ export default async function ServicePage({ params }: Props) {
             <span className="text-[var(--color-brown)] truncate min-w-0">{service.title}</span>
           </nav>
 
-          {!imageVariants && <div className="text-4xl mb-3">{service.icon}</div>}
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4 break-words">
+          {!imageVariants && <div className="text-4xl mb-4">{service.icon}</div>}
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-5 break-words">
             {service.title}
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
+          <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-8 font-light">
             {service.tagline}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs mb-8">
+          <div className="flex flex-wrap items-center gap-4 text-xs mb-10">
             <Link
               href="/o-alexandros#epikoinonia"
-              className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors w-full sm:w-auto"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white font-medium px-7 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors w-full sm:w-auto shadow-xs"
             >
               {ui.bookSession} <ArrowRight size={13} />
             </Link>
           </div>
 
           {imageVariants && (
-            <div className="relative aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/80 shadow-xs">
+            <div className="relative aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/60 shadow-sm rounded-sm">
               <picture>
                 <source srcSet={imageVariants.hero} media="(min-width: 768px)" type="image/webp" />
                 <source srcSet={imageVariants.card} type="image/webp" />
@@ -89,31 +89,31 @@ export default async function ServicePage({ params }: Props) {
       </header>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-5 py-8 sm:py-12 md:py-16">
+      <div className="max-w-5xl mx-auto px-5 py-12 sm:py-16 md:py-24">
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-16 items-start">
           <main className="min-w-0 w-full">
             <Prose html={service.htmlContent} />
           </main>
 
-          <aside className="mt-14 lg:mt-0 space-y-6 lg:sticky lg:top-20">
+          <aside className="mt-16 lg:mt-0 space-y-8 lg:sticky lg:top-20">
             {/* Direct CTA */}
-            <div className="bg-[var(--color-brown)] text-white p-6">
+            <div className="bg-[var(--color-brown)] text-white p-7 rounded-sm shadow-sm">
               <h3 className="font-heading text-lg text-white mb-2">
                 {assessmentBox.title}
               </h3>
-              <p className="text-xs text-[var(--color-sandDark)] mb-5 leading-relaxed font-light">
+              <p className="text-xs text-[var(--color-sandDark)] mb-6 leading-relaxed font-light">
                 {assessmentBox.text}
               </p>
               <Link
                 href={assessmentBox.buttonLink}
-                className="block w-full text-center bg-[var(--color-amber)] text-white text-xs font-semibold uppercase tracking-wider py-2.5 hover:bg-[var(--color-amberDark)] transition-colors"
+                className="block w-full text-center bg-[var(--color-amber)] text-white text-xs font-semibold uppercase tracking-wider py-3 hover:bg-[var(--color-amberDark)] transition-colors rounded-xs shadow-xs"
               >
                 {assessmentBox.buttonText}
               </Link>
             </div>
 
             {/* Other services */}
-            <div className="pt-6 border-t border-[var(--color-sandDark)]">
+            <div className="pt-8 border-t border-[var(--color-sandDark)]/60">
               <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-semibold mb-3">
                 {ui.allServices}
               </p>
@@ -124,7 +124,7 @@ export default async function ServicePage({ params }: Props) {
                     <li key={s.slug}>
                       <Link
                         href={`/ypiresies/${s.slug}/`}
-                        className="flex items-center gap-2 text-[var(--color-muted)] hover:text-[var(--color-brown)] transition-colors py-1"
+                        className="flex items-center gap-2.5 text-[var(--color-muted)] hover:text-[var(--color-brown)] transition-colors py-1.5"
                       >
                         <span>{s.icon}</span>
                         <span>{s.title}</span>
@@ -138,16 +138,16 @@ export default async function ServicePage({ params }: Props) {
 
         {/* Related articles */}
         {relatedArticles.length > 0 && (
-          <section className="mt-20 pt-10 border-t border-[var(--color-sandDark)]">
-            <div className="mb-8">
+          <section className="mt-24 pt-14 border-t border-[var(--color-sandDark)]/60">
+            <div className="mb-10">
               <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
                 {ui.relatedTopics}
               </p>
-              <h3 className="font-heading text-2xl text-[var(--color-brown)]">
+              <h3 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)]">
                 {ui.articlesForService}
               </h3>
             </div>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10">
               {relatedArticles.slice(0, 3).map((a) => (
                 <ArticleCard key={a.slug} article={a} />
               ))}
