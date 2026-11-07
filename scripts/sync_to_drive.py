@@ -16,6 +16,7 @@ import re
 import subprocess
 import tempfile
 import time
+import hashlib
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -53,13 +54,14 @@ def sync_markdown_to_drive(verbose=True):
     blog_dir = DOCS_DIR / "blog"
     services_dir = DOCS_DIR / "services"
     site_dir = DOCS_DIR / "site"
-    md_files = sorted(blog_dir.glob("**/*.md"))
+    md_files = [f for f in sorted(blog_dir.glob("**/*.md")) if "images" not in f.parts]
     if services_dir.exists():
         md_files += sorted(services_dir.glob("*.md"))
     if site_dir.exists():
         md_files += sorted(site_dir.glob("*.md"))
 
     tasks = []
+    skipped_count = 0
     for md_file in md_files:
         local_rel = str(md_file.relative_to(DOCS_DIR))
         rel_path = map_local_rel_to_drive_rel(local_rel)
@@ -85,16 +87,28 @@ def sync_markdown_to_drive(verbose=True):
             return match.group(0)
 
         drive_ready_content = re.sub(r"!\[(.*?)\]\((.*?)\)", to_drive_link, local_content)
-        tasks.append((md_file, rel_path, doc_id, drive_ready_content))
+        content_hash = hashlib.sha256(drive_ready_content.encode("utf-8")).hexdigest()
+
+        # If file content is identical to last sync, skip upload!
+        if doc_info.get("contentHash") == content_hash:
+            skipped_count += 1
+            continue
+
+        tasks.append((md_file, rel_path, doc_id, drive_ready_content, content_hash))
+
+    if not tasks:
+        if verbose:
+            print(f"✨ All {len(md_files)} documents are up-to-date with Google Drive (0 modified).")
+        return 0
 
     if verbose:
-        print(f"🚀 Updating {len(tasks)} documents on Google Drive...")
+        print(f"🚀 Updating {len(tasks)} modified document(s) on Google Drive ({skipped_count} unchanged skipped)...")
 
     updated_count = 0
     errors = []
 
     def update_single_doc(task):
-        md_file, rel_path, doc_id, drive_content = task
+        md_file, rel_path, doc_id, drive_content, content_hash = task
         # Create temp file with drive_ready_content (preserves local file with relative paths!)
         with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".md", delete=False) as tf:
             tf.write(drive_content)
@@ -109,9 +123,9 @@ def sync_markdown_to_drive(verbose=True):
                 if "RATE_LIMIT_EXCEEDED" in res.stderr or "403" in res.stderr or "429" in res.stderr:
                     time.sleep(2 ** attempt + 1.5)
                     continue
-                return False, rel_path, res.stderr.strip()
+                return False, rel_path, res.stderr.strip(), content_hash
             else:
-                return False, rel_path, res.stderr.strip() if res else "Unknown error"
+                return False, rel_path, res.stderr.strip() if res else "Unknown error", content_hash
 
             # Retrieve updated modifiedTime
             info_res = run_cmd("gdrive", "readonly", "info", doc_id, "--json")
@@ -123,7 +137,7 @@ def sync_markdown_to_drive(verbose=True):
                 except Exception:
                     pass
 
-            return True, rel_path, mod_time
+            return True, rel_path, mod_time, content_hash
         finally:
             if os.path.exists(temp_path):
                 os.remove(temp_path)
@@ -132,11 +146,12 @@ def sync_markdown_to_drive(verbose=True):
         future_to_task = {executor.submit(update_single_doc, t): t for t in tasks}
         for future in as_completed(future_to_task):
             task = future_to_task[future]
-            success, rel_path, result = future.result()
+            success, rel_path, result, c_hash = future.result()
             if success:
                 updated_count += 1
                 if result:
                     tracked_files[rel_path]["modifiedTime"] = result
+                tracked_files[rel_path]["contentHash"] = c_hash
                 if verbose:
                     print(f"  [{updated_count}/{len(tasks)}] ✅ Synced to Drive: {task[0].name}")
             else:
@@ -144,8 +159,9 @@ def sync_markdown_to_drive(verbose=True):
                 if verbose:
                     print(f"  ❌ Error updating {rel_path}: {result}", file=sys.stderr)
 
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2, ensure_ascii=False)
+    if updated_count > 0:
+        with open(STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, indent=2, ensure_ascii=False)
 
     if verbose:
         print(f"\n🎉 Successfully synced {updated_count}/{len(tasks)} documents to Google Drive.")
