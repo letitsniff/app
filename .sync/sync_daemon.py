@@ -157,10 +157,18 @@ def scan_drive_tree():
                 rel_name = name if name.endswith(".md") else f"{name}.md"
                 f_rel = os.path.join(current_rel, rel_name) if current_rel else rel_name
                 with lock:
+                    if f_rel in files:
+                        curr = files[f_rel]
+                        if (it.get("modifiedTime", ""), it.get("id", "")) <= (curr.get("modifiedTime", ""), curr.get("id", "")):
+                            continue
                     files[f_rel] = it
             else:
                 f_rel = os.path.join(current_rel, name) if current_rel else name
                 with lock:
+                    if f_rel in files:
+                        curr = files[f_rel]
+                        if (it.get("modifiedTime", ""), it.get("id", "")) <= (curr.get("modifiedTime", ""), curr.get("id", "")):
+                            continue
                     files[f_rel] = it
 
         if sub_folders:

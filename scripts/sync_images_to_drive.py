@@ -118,7 +118,16 @@ def sync_images(verbose=True):
             continue
 
         drive_images = list_folder_json(images_folder_id)
-        existing_names = {it.get("name"): it for it in drive_images}
+        existing_names = {}
+        for it in drive_images:
+            name = it.get("name")
+            if not name:
+                continue
+            if name in existing_names:
+                curr = existing_names[name]
+                if (it.get("modifiedTime", ""), it.get("id", "")) <= (curr.get("modifiedTime", ""), curr.get("id", "")):
+                    continue
+            existing_names[name] = it
 
         for img_file in sorted(images_dir.iterdir()):
             if not img_file.is_file():
@@ -131,7 +140,8 @@ def sync_images(verbose=True):
             if img_file.name in existing_names:
                 drive_it = existing_names[img_file.name]
                 drive_id = drive_it.get("id")
-                if rel_path not in tracked_files:
+                curr_tracked = tracked_files.get(rel_path)
+                if not curr_tracked or curr_tracked.get("id") != drive_id or curr_tracked.get("modifiedTime") != drive_it.get("modifiedTime"):
                     tracked_files[rel_path] = {
                         "id": drive_id,
                         "modifiedTime": drive_it.get("modifiedTime"),

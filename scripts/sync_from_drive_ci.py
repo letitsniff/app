@@ -219,7 +219,16 @@ def upload_local_images_to_drive(service):
         if not images_folder_id:
             continue
 
-        drive_images = {it.get("name"): it for it in list_folder_contents(service, images_folder_id)}
+        drive_images = {}
+        for it in list_folder_contents(service, images_folder_id):
+            name = it.get("name")
+            if not name:
+                continue
+            if name in drive_images:
+                curr = drive_images[name]
+                if (it.get("modifiedTime", ""), it.get("id", "")) <= (curr.get("modifiedTime", ""), curr.get("id", "")):
+                    continue
+            drive_images[name] = it
 
         for img_path in sorted(images_dir.iterdir()):
             if not img_path.is_file():
@@ -271,8 +280,24 @@ def main():
 
     # Step 2: Scan Drive tree and incrementally pull modified files
     print("Scanning Google Drive structure...")
-    drive_files = scan_drive_recursive(service, ROOT_FOLDER_ID)
-    print(f"Found {len(drive_files)} files on Google Drive.")
+    raw_drive_files = scan_drive_recursive(service, ROOT_FOLDER_ID)
+    print(f"Found {len(raw_drive_files)} files on Google Drive.")
+
+    # Deduplicate files sharing the same relative path by keeping the newest modifiedTime
+    deduped_files = {}
+    for rel_path, item_id, mime, original_name, modified_time in raw_drive_files:
+        if rel_path in deduped_files:
+            _, _, _, _, existing_mod, existing_id = deduped_files[rel_path]
+            if (modified_time, item_id) <= (existing_mod, existing_id):
+                continue
+        deduped_files[rel_path] = (rel_path, item_id, mime, original_name, modified_time, item_id)
+
+    drive_files = [
+        (rel, i_id, mime, orig, mtime)
+        for rel, i_id, mime, orig, mtime, _ in deduped_files.values()
+    ]
+    if len(drive_files) < len(raw_drive_files):
+        print(f"Deduplicated to {len(drive_files)} unique relative paths.")
 
     state = load_state()
     tracked_files = state.setdefault("files", {})
