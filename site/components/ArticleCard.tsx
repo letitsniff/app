@@ -3,6 +3,7 @@ import { Clock } from "lucide-react";
 import type { Article } from "@/lib/content";
 import { getImageVariants } from "@/lib/images";
 import { getUIStrings } from "@/lib/siteContent";
+import { toAccessibleColor } from "@/lib/colors";
 
 interface Props {
   article: Article;
@@ -50,7 +51,7 @@ export default function ArticleCard({
             <div>
               <span
                 className="text-xs font-semibold tracking-wider uppercase inline-block mb-3"
-                style={{ color }}
+                style={{ color: toAccessibleColor(color) }}
               >
                 {article.categoryTitle}
               </span>
@@ -65,7 +66,7 @@ export default function ArticleCard({
               <Clock size={13} />
               <span>{article.readingTime}</span>
               <span>·</span>
-              <span className="text-[var(--color-amber)] group-hover:underline">{ui.readArticle}</span>
+              <span className="text-[var(--color-amberText)] group-hover:underline">{ui.readArticle}</span>
             </div>
           </div>
         </div>
@@ -100,7 +101,7 @@ export default function ArticleCard({
         )}
         <span
           className="text-[11px] font-semibold tracking-wider uppercase block mb-2"
-          style={{ color }}
+          style={{ color: toAccessibleColor(color) }}
         >
           {article.categoryTitle}
         </span>

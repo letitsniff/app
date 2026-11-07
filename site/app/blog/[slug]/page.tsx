@@ -116,7 +116,7 @@ export default async function ArticlePage({ params }: Props) {
                     <source
                       type="image/webp"
                       srcSet={`${variants.card} 720w, ${variants.hero} 1400w`}
-                      sizes="(max-width: 768px) 100vw, 896px"
+                      sizes="(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 896px, 896px"
                     />
                   )}
                   <img
@@ -147,7 +147,7 @@ export default async function ArticlePage({ params }: Props) {
             <aside className="mt-16 lg:mt-0 space-y-8 lg:sticky lg:top-20">
               {/* Contextual Consultation Box */}
               <div className="bg-white border border-[var(--color-sandDark)]/60 p-6 sm:p-7 rounded-sm shadow-xs">
-                <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-2">
+                <p className="text-xs uppercase tracking-widest text-[var(--color-amberText)] font-semibold mb-2">
                   {consultationBox.kicker}
                 </p>
                 <h3 className="font-heading text-lg text-[var(--color-brown)] mb-3">
@@ -158,7 +158,7 @@ export default async function ArticlePage({ params }: Props) {
                 </p>
                 <Link
                   href={consultationBox.buttonLink}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-brown)] hover:text-[var(--color-amberText)] transition-colors"
                 >
                   {consultationBox.buttonText} <ArrowRight size={13} />
                 </Link>
@@ -179,7 +179,7 @@ export default async function ArticlePage({ params }: Props) {
                   </p>
                   <Link
                     href={`/ypiresies/${relatedService.slug}/`}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-amberText)] hover:text-[var(--color-brown)] transition-colors"
                   >
                     {ui.learnMore} <ArrowRight size={12} />
                   </Link>
@@ -194,7 +194,7 @@ export default async function ArticlePage({ params }: Props) {
                   </p>
                   <Link
                     href={`/blog/enotita/${category.slug}/`}
-                    className="font-heading text-sm text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors block mb-4"
+                    className="font-heading text-sm text-[var(--color-brown)] hover:text-[var(--color-amberText)] transition-colors block mb-4"
                   >
                     {category.title} →
                   </Link>
@@ -205,7 +205,7 @@ export default async function ArticlePage({ params }: Props) {
                           href={`/blog/${a.slug}/`}
                           className={`block transition-colors ${
                             a.slug === article.slug
-                              ? "font-semibold text-[var(--color-amber)] border-l-2 pl-2 border-[var(--color-amber)]"
+                              ? "font-semibold text-[var(--color-amberText)] border-l-2 pl-2 border-[var(--color-amber)]"
                               : "text-[var(--color-muted)] hover:text-[var(--color-brown)]"
                           }`}
                         >

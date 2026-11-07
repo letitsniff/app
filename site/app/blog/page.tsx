@@ -28,7 +28,7 @@ export default function BlogPage() {
     <div className="max-w-5xl mx-auto px-5 py-12 sm:py-16 md:py-24">
       {/* ── Page Header ───────────────────────────────────── */}
       <header className="mb-14 sm:mb-18 pb-10 border-b border-[var(--color-sandDark)]/60">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amberText)] mb-3">
           {content.header.kicker} · {categories.length} Θεματικές Ενότητες · {totalArticles} Άρθρα
         </p>
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] mb-5 break-words">
@@ -48,9 +48,9 @@ export default function BlogPage() {
               <a
                 key={cluster.id}
                 href={`#${cluster.id}`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/90 border border-[var(--color-sandDark)]/60 text-[var(--color-brownMid)] hover:border-[var(--color-amber)] hover:text-[var(--color-amber)] hover:shadow-xs transition-all shrink-0 sm:shrink rounded-full"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/90 border border-[var(--color-sandDark)]/60 text-[var(--color-brownMid)] hover:border-[var(--color-amberText)] hover:text-[var(--color-amberText)] hover:shadow-xs transition-all shrink-0 sm:shrink rounded-full"
               >
-                <span className="font-mono font-bold text-[var(--color-amber)]">
+                <span className="font-mono font-bold text-[var(--color-amberText)]">
                   {String(cluster.number).padStart(2, "0")}.
                 </span>
                 <span>{cluster.title}</span>
@@ -80,8 +80,8 @@ export default function BlogPage() {
               <div className="border-b border-[var(--color-sandDark)]/80 pb-5 mb-10">
                 <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 mb-2">
                   <div className="flex items-center gap-2">
-                    <Layers size={14} className="text-[var(--color-amber)]" />
-                    <span className="text-xs font-mono font-bold tracking-widest uppercase text-[var(--color-amber)]">
+                    <Layers size={14} className="text-[var(--color-amberText)]" />
+                    <span className="text-xs font-mono font-bold tracking-widest uppercase text-[var(--color-amberText)]">
                       {`ΘΕΜΑΤΙΚΗ ΕΝΟΤΗΤΑ ${String(cluster.number).padStart(2, "0")}`}
                     </span>
                   </div>

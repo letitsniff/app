@@ -15,7 +15,7 @@ function renderEmphasizedTitle(title: string) {
   return parts.map((part, idx) => {
     if (part.startsWith("*") && part.endsWith("*")) {
       return (
-        <em key={idx} className="text-[var(--color-amber)] italic">
+        <em key={idx} className="text-[var(--color-amberText)] italic">
           {part.slice(1, -1)}
         </em>
       );
@@ -38,7 +38,7 @@ export default function HomePage() {
       <section className="border-b border-[var(--color-sandDark)]/60 bg-[var(--color-cream)]">
         <div className="max-w-5xl mx-auto px-5 pt-14 pb-14 sm:pt-20 sm:pb-18 md:pt-28 md:pb-24">
           <div className="max-w-3xl mb-12 sm:mb-14 md:mb-18">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amber)] mb-3 sm:mb-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amberText)] mb-3 sm:mb-4">
               {page.hero.kicker}
             </p>
 
@@ -101,7 +101,7 @@ export default function HomePage() {
             </div>
             <Link
               href={page.services.linkUrl}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amberText)] hover:text-[var(--color-brown)] transition-colors"
             >
               {page.services.linkText} <ArrowRight size={13} />
             </Link>
@@ -142,7 +142,7 @@ export default function HomePage() {
       <section className="max-w-5xl mx-auto px-5 py-16 sm:py-20 md:py-28">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12 sm:mb-14 pb-5 border-b border-[var(--color-sandDark)]/60">
           <div>
-            <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-2">
+            <p className="text-xs uppercase tracking-widest text-[var(--color-amberText)] font-semibold mb-2">
               {page.library.kicker} · {categories.length} {page.library.pillarsSuffix} · {allArticles.length} Οδηγοί
             </p>
             <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl text-[var(--color-brown)]">
@@ -151,7 +151,7 @@ export default function HomePage() {
           </div>
           <Link
             href={page.library.linkUrl}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amberText)] hover:text-[var(--color-brown)] transition-colors self-start sm:self-auto"
           >
             {page.library.linkText} <ArrowRight size={13} />
           </Link>
@@ -172,7 +172,7 @@ export default function HomePage() {
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-xs font-mono font-bold tracking-wider text-[var(--color-amber)]">
+                    <span className="text-xs font-mono font-bold tracking-wider text-[var(--color-amberText)]">
                       {`${page.library.badgePrefix} ${String(cluster.number).padStart(2, "0")}`}
                     </span>
                     <span className="text-xs text-[var(--color-mutedLight)] font-mono">
@@ -204,7 +204,7 @@ export default function HomePage() {
                 <div className="pt-4 border-t border-[var(--color-sand)]/60">
                   <Link
                     href={`/blog#${cluster.id}`}
-                    className="inline-flex items-center justify-between text-xs font-semibold text-[var(--color-amber)] hover:text-[var(--color-brown)] transition-colors w-full"
+                    className="inline-flex items-center justify-between text-xs font-semibold text-[var(--color-amberText)] hover:text-[var(--color-brown)] transition-colors w-full"
                   >
                     <span>{page.library.clusterLinkText}</span>
                     <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />

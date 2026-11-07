@@ -21,7 +21,7 @@ export default function ServicesPage() {
     <div className="max-w-5xl mx-auto px-5 py-12 sm:py-16 md:py-24">
       {/* Header */}
       <header className="mb-14 sm:mb-18 pb-10 border-b border-[var(--color-sandDark)]/60">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-terra)] mb-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-terraText)] mb-3">
           {content.header.kicker}
         </p>
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] mb-5 break-words">

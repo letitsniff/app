@@ -40,7 +40,7 @@ export default function Footer({ settings }: FooterProps) {
             </a>
           </nav>
         </div>
-        <p className="text-xs text-[var(--color-mutedLight)] mt-8">
+        <p className="text-xs text-[var(--color-muted)] mt-8">
           {copyright}
         </p>
       </div>

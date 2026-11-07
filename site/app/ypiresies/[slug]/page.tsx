@@ -106,7 +106,7 @@ export default async function ServicePage({ params }: Props) {
               </p>
               <Link
                 href={assessmentBox.buttonLink}
-                className="block w-full text-center bg-[var(--color-amber)] text-white text-xs font-semibold uppercase tracking-wider py-3 hover:bg-[var(--color-amberDark)] transition-colors rounded-xs shadow-xs"
+                className="block w-full text-center bg-[var(--color-amberDark)] text-white text-xs font-semibold uppercase tracking-wider py-3 hover:bg-[var(--color-brown)] transition-colors rounded-xs shadow-xs"
               >
                 {assessmentBox.buttonText}
               </Link>

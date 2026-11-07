@@ -45,7 +45,7 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
         <div className="px-6 pb-6 sm:px-7 sm:pb-7 pt-0">
           <Link
             href={`/ypiresies/${service.slug}/`}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors pt-4 border-t border-[var(--color-sand)]/70 w-full justify-between"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amberText)] hover:text-[var(--color-brown)] transition-colors pt-4 border-t border-[var(--color-sand)]/70 w-full justify-between"
           >
             <span>{ui.details}</span>
             <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
@@ -82,15 +82,15 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
         <div className="p-6 sm:p-8 md:p-9 flex-1 flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-start justify-between gap-4 mb-3">
-              <h3 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug break-words">
+              <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug break-words">
                 {service.title}
-              </h3>
+              </h2>
             </div>
             <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6">
               {service.tagline}
             </p>
           </div>
-          <div className="flex items-center justify-between pt-4 border-t border-[var(--color-sand)]/70 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] group-hover:text-[var(--color-amberDark)]">
+          <div className="flex items-center justify-between pt-4 border-t border-[var(--color-sand)]/70 text-xs font-semibold uppercase tracking-wider text-[var(--color-amberText)] group-hover:text-[var(--color-brown)]">
             <span className="flex items-center gap-2">
               <span>{ui.learnMore}</span>
               <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />

@@ -177,7 +177,7 @@ export default function Navbar({
           />
           <div className="md:hidden relative z-50 bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100dvh-3.5rem)] overflow-y-auto">
             <div className="space-y-3">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-mutedLight)] mb-2">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-2">
                 {mobileMenuTitle}
               </p>
               {navLinks.map((l) => {
@@ -209,8 +209,8 @@ export default function Navbar({
                         size={16}
                         className={
                           isActive
-                            ? "text-[var(--color-amber)]"
-                            : "text-[var(--color-mutedLight)]"
+                            ? "text-[var(--color-amberText)]"
+                            : "text-[var(--color-muted)]"
                         }
                       />
                     </div>

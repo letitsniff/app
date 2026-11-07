@@ -43,11 +43,11 @@ export default function CategoryCard({ category, showCover = false }: Props) {
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-3">
             <span
               className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded-xs"
-              style={{ color, backgroundColor: `${color}15` }}
+              style={{ color: "var(--color-brown)", backgroundColor: `${color}20`, border: `1px solid ${color}45` }}
             >
               {ui.pillarBadge} {String(category.number).padStart(2, "0")}
             </span>
-            <span className="text-xs text-[var(--color-mutedLight)] font-medium font-mono">
+            <span className="text-xs text-[var(--color-muted)] font-medium font-mono">
               {category.articles.length} {category.articles.length === 1 ? ui.articleSingleSuffix : ui.articleCountSuffix}
             </span>
           </div>

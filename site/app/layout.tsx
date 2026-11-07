@@ -1,8 +1,17 @@
 import type { Metadata, Viewport } from "next";
+import { DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getGlobalSettings } from "@/lib/siteContent";
+
+const dmSerifDisplay = DM_Serif_Display({
+  weight: "400",
+  subsets: ["latin", "latin-ext"],
+  style: ["normal", "italic"],
+  variable: "--font-dm-serif",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -41,7 +50,7 @@ export default function RootLayout({
   const global = getGlobalSettings();
 
   return (
-    <html lang="el">
+    <html lang="el" className={dmSerifDisplay.variable}>
       <body>
         <Navbar
           navLinks={global.navLinks}

@@ -47,7 +47,7 @@ export default function AboutPage() {
       <section className="max-w-4xl mx-auto px-5 py-16 sm:py-20 md:py-28 border-b border-[var(--color-sandDark)]/60">
         <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
           <div className="md:col-span-7">
-            <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-2">
+            <p className="text-xs uppercase tracking-widest text-[var(--color-amberText)] font-semibold mb-2">
               {content.methodology.kicker}
             </p>
             <h2 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)] mb-6">
@@ -100,7 +100,7 @@ export default function AboutPage() {
       {/* ── Honest Contact Section ────────────────────────── */}
       <section id="epikoinonia" className="max-w-3xl mx-auto px-5 py-16 sm:py-20 md:py-28 scroll-mt-10">
         <div className="border border-[var(--color-sandDark)]/60 bg-white p-8 sm:p-12 md:p-16 rounded-sm shadow-sm">
-          <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-2 text-center sm:text-left">
+          <p className="text-xs uppercase tracking-widest text-[var(--color-amberText)] font-semibold mb-2 text-center sm:text-left">
             {content.contact.kicker}
           </p>
           <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl text-[var(--color-brown)] mb-4 text-center sm:text-left break-words">
@@ -114,12 +114,12 @@ export default function AboutPage() {
             <div className="flex items-start gap-3.5 min-w-0">
               <Mail className="text-[var(--color-amber)] flex-shrink-0 mt-1" size={20} />
               <div className="min-w-0">
-                <p className="text-xs uppercase tracking-wider text-[var(--color-mutedLight)] font-bold mb-1.5">
+                <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] font-bold mb-1.5">
                   {content.contact.emailLabel}
                 </p>
                 <a
                   href={mailtoHref}
-                  className="font-heading text-base sm:text-lg text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors underline decoration-[var(--color-amber)] decoration-1 underline-offset-4 break-all block"
+                  className="font-heading text-base sm:text-lg text-[var(--color-brown)] hover:text-[var(--color-amberText)] transition-colors underline decoration-[var(--color-amber)] decoration-1 underline-offset-4 break-all block"
                 >
                   {content.contact.email}
                 </a>
@@ -129,7 +129,7 @@ export default function AboutPage() {
             <div className="flex items-start gap-3.5 min-w-0">
               <MapPin className="text-[var(--color-amber)] flex-shrink-0 mt-1" size={20} />
               <div className="min-w-0">
-                <p className="text-xs uppercase tracking-wider text-[var(--color-mutedLight)] font-bold mb-1.5">
+                <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] font-bold mb-1.5">
                   {content.contact.areaLabel}
                 </p>
                 <p className="text-sm text-[var(--color-brown)]">
@@ -142,7 +142,7 @@ export default function AboutPage() {
           <div className="mt-10 pt-8 border-t border-[var(--color-sand)]/70 text-center sm:text-left">
             <a
               href={mailtoHref}
-              className="inline-flex items-center justify-center gap-2 bg-[var(--color-amber)] text-white text-sm font-semibold px-7 py-4 hover:bg-[var(--color-amberDark)] transition-colors w-full sm:w-auto shadow-xs rounded-xs"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-amberDark)] text-white text-sm font-semibold px-7 py-4 hover:bg-[var(--color-brown)] transition-colors w-full sm:w-auto shadow-xs rounded-xs"
             >
               {content.contact.emailButton} <ArrowRight size={15} />
             </a>

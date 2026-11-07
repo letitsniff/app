@@ -10,6 +10,7 @@ import {
 import { getServiceBySlug } from "@/lib/services";
 import { getImageVariants } from "@/lib/images";
 import { getUIStrings } from "@/lib/siteContent";
+import { toAccessibleColor } from "@/lib/colors";
 import ArticleCard from "@/components/ArticleCard";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -99,7 +100,7 @@ export default async function EnotitaPage({ params }: Props) {
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 mb-4">
             <span
               className="text-xs font-mono font-bold tracking-wider px-2.5 py-1 bg-white border rounded-xs"
-              style={{ color, borderColor: `${color}40` }}
+              style={{ color: toAccessibleColor(color), borderColor: `${color}40` }}
             >
               {ui.pillarBadge} {String(category.number).padStart(2, "0")}
             </span>
@@ -135,7 +136,7 @@ export default async function EnotitaPage({ params }: Props) {
                   <Link
                     key={srv.slug}
                     href={`/ypiresies/${srv.slug}/`}
-                    className="inline-flex items-center gap-1.5 font-semibold text-[var(--color-amber)] hover:text-[var(--color-brown)] bg-white px-3.5 py-2 border border-[var(--color-sandDark)]/70 hover:shadow-xs rounded-sm transition-all"
+                    className="inline-flex items-center gap-1.5 font-semibold text-[var(--color-amberText)] hover:text-[var(--color-brown)] bg-white px-3.5 py-2 border border-[var(--color-sandDark)]/70 hover:shadow-xs rounded-sm transition-all"
                   >
                     <span>{srv.title}</span>
                     <ArrowRight size={12} />
