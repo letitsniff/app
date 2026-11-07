@@ -54,7 +54,7 @@ export default function ArticleCard({
               >
                 {article.categoryTitle}
               </span>
-              <h3 className="font-heading text-2xl md:text-3xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-4">
+              <h3 className="font-heading text-2xl md:text-3xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-4 break-words">
                 {article.title}
               </h3>
               <p className="text-[var(--color-muted)] text-base leading-relaxed line-clamp-3 mb-6">
@@ -104,7 +104,7 @@ export default function ArticleCard({
         >
           {article.categoryTitle}
         </span>
-        <h3 className="font-heading text-lg md:text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-2">
+        <h3 className="font-heading text-lg md:text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-2 break-words">
           {article.title}
         </h3>
         <p className="text-sm text-[var(--color-muted)] leading-relaxed line-clamp-2 mb-4">

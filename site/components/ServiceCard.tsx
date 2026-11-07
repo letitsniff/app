@@ -15,10 +15,10 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
 
   if (variant === "hero") {
     return (
-      <div className="group bg-white border border-[var(--color-sandDark)] flex flex-col justify-between transition-all hover:border-[var(--color-amber)] overflow-hidden shadow-xs hover:shadow-sm">
+      <div className="group bg-white border border-[var(--color-sandDark)]/60 flex flex-col justify-between transition-all duration-300 hover:border-[var(--color-amber)] hover:shadow-md rounded-sm overflow-hidden">
         <div>
           {imageVariants ? (
-            <div className="relative aspect-[16/9] w-full overflow-hidden bg-[var(--color-sand)] border-b border-[var(--color-sandDark)]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--color-sand)] border-b border-[var(--color-sandDark)]/50">
               <picture>
                 <source srcSet={imageVariants.card} type="image/webp" />
                 <img
@@ -31,24 +31,24 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
               </picture>
             </div>
           ) : (
-            <div className="p-6 pb-0 text-3xl mb-4">{service.icon}</div>
+            <div className="p-7 pb-0 text-3xl mb-4">{service.icon}</div>
           )}
-          <div className="p-5 sm:p-6">
-            <h3 className="font-heading text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors mb-2 leading-snug">
+          <div className="p-6 sm:p-7 min-w-0">
+            <h3 className="font-heading text-xl sm:text-2xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors mb-3 leading-snug break-words">
               {service.title}
             </h3>
-            <p className="text-sm text-[var(--color-muted)] leading-relaxed line-clamp-3">
+            <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed line-clamp-3">
               {service.tagline}
             </p>
           </div>
         </div>
-        <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0">
+        <div className="px-6 pb-6 sm:px-7 sm:pb-7 pt-0">
           <Link
             href={`/ypiresies/${service.slug}/`}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors pt-3 border-t border-[var(--color-sand)] w-full justify-between"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] hover:text-[var(--color-amberDark)] transition-colors pt-4 border-t border-[var(--color-sand)]/70 w-full justify-between"
           >
             <span>{ui.details}</span>
-            <ArrowRight size={13} />
+            <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>
@@ -58,11 +58,11 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
   return (
     <Link
       href={`/ypiresies/${service.slug}/`}
-      className="group block bg-white border border-[var(--color-sandDark)] overflow-hidden transition-all hover:border-[var(--color-amber)] shadow-xs hover:shadow-sm"
+      className="group block bg-white border border-[var(--color-sandDark)]/60 overflow-hidden transition-all duration-300 hover:border-[var(--color-amber)] hover:shadow-md rounded-sm"
     >
       <div className="flex flex-col sm:flex-row sm:items-stretch">
         {imageVariants ? (
-          <div className="sm:w-60 md:w-72 flex-shrink-0 aspect-[16/9] sm:aspect-auto relative overflow-hidden bg-[var(--color-sand)] border-b sm:border-b-0 sm:border-r border-[var(--color-sandDark)]">
+          <div className="sm:w-64 md:w-80 flex-shrink-0 aspect-[16/10] sm:aspect-auto relative overflow-hidden bg-[var(--color-sand)] border-b sm:border-b-0 sm:border-r border-[var(--color-sandDark)]/50">
             <picture>
               <source srcSet={imageVariants.card} type="image/webp" />
               <img
@@ -75,25 +75,25 @@ export default function ServiceCard({ service, variant = "card" }: Props) {
             </picture>
           </div>
         ) : (
-          <div className="p-6 flex items-center justify-center text-3xl sm:w-24">
+          <div className="p-8 flex items-center justify-center text-3xl sm:w-28 bg-[var(--color-sand)]/20">
             {service.icon}
           </div>
         )}
-        <div className="p-6 flex-1 flex flex-col justify-between">
+        <div className="p-6 sm:p-8 md:p-9 flex-1 flex flex-col justify-between min-w-0">
           <div>
-            <div className="flex items-start justify-between gap-4 mb-2">
-              <h3 className="font-heading text-xl sm:text-2xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug">
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <h3 className="font-heading text-2xl sm:text-3xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug break-words">
                 {service.title}
               </h3>
             </div>
-            <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-2xl mb-4">
+            <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6">
               {service.tagline}
             </p>
           </div>
-          <div className="flex items-center justify-between pt-3 border-t border-[var(--color-sand)]/60 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] group-hover:text-[var(--color-amberDark)]">
-            <span className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between pt-4 border-t border-[var(--color-sand)]/70 text-xs font-semibold uppercase tracking-wider text-[var(--color-amber)] group-hover:text-[var(--color-amberDark)]">
+            <span className="flex items-center gap-2">
               <span>{ui.learnMore}</span>
-              <ArrowRight size={13} />
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
             </span>
           </div>
         </div>

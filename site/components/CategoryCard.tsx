@@ -40,8 +40,8 @@ export default function CategoryCard({ category, showCover = false }: Props) {
           </div>
         )}
 
-        <div className="p-5 sm:p-6">
-          <div className="flex items-baseline justify-between gap-4 mb-2">
+        <div className="p-5 sm:p-6 min-w-0">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-2">
             <span
               className="text-xs font-mono font-bold tracking-wider"
               style={{ color }}
@@ -53,7 +53,7 @@ export default function CategoryCard({ category, showCover = false }: Props) {
             </span>
           </div>
 
-          <h3 className="font-heading text-lg sm:text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-2">
+          <h3 className="font-heading text-lg sm:text-xl text-[var(--color-brown)] group-hover:text-[var(--color-amber)] transition-colors leading-snug mb-2 break-words">
             {category.title}
           </h3>
 

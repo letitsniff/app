@@ -22,19 +22,19 @@ export default function Footer({ settings }: FooterProps) {
               {global.tagline}
             </p>
           </div>
-          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--color-muted)]">
+          <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-[var(--color-muted)]">
             {global.navLinks.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className="hover:text-[var(--color-brown)] transition-colors"
+                className="hover:text-[var(--color-brown)] transition-colors py-1"
               >
                 {l.label}
               </Link>
             ))}
             <a
               href={`mailto:${global.email}`}
-              className="hover:text-[var(--color-brown)] transition-colors"
+              className="hover:text-[var(--color-brown)] transition-colors py-1 break-all"
             >
               {global.email}
             </a>

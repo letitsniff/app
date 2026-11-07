@@ -43,28 +43,28 @@ export default async function ServicePage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-12 pb-12">
+      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-8 pb-8 sm:pt-12 sm:pb-12">
         <div className="max-w-4xl mx-auto px-5">
-          <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6">
-            <Link href="/ypiresies" className="hover:text-[var(--color-brown)] transition-colors">
+          <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6 min-w-0">
+            <Link href="/ypiresies" className="hover:text-[var(--color-brown)] transition-colors shrink-0">
               {ui.allServices}
             </Link>
-            <span>/</span>
-            <span className="text-[var(--color-brown)]">{service.title}</span>
+            <span className="shrink-0">/</span>
+            <span className="text-[var(--color-brown)] truncate min-w-0">{service.title}</span>
           </nav>
 
           {!imageVariants && <div className="text-4xl mb-3">{service.icon}</div>}
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-tight mb-4 break-words">
             {service.title}
           </h1>
-          <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
+          <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl mb-6 font-light">
             {service.tagline}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 text-xs mb-8">
             <Link
               href="/o-alexandros#epikoinonia"
-              className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white font-medium px-5 py-2 hover:bg-[var(--color-brownMid)] transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors w-full sm:w-auto"
             >
               {ui.bookSession} <ArrowRight size={13} />
             </Link>
@@ -89,9 +89,9 @@ export default async function ServicePage({ params }: Props) {
       </header>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
+      <div className="max-w-5xl mx-auto px-5 py-8 sm:py-12 md:py-16">
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-16 items-start">
-          <main>
+          <main className="min-w-0 w-full">
             <Prose html={service.htmlContent} />
           </main>
 

@@ -62,18 +62,18 @@ export default async function ArticlePage({ params }: Props) {
 
       <article className="min-h-screen">
         {/* ── Editorial Header ────────────────────────────── */}
-        <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-12 pb-10">
+        <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-8 pb-8 sm:pt-12 sm:pb-10">
           <div className="max-w-4xl mx-auto px-5">
             {/* Breadcrumb navigation */}
-            <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6">
-              <Link href="/blog" className="hover:text-[var(--color-brown)] transition-colors">
+            <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6 min-w-0">
+              <Link href="/blog" className="hover:text-[var(--color-brown)] transition-colors shrink-0">
                 Βιβλιοθήκη
               </Link>
-              <span>/</span>
+              <span className="shrink-0">/</span>
               {category && (
                 <Link
                   href={`/blog/enotita/${category.slug}/`}
-                  className="hover:text-[var(--color-brown)] transition-colors line-clamp-1"
+                  className="hover:text-[var(--color-brown)] transition-colors truncate min-w-0"
                 >
                   {category.title}
                 </Link>
@@ -89,18 +89,18 @@ export default async function ArticlePage({ params }: Props) {
               </span>
             </div>
 
-            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-[1.15] mb-6">
+            <h1 className="font-heading text-2xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-[1.2] sm:leading-[1.15] mb-6 break-words">
               {article.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--color-muted)] pt-4 border-t border-[var(--color-sand)]">
-              <span className="flex items-center gap-1.5 font-medium">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--color-muted)] pt-4 border-t border-[var(--color-sand)]">
+              <span className="flex items-center gap-1.5 font-medium shrink-0">
                 <Clock size={13} /> {article.readingTime}
               </span>
               <span>·</span>
-              <span>{ui.authorText}</span>
+              <span className="shrink-0">{ui.authorText}</span>
               <span>·</span>
-              <span>{siteName}</span>
+              <span className="shrink-0">{siteName}</span>
             </div>
           </div>
         </header>
@@ -136,10 +136,10 @@ export default async function ArticlePage({ params }: Props) {
         })()}
 
         {/* ── Content & Editorial Sidebar ─────────────────── */}
-        <div className="max-w-5xl mx-auto px-5 py-12 md:py-16">
+        <div className="max-w-5xl mx-auto px-5 py-8 sm:py-12 md:py-16">
           <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-16 items-start">
             {/* Article Prose */}
-            <main>
+            <main className="min-w-0 w-full">
               <Prose html={article.htmlContent} />
             </main>
 
@@ -233,7 +233,7 @@ export default async function ArticlePage({ params }: Props) {
                   {ui.relatedArticles}
                 </h3>
               </div>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                 {related.map((a) => (
                   <ArticleCard key={a.slug} article={a} />
                 ))}

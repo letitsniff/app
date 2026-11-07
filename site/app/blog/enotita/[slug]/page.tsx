@@ -78,25 +78,25 @@ export default async function EnotitaPage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* ── Page Header ─────────────────────────────────── */}
-      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-12 pb-10">
+      <header className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-8 pb-8 sm:pt-12 sm:pb-10">
         <div className="max-w-4xl mx-auto px-5">
           {/* Breadcrumb navigation */}
-          <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6">
-            <Link href="/" className="hover:text-[var(--color-brown)] transition-colors">
+          <nav className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-6 min-w-0">
+            <Link href="/" className="hover:text-[var(--color-brown)] transition-colors shrink-0">
               Αρχική
             </Link>
-            <span>/</span>
-            <Link href="/blog" className="hover:text-[var(--color-brown)] transition-colors">
+            <span className="shrink-0">/</span>
+            <Link href="/blog" className="hover:text-[var(--color-brown)] transition-colors shrink-0">
               Βιβλιοθήκη
             </Link>
-            <span>/</span>
-            <span className="text-[var(--color-brown)] truncate">
+            <span className="shrink-0">/</span>
+            <span className="text-[var(--color-brown)] truncate min-w-0">
               {ui.pillarBreadcrumb} {String(category.number).padStart(2, "0")}
             </span>
           </nav>
 
           {/* Pillar badge & cluster */}
-          <div className="flex flex-wrap items-center gap-3 mb-4">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 mb-4">
             <span
               className="text-xs font-mono font-bold tracking-wider px-2.5 py-1 bg-white border"
               style={{ color, borderColor: `${color}40` }}
@@ -114,7 +114,7 @@ export default async function EnotitaPage({ params }: Props) {
             </span>
           </div>
 
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-[1.15] mb-5">
+          <h1 className="font-heading text-2xl sm:text-4xl md:text-5xl text-[var(--color-brown)] leading-[1.2] sm:leading-[1.15] mb-5 break-words">
             {category.title}
           </h1>
 
@@ -185,7 +185,7 @@ export default async function EnotitaPage({ params }: Props) {
           </div>
 
           {category.articles.length > 0 ? (
-            <div className="grid sm:grid-cols-2 gap-8">
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
               {category.articles.map((article, idx) => (
                 <ArticleCard
                   key={article.slug}
@@ -216,7 +216,7 @@ export default async function EnotitaPage({ params }: Props) {
               </p>
             </Link>
           ) : (
-            <div />
+            <div className="hidden sm:block" />
           )}
 
           {nextCategory && (

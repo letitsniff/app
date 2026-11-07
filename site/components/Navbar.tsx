@@ -77,6 +77,27 @@ export default function Navbar({
     setOpen(false);
   }
 
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   // Subtle border on scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -137,7 +158,7 @@ export default function Navbar({
         {/* Mobile toggle button */}
         <button
           type="button"
-          className="md:hidden p-2 -mr-2 text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors focus:outline-none"
+          className="md:hidden min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors focus:outline-none"
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
           aria-expanded={open}
@@ -146,75 +167,82 @@ export default function Navbar({
         </button>
       </nav>
 
-      {/* Mobile Dropdown Panel — natural flow, never traps layout */}
+      {/* Mobile Dropdown Panel & Backdrop */}
       {open && (
-        <div className="md:hidden bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100vh-3.5rem)] overflow-y-auto">
-          <div className="space-y-3">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-mutedLight)] mb-2">
-              {mobileMenuTitle}
-            </p>
-            {navLinks.map((l) => {
-              const isActive =
-                pathname === l.href ||
-                (l.href !== "/" && pathname.startsWith(l.href));
-              return (
+        <>
+          <div
+            className="md:hidden fixed inset-0 top-14 bg-black/25 z-40 backdrop-blur-xs transition-opacity"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="md:hidden relative z-50 bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100dvh-3.5rem)] overflow-y-auto">
+            <div className="space-y-3">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-mutedLight)] mb-2">
+                {mobileMenuTitle}
+              </p>
+              {navLinks.map((l) => {
+                const isActive =
+                  pathname === l.href ||
+                  (l.href !== "/" && pathname.startsWith(l.href));
+                return (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className={`block p-4 border transition-colors ${
+                      isActive
+                        ? "bg-white border-l-4 border-l-[var(--color-amber)] border-y-[var(--color-sandDark)]/60 border-r-[var(--color-sandDark)]/60"
+                        : "bg-white/70 border-[var(--color-sandDark)]/60 hover:bg-white"
+                    }`}
+                    onClick={() => setOpen(false)}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span
+                        className={`font-heading text-lg ${
+                          isActive
+                            ? "text-[var(--color-brown)] font-bold"
+                            : "text-[var(--color-brown)]"
+                        }`}
+                      >
+                        {l.label}
+                      </span>
+                      <ArrowRight
+                        size={16}
+                        className={
+                          isActive
+                            ? "text-[var(--color-amber)]"
+                            : "text-[var(--color-mutedLight)]"
+                        }
+                      />
+                    </div>
+                    <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+                      {l.desc}
+                    </p>
+                  </Link>
+                );
+              })}
+
+              <div className="pt-2">
                 <Link
-                  key={l.href}
-                  href={l.href}
-                  className={`block p-4 border transition-colors ${
-                    isActive
-                      ? "bg-white border-l-4 border-l-[var(--color-amber)] border-y-[var(--color-sandDark)]/60 border-r-[var(--color-sandDark)]/60"
-                      : "bg-white/70 border-[var(--color-sandDark)]/60 hover:bg-white"
-                  }`}
+                  href="/o-alexandros#epikoinonia"
+                  className="flex items-center justify-center gap-2 w-full bg-[var(--color-brown)] text-white font-medium py-3.5 text-sm hover:bg-[var(--color-brownMid)] transition-colors"
                   onClick={() => setOpen(false)}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span
-                      className={`font-heading text-lg ${
-                        isActive
-                          ? "text-[var(--color-brown)] font-bold"
-                          : "text-[var(--color-brown)]"
-                      }`}
-                    >
-                      {l.label}
-                    </span>
-                    <ArrowRight
-                      size={16}
-                      className={
-                        isActive
-                          ? "text-[var(--color-amber)]"
-                          : "text-[var(--color-mutedLight)]"
-                      }
-                    />
-                  </div>
-                  <p className="text-xs text-[var(--color-muted)] leading-relaxed">
-                    {l.desc}
-                  </p>
+                  {mobileContactLabel} <ArrowRight size={14} />
                 </Link>
-              );
-            })}
+              </div>
+            </div>
 
-            <div className="pt-2">
-              <Link
-                href="/o-alexandros#epikoinonia"
-                className="flex items-center justify-center gap-2 w-full bg-[var(--color-brown)] text-white font-medium py-3.5 text-sm hover:bg-[var(--color-brownMid)] transition-colors"
-                onClick={() => setOpen(false)}
+            <div className="mt-6 pt-4 border-t border-[var(--color-sandDark)]/70 text-xs text-[var(--color-muted)] flex flex-wrap items-center justify-between gap-2">
+              <span>{mobileArea}</span>
+              <a
+                href={`mailto:${email}`}
+                className="flex items-center gap-1.5 text-[var(--color-brown)] font-medium hover:text-[var(--color-amber)] break-all"
               >
-                {mobileContactLabel} <ArrowRight size={14} />
-              </Link>
+                <Mail size={13} className="shrink-0" /> {email}
+              </a>
             </div>
           </div>
-
-          <div className="mt-6 pt-4 border-t border-[var(--color-sandDark)]/70 text-xs text-[var(--color-muted)] flex items-center justify-between">
-            <span>{mobileArea}</span>
-            <a
-              href={`mailto:${email}`}
-              className="flex items-center gap-1.5 text-[var(--color-brown)] font-medium hover:text-[var(--color-amber)]"
-            >
-              <Mail size={13} /> {email}
-            </a>
-          </div>
-        </div>
+        </>
       )}
     </header>
   );

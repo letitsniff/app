@@ -23,20 +23,20 @@ export default function AboutPage() {
   return (
     <div>
       {/* ── Hero ────────────────────────────────────────── */}
-      <section className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-16 pb-14 md:pt-24 md:pb-20">
+      <section className="border-b border-[var(--color-sandDark)] bg-[var(--color-cream)] pt-12 pb-12 sm:pt-16 sm:pb-14 md:pt-24 md:pb-20">
         <div className="max-w-4xl mx-auto px-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-forest)] mb-3">
             {content.hero.kicker}
           </p>
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-[var(--color-brown)] leading-[1.1] mb-6">
+          <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl text-[var(--color-brown)] leading-[1.15] sm:leading-[1.1] mb-6 break-words">
             {content.hero.title}
           </h1>
-          <p className="text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl font-light mb-8 whitespace-pre-line">
+          <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed max-w-2xl font-light mb-8 whitespace-pre-line">
             {content.hero.bio}
           </p>
           <a
             href={content.hero.buttonLink}
-            className="inline-flex items-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors"
+            className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors w-full sm:w-auto"
           >
             {content.hero.buttonText} <ArrowRight size={15} />
           </a>
@@ -44,8 +44,8 @@ export default function AboutPage() {
       </section>
 
       {/* ── Philosophy & Principles ──────────────────────── */}
-      <section className="max-w-4xl mx-auto px-5 py-16 md:py-20 border-b border-[var(--color-sandDark)]">
-        <div className="grid md:grid-cols-12 gap-12 items-start">
+      <section className="max-w-4xl mx-auto px-5 py-12 sm:py-16 md:py-20 border-b border-[var(--color-sandDark)]">
+        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start">
           <div className="md:col-span-7">
             <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-2">
               {content.methodology.kicker}
@@ -60,7 +60,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="md:col-span-5 bg-white border border-[var(--color-sandDark)] p-6 sm:p-7">
+          <div className="md:col-span-5 bg-white border border-[var(--color-sandDark)] p-5 sm:p-7">
             <p className="text-xs uppercase tracking-widest text-[var(--color-brown)] font-bold mb-4">
               {content.methodology.principlesTitle}
             </p>
@@ -81,8 +81,8 @@ export default function AboutPage() {
       </section>
 
       {/* ── Services Overview ────────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-5 py-16 md:py-20 border-b border-[var(--color-sandDark)]">
-        <div className="mb-10">
+      <section className="max-w-4xl mx-auto px-5 py-12 sm:py-16 md:py-20 border-b border-[var(--color-sandDark)]">
+        <div className="mb-8 sm:mb-10">
           <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-1">
             {content.services.kicker}
           </p>
@@ -98,37 +98,37 @@ export default function AboutPage() {
       </section>
 
       {/* ── Honest Contact Section ────────────────────────── */}
-      <section id="epikoinonia" className="max-w-3xl mx-auto px-5 py-16 md:py-24 scroll-mt-10">
-        <div className="border border-[var(--color-sandDark)] bg-white p-8 sm:p-12">
+      <section id="epikoinonia" className="max-w-3xl mx-auto px-5 py-12 sm:py-16 md:py-24 scroll-mt-10">
+        <div className="border border-[var(--color-sandDark)] bg-white p-5 sm:p-10 md:p-12">
           <p className="text-xs uppercase tracking-widest text-[var(--color-amber)] font-semibold mb-2 text-center sm:text-left">
             {content.contact.kicker}
           </p>
-          <h2 className="font-heading text-3xl sm:text-4xl text-[var(--color-brown)] mb-4 text-center sm:text-left">
+          <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl text-[var(--color-brown)] mb-4 text-center sm:text-left break-words">
             {content.contact.title}
           </h2>
-          <p className="text-base text-[var(--color-muted)] leading-relaxed mb-8 font-light text-center sm:text-left">
+          <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed mb-8 font-light text-center sm:text-left">
             {content.contact.description}
           </p>
 
           <div className="grid sm:grid-cols-2 gap-6 pt-6 border-t border-[var(--color-sand)]">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 min-w-0">
               <Mail className="text-[var(--color-amber)] flex-shrink-0 mt-1" size={20} />
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs uppercase tracking-wider text-[var(--color-mutedLight)] font-bold mb-1">
                   {content.contact.emailLabel}
                 </p>
                 <a
                   href={mailtoHref}
-                  className="font-heading text-lg text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors underline decoration-[var(--color-amber)] decoration-1 underline-offset-4"
+                  className="font-heading text-base sm:text-lg text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors underline decoration-[var(--color-amber)] decoration-1 underline-offset-4 break-all block"
                 >
                   {content.contact.email}
                 </a>
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 min-w-0">
               <MapPin className="text-[var(--color-amber)] flex-shrink-0 mt-1" size={20} />
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs uppercase tracking-wider text-[var(--color-mutedLight)] font-bold mb-1">
                   {content.contact.areaLabel}
                 </p>
@@ -142,7 +142,7 @@ export default function AboutPage() {
           <div className="mt-8 pt-6 border-t border-[var(--color-sand)] text-center sm:text-left">
             <a
               href={mailtoHref}
-              className="inline-flex items-center gap-2 bg-[var(--color-amber)] text-white text-sm font-semibold px-6 py-3.5 hover:bg-[var(--color-amberDark)] transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-amber)] text-white text-sm font-semibold px-6 py-3.5 hover:bg-[var(--color-amberDark)] transition-colors w-full sm:w-auto"
             >
               {content.contact.emailButton} <ArrowRight size={15} />
             </a>
