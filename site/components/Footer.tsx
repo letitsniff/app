@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getGlobalSettings, type GlobalSettings } from "@/lib/siteContent";
+import StaticNoseLogo from "./StaticNoseLogo";
 
 interface FooterProps {
   settings?: GlobalSettings;
@@ -15,9 +16,12 @@ export default function Footer({ settings }: FooterProps) {
       <div className="max-w-5xl mx-auto px-5 py-14">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
-            <p className="font-heading text-lg text-[var(--color-brown)] mb-1">
-              {global.siteName}
-            </p>
+            <div className="flex items-center gap-2.5 mb-1">
+              <StaticNoseLogo size={26} ariaLabel={`${global.siteName} logo`} />
+              <span className="font-heading text-lg text-[var(--color-brown)]">
+                {global.siteName}
+              </span>
+            </div>
             <p className="text-sm text-[var(--color-muted)]">
               {global.tagline}
             </p>
