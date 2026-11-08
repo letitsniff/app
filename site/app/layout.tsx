@@ -3,6 +3,7 @@ import { DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PwaOfflineManager from "@/components/PwaOfflineManager";
 import { getGlobalSettings } from "@/lib/siteContent";
 
 const dmSerifDisplay = DM_Serif_Display({
@@ -39,6 +40,7 @@ export function generateMetadata(): Metadata {
       ],
       apple: [{ url: "/apple-touch-icon.png" }],
     },
+    manifest: "/manifest.webmanifest",
   };
 }
 
@@ -63,6 +65,7 @@ export default function RootLayout({
         />
         <main>{children}</main>
         <Footer settings={global} />
+        <PwaOfflineManager />
       </body>
     </html>
   );
