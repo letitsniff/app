@@ -324,7 +324,7 @@ export function getHomePageContent(): HomePageContent {
       link1: extractField(heroSection, ["Σύνδεσμος 1", "Σύνδεσμος Υπηρεσιών"], "/ypiresies"),
       button2: extractField(heroSection, ["Κουμπί 2", "Κουμπί Βιβλιοθήκης"], "Βιβλιοθήκη Άρθρων"),
       link2: extractField(heroSection, ["Σύνδεσμος 2", "Σύνδεσμος Βιβλιοθήκης"], "/blog"),
-      image: extractField(heroSection, ["Εικόνα", "Image"], "/images/hero-home.jpg"),
+      image: extractField(heroSection, ["Εικόνα", "Image"], "/images/hero-home.png"),
       alt: extractField(
         heroSection,
         ["Alt Εικόνας", "Alt"],

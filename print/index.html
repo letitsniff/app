@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Let It Sniff — Collateral & Print Production Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-cream: #FDFAF5;
+      --color-sand: #F0E8D5;
+      --color-sandDark: #DDD0B3;
+      --color-amber: #C4852A;
+      --color-amberDark: #925C18;
+      --color-brown: #2C1810;
+      --color-brownMid: #4A2E20;
+      --color-muted: #6E5941;
+      --color-forest: #3D5C38;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #F4EFE6;
+      color: var(--color-brown);
+      padding: 40px 20px 80px 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Hero Banner */
+    .hero {
+      background: linear-gradient(135deg, #2C1810 0%, #3B2219 100%);
+      color: #FDFAF5;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(44, 24, 16, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .hero-content {
+      flex: 1;
+      min-width: 300px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--color-amber);
+      color: #FFF;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 36px;
+      color: #FFF;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 16px;
+      color: #DDD0B3;
+      max-width: 650px;
+    }
+    .hero-trainer {
+      margin-top: 15px;
+      font-size: 14.5px;
+      color: #E8A84A;
+      font-weight: 600;
+    }
+
+    /* Grid of Collateral Items */
+    .collateral-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .item-card {
+      background: #FFF;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid rgba(221, 208, 179, 0.4);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    }
+    .card-thumb {
+      height: 160px;
+      background: #FAF7F2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--color-sand);
+      font-size: 48px;
+      position: relative;
+    }
+    .card-thumb img {
+      max-height: 120px;
+      max-width: 80%;
+      object-fit: contain;
+    }
+    .card-body {
+      padding: 22px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-amberDark);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 21px;
+      color: var(--color-brown);
+      margin-bottom: 8px;
+    }
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--color-muted);
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+    .card-specs {
+      font-size: 12px;
+      color: #8C7862;
+      background: #FDFBF7;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 3px solid var(--color-sandDark);
+      margin-top: auto;
+      margin-bottom: 18px;
+    }
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--color-brown);
+      color: #FFF;
+      padding: 9px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: background 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover { background: #4A2E20; }
+    .btn-outline {
+      background: #FFF;
+      color: var(--color-brown);
+      border: 1px solid #CCC;
+    }
+    .btn-outline:hover { background: #F8F5EE; }
+
+    /* Print Specs & Print Shop Guide */
+    .guide-section {
+      background: #FFF;
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      border: 1px solid rgba(221, 208, 179, 0.4);
+    }
+    .guide-section h2 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 24px;
+      color: var(--color-brown);
+      margin-bottom: 12px;
+    }
+    .guide-section p {
+      font-size: 14.5px;
+      color: var(--color-muted);
+      margin-bottom: 20px;
+    }
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .specs-table th {
+      text-align: left;
+      padding: 10px 12px;
+      background: #FAF7F2;
+      color: var(--color-brown);
+      font-weight: 700;
+      border-bottom: 2px solid var(--color-sandDark);
+    }
+    .specs-table td {
+      padding: 12px;
+      border-bottom: 1px solid #EAE3D5;
+      color: var(--color-brownMid);
+    }
+    .specs-table tr:hover td {
+      background: #FDFCF9;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: var(--color-sand);
+      color: var(--color-brown);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-content">
+        <span class="hero-badge">PRINT PRODUCTION SUITE</span>
+        <h1>Let It Sniff — Έντυπο Υλικό</h1>
+        <p>
+          Πλήρες σετ εκτυπώσιμου υλικού προώθησης για την <strong>Εκπαίδευση Σκύλων Χωρίς Καταναγκασμό</strong> στην Αθήνα. Όλα τα πρότυπα είναι έτοιμα με ακριβείς διαστάσεις, διανυσματικά γραφικά (Vector SVG), QR codes και οδηγίες για το τυπογραφείο.
+        </p>
+        <div class="hero-trainer">
+          👤 <strong>Αλέξανδρος Τσιόλης</strong> · Σύμβουλος Συμπεριφοράς & Εκπαιδευτής
+        </div>
+      </div>
+      <div>
+        <a href="../docs/print/README.md" class="btn" style="background: var(--color-amber); padding: 12px 20px; font-size: 14.5px;">
+          📁 Προβολή Φακέλου docs/print/
+        </a>
+      </div>
+    </div>
+
+    <!-- CARDS GRID -->
+    <div class="collateral-grid">
+
+      <!-- 1. BUSINESS CARD -->
+      <div class="item-card">
+        <div class="card-thumb" style="background: #F8F4EB;">
+          <img src="assets/logo_nose.svg" alt="Business Card" style="height: 60px;">
+        </div>
+        <div class="card-body">
+          <div class="card-tag">ΕΠΑΓΓΕΛΜΑΤΙΚΗ ΚΑΡΤΑ</div>
+          <div class="card-title">Business Card</div>
+          <div class="card-desc">
+            Εμπρός: Logo, ονοματεπώνυμο, τίτλος & brand. Πίσω: 4 βασικοί τομείς, QR code για letitsniff.gr και στοιχεία επικοινωνίας.
+          </div>
+          <div class="card-specs">
+            📏 <strong>85 × 55 mm</strong> · Διπλής Όψης<br>
+            📄 Προτεινόμενο: 350gsm Velvet ή Ματ
+          </div>
+          <div class="card-actions">
+            <a href="business-card/index.html" class="btn">👁️ Προβολή</a>
+            <a href="../docs/print/letitsniff_business_card.pdf" class="btn btn-outline" download>📥 PDF</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. BROCHURE -->
+      <div class="item-card">
+        <div class="card-thumb" style="background: #FAF7F0;">
+          📜
+        </div>
+        <div class="card-body">
+          <div class="card-tag">ΕΝΗΜΕΡΩΤΙΚΟ ΕΝΤΥΠΟ</div>
+          <div class="card-title">Τρίπτυχο Brochure</div>
+          <div class="card-desc">
+            A4 σε 6 panels DL. Αναλυτική παρουσίαση της φιλοσοφίας «Χωρίς Καταναγκασμό», τα 4 προγράμματα, βήματα συνεργασίας & βιβλιοθήκη.
+          </div>
+          <div class="card-specs">
+            📏 <strong>A4 (297 × 210 mm)</strong> σε 3 Panels DL<br>
+            📄 Προτεινόμενο: 170-200gsm Velvet
+          </div>
+          <div class="card-actions">
+            <a href="brochure/index.html" class="btn">👁️ Προβολή</a>
+            <a href="../docs/print/letitsniff_brochure_trifold.pdf" class="btn btn-outline" download>📥 PDF</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. FLYER -->
+      <div class="item-card">
+        <div class="card-thumb" style="background: #F5EFE4;">
+          📋
+        </div>
+        <div class="card-body">
+          <div class="card-tag">ΔΙΑΦΗΜΙΣΤΙΚΟ ΦΥΛΛΑΔΙΟ</div>
+          <div class="card-title">Flyer A5</div>
+          <div class="card-desc">
+            Μονόφυλλο A5 διπλής όψης. Εμπρός: Checklist προκλήσεων βόλτας/διαμερίσματος. Πίσω: Grid 4 υπηρεσιών, QR code & CTA επικοινωνίας.
+          </div>
+          <div class="card-specs">
+            📏 <strong>A5 (148 × 210 mm)</strong> · Όρθιο (Portrait)<br>
+            📄 Προτεινόμενο: 150-170gsm Ματ
+          </div>
+          <div class="card-actions">
+            <a href="flyer/index.html" class="btn">👁️ Προβολή</a>
+            <a href="../docs/print/letitsniff_flyer_a5.pdf" class="btn btn-outline" download>📥 PDF</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. STICKERS -->
+      <div class="item-card">
+        <div class="card-thumb" style="background: #F3EFE6;">
+          <img src="stickers/sticker_classic_round.svg" alt="Stickers" style="height: 110px;">
+        </div>
+        <div class="card-body">
+          <div class="card-tag">ΑΥΤΟΚΟΛΛΗΤΑ BRAND</div>
+          <div class="card-title">Stickers Suite</div>
+          <div class="card-desc">
+            3 διανυσματικά σχέδια: Classic Round 60mm, Statement «Άφησέ τον να μυρίσει» και Die-cut περιμετρικό κόψιμο μουσούδας.
+          </div>
+          <div class="card-specs">
+            📏 <strong>Ø 60mm / 75mm & Κοπτικό</strong><br>
+            📄 Βινύλιο αδιάβροχο εξωτερικού χώρου
+          </div>
+          <div class="card-actions">
+            <a href="stickers/index.html" class="btn">👁️ Προβολή</a>
+            <a href="../docs/print/letitsniff_stickers_sheet_a4.pdf" class="btn btn-outline" download>📥 PDF</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PRINT SHOP SPECIFICATIONS TABLE -->
+    <div class="guide-section">
+      <h2>📋 Τεχνικές Προδιαγραφές για το Τυπογραφείο</h2>
+      <p>
+        Μπορείτε να εκτυπώσετε τα αρχεία απευθείας από τον browser (πατώντας «Εκτύπωση / Save as PDF») ή να στείλετε τους παρακάτω οδηγούς στον γραφίστα / τυπογράφο σας.
+      </p>
+
+      <table class="specs-table">
+        <thead>
+          <tr>
+            <th>Έντυπο</th>
+            <th>Καθαρές Διαστάσεις</th>
+            <th>Διαστάσεις με Bleed (2-3mm)</th>
+            <th>Προτεινόμενο Χαρτί</th>
+            <th>Φινίρισμα / Σημειώσεις</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Επαγγελματική Κάρτα</strong></td>
+            <td>85 × 55 mm</td>
+            <td>89 × 59 mm</td>
+            <td>350gsm Velvet ή Οικολογικό Kraft</td>
+            <td>Ματ πλαστικοποίηση διπλής όψης (ή άκοπο ματ)</td>
+          </tr>
+          <tr>
+            <td><strong>Τρίπτυχο Brochure</strong></td>
+            <td>297 × 210 mm (Ανοιχτό)</td>
+            <td>303 × 216 mm</td>
+            <td>170gsm - 200gsm Velvet</td>
+            <td>2 πικμάνσεις (διπλώματα) σε 3 πάνελ (DL: 99 × 210 mm)</td>
+          </tr>
+          <tr>
+            <td><strong>Φυλλάδιο A5</strong></td>
+            <td>148 × 210 mm</td>
+            <td>152 × 214 mm</td>
+            <td>150gsm - 170gsm Velvet / Couché</td>
+            <td>Κοπή με μαχαίρι, χωρίς πλαστικοποίηση</td>
+          </tr>
+          <tr>
+            <td><strong>Αυτοκόλλητα</strong></td>
+            <td>Ø 60mm ή 75mm</td>
+            <td>Ø 64mm ή 79mm</td>
+            <td>Αυτοκόλλητο Βινύλιο (Vinyl)</td>
+            <td>Αδιάβροχο UV laminate για αντοχή σε εξωτερικό χώρο</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</body>
+</html>

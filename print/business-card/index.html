@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Let It Sniff — Επαγγελματική Κάρτα (Αλέξανδρος Τσιόλης)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-cream: #FDFAF5;
+      --color-sand: #F0E8D5;
+      --color-sandDark: #DDD0B3;
+      --color-amber: #C4852A;
+      --color-amberDark: #925C18;
+      --color-brown: #2C1810;
+      --color-muted: #6E5941;
+      --color-forest: #3D5C38;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #D8D2C4;
+      color: var(--color-brown);
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .toolbar {
+      background: #FFF;
+      padding: 12px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
+      max-width: 900px;
+      width: 100%;
+      justify-content: space-between;
+    }
+    .toolbar-title h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 20px;
+      color: var(--color-brown);
+    }
+    .toolbar-title p {
+      font-size: 12.5px;
+      color: var(--color-muted);
+    }
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-brown);
+      color: #FFF;
+      padding: 7px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #4A2E20; }
+    .btn-secondary {
+      background: #F0E8D5;
+      color: var(--color-brown);
+    }
+    .btn-secondary:hover { background: #E5DAC2; }
+
+    /* Cards Workspace */
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      max-width: 950px;
+    }
+
+    .card-wrapper {
+      text-align: center;
+    }
+    .card-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #6E5941;
+      margin-bottom: 8px;
+    }
+
+    /* Standard European Business Card: 85mm x 55mm */
+    .card {
+      width: 85mm;
+      height: 55mm;
+      background: var(--color-cream);
+      border-radius: 2mm;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 5mm;
+      border: 1px solid rgba(221, 208, 179, 0.4);
+    }
+
+    /* FRONT DESIGN */
+    .card-front {
+      background: linear-gradient(145deg, #FDFAF5 0%, #FAF5EB 100%);
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      gap: 2.5mm;
+    }
+
+    .front-logo-wrap {
+      width: 14mm;
+      height: 11mm;
+      margin-bottom: 0.5mm;
+    }
+    .front-logo-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .front-brand {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 5.6mm;
+      color: var(--color-brown);
+      letter-spacing: 0.5mm;
+      line-height: 1.05;
+    }
+
+    .front-tagline {
+      font-size: 2.1mm;
+      font-weight: 700;
+      color: var(--color-amberDark);
+      letter-spacing: 0.25mm;
+      text-transform: uppercase;
+      margin-bottom: 1.5mm;
+    }
+
+    .front-divider {
+      width: 25mm;
+      height: 0.3mm;
+      background: var(--color-sandDark);
+      margin: 0.5mm auto;
+    }
+
+    .front-name {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 4.4mm;
+      color: var(--color-brown);
+      line-height: 1.15;
+    }
+
+    .front-role {
+      font-size: 2.1mm;
+      font-weight: 500;
+      color: var(--color-muted);
+      letter-spacing: 0.15mm;
+    }
+
+    /* BACK DESIGN */
+    .card-back {
+      background: var(--color-cream);
+      padding: 4.5mm 5mm;
+      justify-content: space-between;
+    }
+
+    .back-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 0.25mm solid var(--color-sandDark);
+      padding-bottom: 1.5mm;
+    }
+    .back-brand-mini {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 3.4mm;
+      color: var(--color-brown);
+      display: flex;
+      align-items: center;
+      gap: 1.5mm;
+    }
+    .back-brand-mini svg {
+      width: 4.2mm;
+      height: 3.3mm;
+    }
+    .back-tagline-mini {
+      font-size: 1.8mm;
+      font-weight: 700;
+      color: var(--color-amberDark);
+      letter-spacing: 0.15mm;
+    }
+
+    .back-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3mm;
+      margin: auto 0;
+    }
+
+    .back-bullets {
+      flex: 1;
+      list-style: none;
+    }
+    .back-bullets li {
+      font-size: 2.1mm;
+      font-weight: 500;
+      color: var(--color-brown);
+      line-height: 1.45;
+      display: flex;
+      align-items: center;
+      gap: 1.5mm;
+    }
+    .back-bullets li::before {
+      content: "•";
+      color: var(--color-amber);
+      font-size: 3mm;
+      line-height: 0;
+    }
+
+    .back-qr-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 19mm;
+      shrink: 0;
+    }
+    .back-qr-img {
+      width: 15mm;
+      height: 15mm;
+      background: #FFF;
+      padding: 0.8mm;
+      border-radius: 1mm;
+      border: 0.25mm solid var(--color-sandDark);
+    }
+    .back-qr-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .back-qr-label {
+      font-size: 1.5mm;
+      font-weight: 600;
+      color: var(--color-muted);
+      margin-top: 0.8mm;
+      line-height: 1.1;
+    }
+
+    .back-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 2mm;
+      font-weight: 600;
+      color: var(--color-muted);
+      border-top: 0.25mm solid var(--color-sandDark);
+      padding-top: 1.2mm;
+    }
+    .back-footer span {
+      display: flex;
+      align-items: center;
+      gap: 1mm;
+    }
+    .back-footer .web {
+      color: var(--color-amberDark);
+      font-weight: 700;
+    }
+
+    /* PRINT RULES */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+      .toolbar, .card-label {
+        display: none !important;
+      }
+      .cards-container {
+        display: block;
+        max-width: 100%;
+      }
+      .card-wrapper {
+        page-break-after: always;
+        break-after: page;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .card {
+        box-shadow: none;
+        border: none;
+      }
+      @page {
+        size: 85mm 55mm;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <div class="toolbar-title">
+      <h1>Let It Sniff — Επαγγελματική Κάρτα</h1>
+      <p>Ευρωπαϊκό Πρότυπο: 85 × 55 mm · Vector CMYK Safe</p>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn" onclick="window.print()">🖨️ Εκτύπωση / Save as PDF</button>
+      <a href="../index.html" class="btn btn-secondary">← Collateral Hub</a>
+    </div>
+  </div>
+
+  <div class="cards-container">
+    <!-- FRONT -->
+    <div class="card-wrapper">
+      <div class="card-label">Εμπρόσθια Όψη (Front)</div>
+      <div class="card card-front">
+        <div class="front-logo-wrap">
+          <svg viewBox="0 0 44 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="22" cy="21" rx="16.5" ry="10.5" fill="#F0E8D5" />
+            <path d="M 22 19.5 L 22 24.5 M 22 24.5 C 20.2 27.6, 15.2 28.4, 11.2 26.2 C 9.6 25.3, 8.6 24.1, 8.2 23.2 M 22 24.5 C 23.8 27.6, 28.8 28.4, 32.8 26.2 C 34.4 25.3, 35.4 24.1, 35.8 23.2" stroke="#2C1810" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M 12.5 5.5 C 17.5 4.4, 26.5 4.4, 31.5 5.5 C 35.2 6.3, 36.8 9.2, 36.0 12.4 C 35.3 15.2, 32.8 16.5, 30.2 17.2 C 28.3 17.7, 27.2 19.3, 25.0 19.8 C 23.5 20.1, 20.5 20.1, 19.0 19.8 C 16.8 19.3, 15.7 17.7, 13.8 17.2 C 11.2 16.5, 8.7 15.2, 8.0 12.4 C 7.2 9.2, 8.8 6.3, 12.5 5.5 Z" fill="#2C1810" />
+            <ellipse cx="11.2" cy="8.6" rx="1.1" ry="0.65" transform="rotate(-18 11.2 8.6)" fill="#FDFAF5" fill-opacity="0.3" />
+            <path d="M 22 14.2 L 22 19.7" stroke="#120905" stroke-width="1.2" stroke-linecap="round" opacity="0.7" />
+            <path d="M 16.8 10.8 C 15.1 10.2, 13.0 11.1, 12.2 12.7 C 11.5 14.0, 10.3 14.4, 9.7 13.9 C 10.5 15.2, 12.4 15.5, 13.9 14.7 C 15.7 13.9, 16.9 15.2, 17.8 14.2 C 18.6 13.2, 18.2 11.3, 16.8 10.8 Z" fill="#0E0704" />
+            <path d="M 27.2 10.8 C 28.9 10.2, 31.0 11.1, 31.8 12.7 C 32.5 14.0, 33.7 14.4, 34.3 13.9 C 33.5 15.2, 31.6 15.5, 30.1 14.7 C 28.3 13.9, 27.1 15.2, 26.2 14.2 C 25.4 13.2, 25.8 11.3, 27.2 10.8 Z" fill="#0E0704" />
+          </svg>
+        </div>
+        <div class="front-brand">LET IT SNIFF</div>
+        <div class="front-tagline">ΕΚΠΑΙΔΕΥΣΗ ΣΚΥΛΩΝ ΧΩΡΙΣ ΚΑΤΑΝΑΓΚΑΣΜΟ · ΑΘΗΝΑ</div>
+        <div class="front-divider"></div>
+        <div class="front-name">Αλέξανδρος Τσιόλης</div>
+        <div class="front-role">Σύμβουλος Συμπεριφοράς & Εκπαιδευτής</div>
+      </div>
+    </div>
+
+    <!-- BACK -->
+    <div class="card-wrapper">
+      <div class="card-label">Οπίσθια Όψη (Back)</div>
+      <div class="card card-back">
+        <div class="back-header">
+          <div class="back-brand-mini">
+            <svg viewBox="0 0 44 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="22" cy="21" rx="16.5" ry="10.5" fill="#F0E8D5" />
+              <path d="M 22 19.5 L 22 24.5 M 22 24.5 C 20.2 27.6, 15.2 28.4, 11.2 26.2 M 22 24.5 C 23.8 27.6, 28.8 28.4, 32.8 26.2" stroke="#2C1810" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M 12.5 5.5 C 17.5 4.4, 26.5 4.4, 31.5 5.5 C 35.2 6.3, 36.8 9.2, 36.0 12.4 C 35.3 15.2, 32.8 16.5, 30.2 17.2 C 28.3 17.7, 27.2 19.3, 25.0 19.8 C 23.5 20.1, 20.5 20.1, 19.0 19.8 C 16.8 19.3, 15.7 17.7, 13.8 17.2 C 11.2 16.5, 8.7 15.2, 8.0 12.4 C 7.2 9.2, 8.8 6.3, 12.5 5.5 Z" fill="#2C1810" />
+            </svg>
+            Let It Sniff
+          </div>
+          <div class="back-tagline-mini">ΧΩΡΙΣ ΚΑΤΑΝΑΓΚΑΣΜΟ</div>
+        </div>
+
+        <div class="back-body">
+          <ul class="back-bullets">
+            <li>Χαλαρή Βόλτα & Όσφρηση στην πόλη</li>
+            <li>Εκπαίδευση Κουταβιού (8–16 εβδ.)</li>
+            <li>Αντιδραστικότητα, Φοβίες & Άγχος</li>
+            <li>Υιοθεσία & Πρώτη Προσαρμογή</li>
+          </ul>
+
+          <div class="back-qr-box">
+            <div class="back-qr-img">
+              <img src="../assets/qr_letitsniff.svg" alt="QR Code letitsniff.gr">
+            </div>
+            <div class="back-qr-label">Σκανάρετε για<br>οδηγούς & επικοινωνία</div>
+          </div>
+        </div>
+
+        <div class="back-footer">
+          <span class="web">🌐 letitsniff.gr</span>
+          <span>✉️ info@letitsniff.gr</span>
+          <span>📍 Αθήνα & Αττική</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

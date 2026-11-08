@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Let It Sniff — Ενημερωτικό Τρίπτυχο Brochure (Αλέξανδρος Τσιόλης)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-cream: #FDFAF5;
+      --color-sand: #F0E8D5;
+      --color-sandDark: #DDD0B3;
+      --color-amber: #C4852A;
+      --color-amberLight: #E8A84A;
+      --color-amberDark: #925C18;
+      --color-terra: #C4522A;
+      --color-brown: #2C1810;
+      --color-brownMid: #4A2E20;
+      --color-muted: #6E5941;
+      --color-forest: #3D5C38;
+      --color-forestLight: #5A7A54;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #D8D2C4;
+      color: var(--color-brown);
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .toolbar {
+      background: #FFF;
+      padding: 12px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
+      max-width: 1200px;
+      width: 100%;
+      justify-content: space-between;
+    }
+    .toolbar-title h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 20px;
+      color: var(--color-brown);
+    }
+    .toolbar-title p {
+      font-size: 12.5px;
+      color: var(--color-muted);
+    }
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-brown);
+      color: #FFF;
+      padding: 7px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #4A2E20; }
+    .btn-secondary {
+      background: #F0E8D5;
+      color: var(--color-brown);
+    }
+    .btn-secondary:hover { background: #E5DAC2; }
+
+    .spreads-container {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      align-items: center;
+      max-width: 1250px;
+      width: 100%;
+    }
+
+    .spread-wrapper {
+      text-align: center;
+      width: 100%;
+    }
+    .spread-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #554332;
+      margin-bottom: 10px;
+    }
+
+    /* A4 Landscape Trifold: 297mm x 210mm */
+    .trifold-spread {
+      width: 297mm;
+      height: 210mm;
+      background: var(--color-cream);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      border: 1px solid rgba(221, 208, 179, 0.6);
+      margin: 0 auto;
+    }
+
+    /* 3 Panels: 99mm each */
+    .panel {
+      width: 99mm;
+      height: 210mm;
+      padding: 10mm 8.5mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    /* Subtle Fold Guide Line */
+    .panel:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 1px;
+      height: 100%;
+      background: rgba(221, 208, 179, 0.5);
+      border-right: 1px dashed rgba(196, 133, 42, 0.25);
+    }
+
+    /* ========================================================
+       OUTSIDE SPREAD: Panel 5 (Flap) | Panel 6 (Back) | Panel 1 (Front)
+       ======================================================== */
+    
+    /* Panel 5: Η Μέθοδος & Βιβλιοθήκη */
+    .panel-5 {
+      background: #FDFAF5;
+    }
+    .panel-5 .kicker {
+      font-size: 2.1mm;
+      font-weight: 700;
+      color: var(--color-amberDark);
+      letter-spacing: 0.25mm;
+      text-transform: uppercase;
+      margin-bottom: 1mm;
+    }
+    .panel-5 .title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 5.2mm;
+      color: var(--color-brown);
+      line-height: 1.15;
+      margin-bottom: 3.5mm;
+    }
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3mm;
+      margin-bottom: 4mm;
+    }
+    .step-item {
+      display: flex;
+      gap: 2.5mm;
+    }
+    .step-num {
+      width: 5.5mm;
+      height: 5.5mm;
+      border-radius: 50%;
+      background: var(--color-amber);
+      color: #FFF;
+      font-size: 2.7mm;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      shrink: 0;
+    }
+    .step-text h4 {
+      font-size: 2.8mm;
+      font-weight: 700;
+      color: var(--color-brown);
+      margin-bottom: 0.4mm;
+    }
+    .step-text p {
+      font-size: 2.3mm;
+      color: var(--color-muted);
+      line-height: 1.35;
+    }
+
+    .library-banner {
+      background: #F0E8D5;
+      border-radius: 2mm;
+      padding: 3mm 3.5mm;
+      margin-top: auto;
+      border-left: 1mm solid var(--color-amber);
+    }
+    .library-banner h5 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 3.1mm;
+      color: var(--color-brown);
+      margin-bottom: 0.8mm;
+    }
+    .library-banner p {
+      font-size: 2.1mm;
+      color: var(--color-brownMid);
+      line-height: 1.35;
+      margin-bottom: 1.5mm;
+    }
+    .library-banner .url-tag {
+      font-size: 2.2mm;
+      font-weight: 700;
+      color: var(--color-amberDark);
+    }
+
+    /* Panel 6: Back Cover (Contact & Info) */
+    .panel-6 {
+      background: #FAF5EB;
+      text-align: center;
+      align-items: center;
+    }
+    .panel-6 .back-logo {
+      width: 14mm;
+      height: 11mm;
+      margin-bottom: 1.5mm;
+    }
+    .panel-6 .back-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 5mm;
+      color: var(--color-brown);
+      line-height: 1.2;
+      margin-bottom: 2mm;
+    }
+    .panel-6 .back-desc {
+      font-size: 2.4mm;
+      color: var(--color-muted);
+      line-height: 1.45;
+      margin-bottom: 4mm;
+      max-width: 75mm;
+    }
+    .panel-6 .qr-frame {
+      background: #FFF;
+      padding: 1.5mm;
+      border-radius: 2mm;
+      width: 25mm;
+      height: 25mm;
+      border: 0.3mm solid var(--color-sandDark);
+      margin-bottom: 2mm;
+    }
+    .panel-6 .qr-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .panel-6 .qr-caption {
+      font-size: 2mm;
+      font-weight: 600;
+      color: var(--color-muted);
+      margin-bottom: 5mm;
+    }
+    .contact-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5mm;
+      font-size: 2.6mm;
+      font-weight: 600;
+      color: var(--color-brown);
+      margin-bottom: auto;
+    }
+    .contact-lines .highlight {
+      color: var(--color-amberDark);
+    }
+    .panel-6 .quote {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2.6mm;
+      font-style: italic;
+      color: var(--color-muted);
+      border-top: 0.25mm solid var(--color-sandDark);
+      padding-top: 2.5mm;
+      line-height: 1.35;
+    }
+    .panel-6 .author {
+      font-family: 'Inter', sans-serif;
+      font-size: 2.2mm;
+      font-weight: 700;
+      color: var(--color-brown);
+      margin-top: 0.8mm;
+    }
+
+    /* Panel 1: Front Cover */
+    .panel-1 {
+      background: radial-gradient(circle at 50% 25%, #FFFDFB 0%, #FDFAF5 65%, #F5EFE2 100%);
+      text-align: center;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cover-top-tag {
+      font-size: 2.2mm;
+      font-weight: 700;
+      letter-spacing: 0.4mm;
+      text-transform: uppercase;
+      color: var(--color-amberDark);
+      border-bottom: 0.3mm solid var(--color-sandDark);
+      padding-bottom: 1.5mm;
+      width: 100%;
+    }
+    .cover-logo-box {
+      width: 22mm;
+      height: 17mm;
+      margin: 2mm 0;
+    }
+    .cover-brand {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 8mm;
+      color: var(--color-brown);
+      letter-spacing: 0.6mm;
+      line-height: 1;
+      margin-bottom: 2mm;
+    }
+    .cover-hook {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 5.5mm;
+      color: var(--color-brown);
+      line-height: 1.25;
+      margin-bottom: 2.5mm;
+    }
+    .cover-hook em {
+      color: var(--color-amber);
+      font-style: italic;
+    }
+    .cover-lead {
+      font-size: 2.6mm;
+      color: var(--color-muted);
+      line-height: 1.45;
+      max-width: 78mm;
+      margin-bottom: 3mm;
+    }
+    .cover-pill {
+      background: var(--color-sand);
+      color: var(--color-brown);
+      font-size: 2.1mm;
+      font-weight: 700;
+      padding: 1.5mm 3.5mm;
+      border-radius: 10mm;
+      letter-spacing: 0.2mm;
+      text-transform: uppercase;
+      margin-bottom: 2mm;
+    }
+    .cover-trainer {
+      border-top: 0.3mm solid var(--color-sandDark);
+      padding-top: 2mm;
+      width: 100%;
+      font-size: 2.4mm;
+      color: var(--color-muted);
+    }
+    .cover-trainer strong {
+      color: var(--color-brown);
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.9mm;
+    }
+
+    /* ========================================================
+       INSIDE SPREAD: Panel 2 (Philosophy) | Panel 3 (Programs A) | Panel 4 (Programs B)
+       ======================================================== */
+    
+    /* Panel 2: Η Φιλοσοφία */
+    .panel-2 {
+      background: #FDFBF7;
+    }
+    .panel-2 .kicker {
+      font-size: 2.1mm;
+      font-weight: 700;
+      color: var(--color-amberDark);
+      letter-spacing: 0.25mm;
+      text-transform: uppercase;
+      margin-bottom: 0.8mm;
+    }
+    .panel-2 .title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 4.8mm;
+      color: var(--color-brown);
+      line-height: 1.2;
+      margin-bottom: 3mm;
+    }
+    .philo-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2.8mm;
+      font-size: 2.4mm;
+      color: var(--color-brownMid);
+      line-height: 1.45;
+    }
+    .philo-box {
+      background: #FFF;
+      border-left: 1mm solid var(--color-terra);
+      padding: 2.5mm 3mm;
+      border-radius: 0 1.5mm 1.5mm 0;
+      font-size: 2.3mm;
+      color: var(--color-brown);
+      line-height: 1.4;
+    }
+    .philo-box strong {
+      color: var(--color-terra);
+    }
+    .philo-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.6mm;
+      margin-top: 1mm;
+    }
+    .philo-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.8mm;
+      font-size: 2.25mm;
+    }
+    .philo-list li::before {
+      content: "✓";
+      color: var(--color-forest);
+      font-weight: bold;
+    }
+
+    /* Panels 3 & 4: Programs */
+    .panel-3, .panel-4 {
+      background: #FDFAF5;
+      justify-content: flex-start;
+      gap: 3.5mm;
+    }
+    .prog-kicker {
+      font-size: 2.1mm;
+      font-weight: 700;
+      color: var(--color-amberDark);
+      letter-spacing: 0.2mm;
+      text-transform: uppercase;
+      margin-bottom: 0.8mm;
+    }
+    .prog-title-main {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 4.8mm;
+      color: var(--color-brown);
+      margin-bottom: 2mm;
+    }
+
+    .program-block {
+      background: #FFF;
+      border: 0.25mm solid var(--color-sandDark);
+      border-radius: 2mm;
+      padding: 3mm 3.5mm;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5mm;
+      box-shadow: 0 0.8mm 2mm rgba(0,0,0,0.02);
+    }
+    .prog-head {
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+    .prog-head .icon {
+      font-size: 3.8mm;
+    }
+    .prog-head h4 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 3.3mm;
+      color: var(--color-brown);
+      line-height: 1.15;
+    }
+    .prog-tagline {
+      font-size: 2.1mm;
+      font-weight: 600;
+      color: var(--color-amberDark);
+    }
+    .prog-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2mm;
+      margin-top: 0.5mm;
+    }
+    .prog-bullets li {
+      font-size: 2.15mm;
+      color: var(--color-muted);
+      line-height: 1.3;
+      padding-left: 2.5mm;
+      position: relative;
+    }
+    .prog-bullets li::before {
+      content: "•";
+      color: var(--color-amber);
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    /* PRINT RULES */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+      .toolbar, .spread-label {
+        display: none !important;
+      }
+      .spreads-container {
+        display: block;
+        max-width: 100%;
+      }
+      .spread-wrapper {
+        page-break-after: always;
+        break-after: page;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .trifold-spread {
+        box-shadow: none;
+        border: none;
+      }
+      .panel:not(:last-child)::after {
+        display: none;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <div class="toolbar-title">
+      <h1>Let It Sniff — Ενημερωτικό Τρίπτυχο Brochure</h1>
+      <p>A4 σε 3 Panels DL (99 × 210 mm έκαστο) · Διπλής Όψης (Inside & Outside Spreads)</p>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn" onclick="window.print()">🖨️ Εκτύπωση / Save as PDF</button>
+      <a href="../index.html" class="btn btn-secondary">← Collateral Hub</a>
+    </div>
+  </div>
+
+  <div class="spreads-container">
+
+    <!-- SPREAD 1: OUTSIDE -->
+    <div class="spread-wrapper">
+      <div class="spread-label">Εξωτερική Όψη (Outside Spread) — Panel 5 (Πίσω) | Panel 6 (Οπισθόφυλλο) | Panel 1 (Εξώφυλλο)</div>
+      <div class="trifold-spread">
+
+        <!-- PANEL 5: Η Μέθοδος & Βιβλιοθήκη -->
+        <div class="panel panel-5">
+          <div>
+            <div class="kicker">ΣΥΝΕΡΓΑΣΙΑ ΒΗΜΑ-ΒΗΜΑ</div>
+            <div class="title">Πώς δουλεύουμε με τον σκύλο σας</div>
+            
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                  <h4>Αρχική Αξιολόγηση</h4>
+                  <p>Συναντιόμαστε στον χώρο σας (σπίτι & γειτονιά) για να κατανοήσουμε τις πραγματικές αιτίες κάθε συμπεριφοράς.</p>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                  <h4>Εξατομικευμένο Πλάνο</h4>
+                  <p>Σχεδιάζουμε πρακτικά βήματα που ταιριάζουν στο δικό σας πρόγραμμα, χωρίς υπερβολές και χωρίς πίεση.</p>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div class="step-text">
+                  <h4>Καθοδήγηση & Υποστήριξη</h4>
+                  <p>Μαθαίνετε πώς να διαβάζετε τη γλώσσα σώματος του σκύλου σας και να διαχειρίζεστε κάθε αστικό ερέθισμα.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="library-banner">
+            <h5>📚 100+ Δωρεάν Οδηγοί στο Blog</h5>
+            <p>Ανοιχτή βιβλιοθήκη γνώσης με αναλυτικά άρθρα για το κουτάβι, το διαμέρισμα, τη βόλτα και την υιοθεσία.</p>
+            <div class="url-tag">letitsniff.gr/blog</div>
+          </div>
+        </div>
+
+        <!-- PANEL 6: Οπισθόφυλλο (Contact & CTA) -->
+        <div class="panel panel-6">
+          <div class="back-logo">
+            <svg viewBox="0 0 44 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="22" cy="21" rx="16.5" ry="10.5" fill="#F0E8D5" />
+              <path d="M 22 19.5 L 22 24.5 M 22 24.5 C 20.2 27.6, 15.2 28.4, 11.2 26.2 M 22 24.5 C 23.8 27.6, 28.8 28.4, 32.8 26.2" stroke="#2C1810" stroke-width="2.2" stroke-linecap="round" />
+              <path d="M 12.5 5.5 C 17.5 4.4, 26.5 4.4, 31.5 5.5 C 35.2 6.3, 36.8 9.2, 36.0 12.4 C 35.3 15.2, 32.8 16.5, 30.2 17.2 C 28.3 17.7, 27.2 19.3, 25.0 19.8 C 23.5 20.1, 20.5 20.1, 19.0 19.8 C 16.8 19.3, 15.7 17.7, 13.8 17.2 C 11.2 16.5, 8.7 15.2, 8.0 12.4 C 7.2 9.2, 8.8 6.3, 12.5 5.5 Z" fill="#2C1810" />
+            </svg>
+          </div>
+
+          <div class="back-title">Ας μιλήσουμε για τον σκύλο σας</div>
+          <div class="back-desc">
+            Κατ’ οίκον επισκέψεις & υπαίθριες συνεδρίες στην Αθήνα και ευρύτερη Αττική. Διατίθεται και online συμβουλευτική.
+          </div>
+
+          <div class="qr-frame">
+            <img src="../assets/qr_letitsniff.svg" alt="QR Code letitsniff.gr">
+          </div>
+          <div class="qr-caption">Σκανάρετε για άμεση επικοινωνία<br>& οδηγούς εκπαίδευσης</div>
+
+          <div class="contact-lines">
+            <span class="highlight">🌐 letitsniff.gr</span>
+            <span>✉️ info@letitsniff.gr</span>
+            <span>📍 Αθήνα & Αττική</span>
+          </div>
+
+          <div>
+            <div class="quote">
+              «Η βόλτα δεν είναι άσκηση υπακοής. Είναι το παράθυρο του σκύλου στον κόσμο.»
+            </div>
+            <div class="author">Αλέξανδρος Τσιόλης</div>
+          </div>
+        </div>
+
+        <!-- PANEL 1: Εξώφυλλο (Front Cover) -->
+        <div class="panel panel-1">
+          <div class="cover-top-tag">ΕΚΠΑΙΔΕΥΣΗ ΣΚΥΛΩΝ ΣΤΗΝ ΑΘΗΝΑ</div>
+
+          <div>
+            <div class="cover-logo-box">
+              <svg viewBox="0 0 44 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="22" cy="21" rx="16.5" ry="10.5" fill="#F0E8D5" />
+                <path d="M 22 19.5 L 22 24.5 M 22 24.5 C 20.2 27.6, 15.2 28.4, 11.2 26.2 M 22 24.5 C 23.8 27.6, 28.8 28.4, 32.8 26.2" stroke="#2C1810" stroke-width="2.2" stroke-linecap="round" />
+                <path d="M 12.5 5.5 C 17.5 4.4, 26.5 4.4, 31.5 5.5 C 35.2 6.3, 36.8 9.2, 36.0 12.4 C 35.3 15.2, 32.8 16.5, 30.2 17.2 C 28.3 17.7, 27.2 19.3, 25.0 19.8 C 23.5 20.1, 20.5 20.1, 19.0 19.8 C 16.8 19.3, 15.7 17.7, 13.8 17.2 C 11.2 16.5, 8.7 15.2, 8.0 12.4 C 7.2 9.2, 8.8 6.3, 12.5 5.5 Z" fill="#2C1810" />
+                <ellipse cx="11.2" cy="8.6" rx="1.1" ry="0.65" transform="rotate(-18 11.2 8.6)" fill="#FDFAF5" fill-opacity="0.35" />
+                <path d="M 22 14.2 L 22 19.7" stroke="#120905" stroke-width="1.2" stroke-linecap="round" opacity="0.7" />
+                <path d="M 16.8 10.8 C 15.1 10.2, 13.0 11.1, 12.2 12.7 C 11.5 14.0, 10.3 14.4, 9.7 13.9 C 10.5 15.2, 12.4 15.5, 13.9 14.7 C 15.7 13.9, 16.9 15.2, 17.8 14.2 C 18.6 13.2, 18.2 11.3, 16.8 10.8 Z" fill="#0E0704" />
+                <path d="M 27.2 10.8 C 28.9 10.2, 31.0 11.1, 31.8 12.7 C 32.5 14.0, 33.7 14.4, 34.3 13.9 C 33.5 15.2, 31.6 15.5, 30.1 14.7 C 28.3 13.9, 27.1 15.2, 26.2 14.2 C 25.4 13.2, 25.8 11.3, 27.2 10.8 Z" fill="#0E0704" />
+              </svg>
+            </div>
+            <div class="cover-brand">LET IT SNIFF</div>
+
+            <div class="cover-hook">
+              Άφησε τον σκύλο σου <em>να μυρίσει</em> τη ζωή στην πόλη.
+            </div>
+
+            <div class="cover-lead">
+              Επιστημονική, εφαρμοσμένη εκπαίδευση σκύλων προσαρμοσμένη στις απαιτητικές συνθήκες της Αθήνας.
+            </div>
+
+            <div class="cover-pill">ΧΩΡΙΣ ΚΑΤΑΝΑΓΚΑΣΜΟ</div>
+          </div>
+
+          <div class="cover-trainer">
+            <strong>Αλέξανδρος Τσιόλης</strong><br>
+            Σύμβουλος Συμπεριφοράς & Εκπαιδευτής
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SPREAD 2: INSIDE -->
+    <div class="spread-wrapper">
+      <div class="spread-label">Εσωτερική Όψη (Inside Spread) — Panel 2 (Φιλοσοφία) | Panel 3 (Προγράμματα A) | Panel 4 (Προγράμματα B)</div>
+      <div class="trifold-spread">
+
+        <!-- PANEL 2: Γιατί «Εκπαίδευση Χωρίς Καταναγκασμό;» -->
+        <div class="panel panel-2">
+          <div>
+            <div class="kicker">Η ΠΡΟΣΕΓΓΙΣΗ</div>
+            <div class="title">Γιατί «Εκπαίδευση Χωρίς Καταναγκασμό»;</div>
+
+            <div class="philo-body">
+              <p>
+                Ο όρος <em>«θετική εκπαίδευση»</em> έχει συχνά παρεξηγηθεί στην Ελλάδα ως έλλειψη ορίων ή απλό «μοίρασμα λιχουδιών».
+              </p>
+              
+              <div class="philo-box">
+                <strong>Η ουσία είναι το Force-Free:</strong><br>
+                Μηδενική ανοχή σε σωματική ή ψυχολογική πίεση, φόβο, πνίχτες, αγκαθωτά και εκφοβισμούς.
+              </div>
+
+              <p>
+                Θέτουμε σαφή όρια μέσω επιβράβευσης, διαχείρισης περιβάλλοντος και σεβασμού στον ρυθμό μάθησης κάθε σκύλου.
+              </p>
+
+              <p>
+                <strong>Η δύναμη της όσφρησης:</strong><br>
+                Η όσφρηση δεν είναι παραξενιά — είναι η θεμελιώδης βιολογική ανάγκη που ρυθμίζει το νευρικό σύστημα και αποφορτίζει τον σκύλο από το στρες της πόλης.
+              </p>
+            </div>
+          </div>
+
+          <ul class="philo-list">
+            <li>Επιστημονική συμπεριφορική ανάλυση</li>
+            <li>Εκπαίδευση στο πραγματικό περιβάλλον</li>
+            <li>Σεβασμός στην προσωπικότητα του σκύλου</li>
+          </ul>
+        </div>
+
+        <!-- PANEL 3: Προγράμματα A -->
+        <div class="panel panel-3">
+          <div>
+            <div class="prog-kicker">ΥΠΗΡΕΣΙΕΣ ΕΚΠΑΙΔΕΥΣΗΣ</div>
+            <div class="prog-title-main">Βασικά Προγράμματα</div>
+          </div>
+
+          <!-- Program 1 -->
+          <div class="program-block">
+            <div class="prog-head">
+              <span class="icon">🦮</span>
+              <div>
+                <h4>Αστική Συμβίωση & Υπακοή</h4>
+                <div class="prog-tagline">Χαλαρή βόλτα & ήρεμη πόλη</div>
+              </div>
+            </div>
+            <ul class="prog-bullets">
+              <li>Βόλτα με χαλαρό λουρί χωρίς τράβηγμα</li>
+              <li>Απελευθέρωση της όσφρησης για αποσυμπίεση</li>
+              <li>Ήρεμη παραμονή σε καφέ & εστιατόρια</li>
+              <li>Διαχείριση ερεθισμάτων (μηχανάκια, σκύλοι)</li>
+            </ul>
+          </div>
+
+          <!-- Program 2 -->
+          <div class="program-block">
+            <div class="prog-head">
+              <span class="icon">🐶</span>
+              <div>
+                <h4>Εκπαίδευση Κουταβιού</h4>
+                <div class="prog-tagline">Σωστές βάσεις (8–16 εβδ.)</div>
+              </div>
+            </div>
+            <ul class="prog-bullets">
+              <li>Εκπαίδευση τουαλέτας στο διαμέρισμα</li>
+              <li>Crate training ως ασφαλής φωλιά χωρίς ενοχές</li>
+              <li>Διαχείριση δαγκωμάτων στο παιχνίδι</li>
+              <li>Ασφαλής κοινωνικοποίηση σε ήχους & πόλη</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PANEL 4: Προγράμματα B -->
+        <div class="panel panel-4">
+          <div>
+            <div class="prog-kicker">ΕΞΕΙΔΙΚΕΥΜΕΝΗ ΥΠΟΣΤΗΡΙΞΗ</div>
+            <div class="prog-title-main">Συμπεριφορά & Ένταξη</div>
+          </div>
+
+          <!-- Program 3 -->
+          <div class="program-block">
+            <div class="prog-head">
+              <span class="icon">🧠</span>
+              <div>
+                <h4>Προβλήματα Συμπεριφοράς</h4>
+                <div class="prog-tagline">Αντιδραστικότητα & Φοβίες</div>
+              </div>
+            </div>
+            <ul class="prog-bullets">
+              <li>Άγχος αποχωρισμού στην πολυκατοικία</li>
+              <li>Αντιδραστικότητα στο λουρί απέναντι σε σκύλους</li>
+              <li>Φοβίες σε κροτίδες, κεραυνούς & ασανσέρ</li>
+              <li>Φύλαξη πόρων (φαγητό, παιχνίδια)</li>
+            </ul>
+          </div>
+
+          <!-- Program 4 -->
+          <div class="program-block">
+            <div class="prog-head">
+              <span class="icon">🏡</span>
+              <div>
+                <h4>Υιοθεσία & Προσαρμογή</h4>
+                <div class="prog-tagline">Από το καταφύγιο στο σπίτι</div>
+              </div>
+            </div>
+            <ul class="prog-bullets">
+              <li>Συμβουλευτική επιλογής σκύλου & dog-proofing</li>
+              <li>Οι κρίσιμες πρώτες 48 ώρες στο διαμέρισμα</li>
+              <li>Ο κανόνας 3-3-3 & η διαδικασία αποσυμπίεσης</li>
+              <li>Χτίσιμο δεσμού εμπιστοσύνης από το μηδέν</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

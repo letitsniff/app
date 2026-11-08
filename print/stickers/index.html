@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Let It Sniff — Brand Stickers (Αυτοκόλλητα)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-cream: #FDFAF5;
+      --color-sand: #F0E8D5;
+      --color-amber: #C4852A;
+      --color-brown: #2C1810;
+      --color-forest: #3D5C38;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #EAE5D9;
+      color: var(--color-brown);
+      padding: 30px 20px;
+      line-height: 1.5;
+    }
+    .header {
+      max-width: 1000px;
+      margin: 0 auto 30px auto;
+      text-align: center;
+    }
+    .header h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 32px;
+      color: var(--color-brown);
+      margin-bottom: 6px;
+    }
+    .header p {
+      font-size: 15px;
+      color: #6E5941;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-brown);
+      color: #FFF;
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #4A2E20; }
+    .btn-secondary {
+      background: #FFF;
+      color: var(--color-brown);
+      border: 1px solid #CCC;
+    }
+    .btn-secondary:hover { background: #F8F5EE; }
+
+    .grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+    }
+    .card {
+      background: #FFF;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .card h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .card .specs {
+      font-size: 13px;
+      color: #8C7862;
+      margin-bottom: 20px;
+    }
+    .sticker-preview {
+      width: 250px;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      background: #F9F7F2;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px dashed #DDD;
+    }
+    .sticker-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .card-footer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+    }
+    .card-footer a {
+      flex: 1;
+      padding: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 1px solid var(--color-sand);
+      color: var(--color-brown);
+      background: #FAF7F2;
+    }
+    .card-footer a:hover {
+      background: var(--color-sand);
+    }
+
+    /* Print Sheet View (Multi-up A4) */
+    @media print {
+      body { background: #FFF; padding: 0; }
+      .header, .actions, .card-footer, .specs { display: none !important; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20mm;
+        max-width: 100%;
+        margin: 15mm;
+      }
+      .card {
+        box-shadow: none;
+        padding: 0;
+        border: none;
+      }
+      .sticker-preview {
+        background: transparent;
+        border: none;
+        width: 60mm;
+        height: 60mm;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🐾 Let It Sniff — Brand Stickers</h1>
+    <p>Αυτοκόλλητα Βινυλίου για τον Αλέξανδρο Τσιόλη (Διαμέτρου 60mm, 75mm ή Κοπτικά)</p>
+    <div class="actions">
+      <button class="btn" onclick="window.print()">🖨️ Εκτύπωση / Εξαγωγή PDF</button>
+      <a href="../index.html" class="btn btn-secondary">← Πίσω στο Collateral Hub</a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Option A -->
+    <div class="card">
+      <h3>1. Classic Brand Mark</h3>
+      <div class="specs">Στρογγυλό 60mm / 75mm · Ζεστό Cream & Amber</div>
+      <div class="sticker-preview">
+        <img src="sticker_classic_round.svg" alt="Classic Brand Sticker">
+      </div>
+      <div class="card-footer">
+        <a href="sticker_classic_round.svg" target="_blank" download>💾 Λήψη SVG</a>
+        <a href="sticker_classic_round.svg" target="_blank">🔍 Πλήρες Μέγεθος</a>
+      </div>
+    </div>
+
+    <!-- Option B -->
+    <div class="card">
+      <h3>2. Statement Badge</h3>
+      <div class="specs">Στρογγυλό 60mm / 75mm · Forest Green & Gold</div>
+      <div class="sticker-preview">
+        <img src="sticker_statement_round.svg" alt="Statement Sticker">
+      </div>
+      <div class="card-footer">
+        <a href="sticker_statement_round.svg" target="_blank" download>💾 Λήψη SVG</a>
+        <a href="sticker_statement_round.svg" target="_blank">🔍 Πλήρες Μέγεθος</a>
+      </div>
+    </div>
+
+    <!-- Option C -->
+    <div class="card">
+      <h3>3. Die-Cut Muzzle</h3>
+      <div class="specs">Περιμετρικό Κοπτικό · Μουσούδα & Logo</div>
+      <div class="sticker-preview">
+        <img src="sticker_diecut_muzzle.svg" alt="Die-Cut Muzzle Sticker">
+      </div>
+      <div class="card-footer">
+        <a href="sticker_diecut_muzzle.svg" target="_blank" download>💾 Λήψη SVG</a>
+        <a href="sticker_diecut_muzzle.svg" target="_blank">🔍 Πλήρες Μέγεθος</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

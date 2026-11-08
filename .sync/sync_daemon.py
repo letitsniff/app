@@ -20,6 +20,7 @@ sys.path.insert(0, WORKSPACE_DIR)
 sys.path.insert(0, SYNC_DIR)
 
 from scripts.sync_images_to_drive import sync_images
+from scripts.sync_print_to_drive import sync_print_to_drive
 from path_mapper import map_drive_rel_to_local_rel, map_local_rel_to_drive_rel
 
 def run_gdrive(*args):
@@ -230,8 +231,8 @@ def sync_from_drive():
     else:
         for tracked_rel in list(tracked_files.keys()):
             if tracked_rel not in active_remote_paths:
-                if "/images/" in tracked_rel or tracked_rel.startswith("images/") or tracked_rel.endswith("index.md") or tracked_rel.startswith("site/"):
-                    continue  # Never delete images, index.md, or site copy!
+                if "/images/" in tracked_rel or tracked_rel.startswith("images/") or tracked_rel.endswith("index.md") or tracked_rel.startswith("site/") or tracked_rel.startswith("print/"):
+                    continue  # Never delete images, index.md, site copy, or print collateral!
                 local_path = os.path.join(DOCS_DIR, map_drive_rel_to_local_rel(tracked_rel))
                 if os.path.exists(local_path):
                     print(f"🗑️  [DRIVE REMOVED] Deleting local file: {tracked_rel}")
@@ -263,6 +264,12 @@ def run_sync_loop(interval=15):
         except Exception as e:
             print(f"⚠️  Image upload error: {e}", file=sys.stderr)
 
+        # Step 1b: Upload any print collateral from docs/print/ -> Drive
+        try:
+            sync_print_to_drive(verbose=False)
+        except Exception as e:
+            print(f"⚠️  Print upload error: {e}", file=sys.stderr)
+
         # Step 2: Pull any Google Docs updates from Drive -> Laptop
         try:
             sync_from_drive()
@@ -275,6 +282,7 @@ if __name__ == "__main__":
     if "--once" in sys.argv:
         print("🐾 Running single sync iteration...")
         sync_images(verbose=True)
+        sync_print_to_drive(verbose=True)
         sync_from_drive()
         print("✅ Single sync complete.")
     else:

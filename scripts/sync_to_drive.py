@@ -27,6 +27,7 @@ STATE_FILE = WORKSPACE_DIR / ".sync" / "drive_state.json"
 sys.path.insert(0, str(WORKSPACE_DIR))
 sys.path.insert(0, str(WORKSPACE_DIR / ".sync"))
 from scripts.sync_images_to_drive import sync_images
+from scripts.sync_print_to_drive import sync_print_to_drive
 from path_mapper import map_local_rel_to_drive_rel
 
 def run_cmd(*args):
@@ -180,8 +181,13 @@ def main():
     # Step 2: Sync all markdown docs (with Drive links on Drive, relative paths in Git)
     print("\n📝 Step 2: Syncing markdown docs to Google Drive (with Drive links)...")
     sync_markdown_to_drive(verbose=True)
+
+    # Step 3: Sync print collateral (PDFs & README)
+    print("\n🖨️ Step 3: Syncing print collateral (PDFs & docs) to Google Drive...")
+    sync_print_to_drive(verbose=True)
+
     print("--------------------------------------------------")
-    print("✅ All images and documents are in perfect sync with Google Drive!")
+    print("✅ All images, documents and print collateral are in perfect sync with Google Drive!")
 
 if __name__ == "__main__":
     main()

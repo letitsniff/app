@@ -36,54 +36,58 @@ export default function HomePage() {
     <>
       {/* ── Hero ──────────────────────────────────────────── */}
       <section className="border-b border-[var(--color-sandDark)]/60 bg-[var(--color-cream)]">
-        <div className="max-w-5xl mx-auto px-5 pt-14 pb-14 sm:pt-20 sm:pb-18 md:pt-28 md:pb-24">
-          <div className="max-w-3xl mb-12 sm:mb-14 md:mb-18">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amberText)] mb-3 sm:mb-4">
-              {page.hero.kicker}
-            </p>
+        <div className="max-w-5xl mx-auto px-5 py-10 sm:py-14 md:py-18">
+          <div className="grid md:grid-cols-12 gap-8 md:gap-8 lg:gap-10 items-center">
+            {/* Left Column: Headline & CTAs */}
+            <div className="md:col-span-7">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amberText)] mb-3 sm:mb-4">
+                {page.hero.kicker}
+              </p>
 
-            <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl text-[var(--color-brown)] leading-[1.18] sm:leading-[1.12] mb-6 sm:mb-7 break-words">
-              {renderEmphasizedTitle(page.hero.title)}
-            </h1>
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-5xl xl:text-6xl text-[var(--color-brown)] leading-[1.18] sm:leading-[1.12] mb-6 sm:mb-7 break-words">
+                {renderEmphasizedTitle(page.hero.title)}
+              </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed mb-8 sm:mb-10 max-w-2xl font-light">
-              {page.hero.subtitle}
-            </p>
+              <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed mb-8 sm:mb-10 max-w-xl font-light">
+                {page.hero.subtitle}
+              </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Link
-                href={page.hero.link1}
-                className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-7 py-4 hover:bg-[var(--color-brownMid)] transition-colors w-full sm:w-auto shadow-xs"
-              >
-                {page.hero.button1} <ArrowRight size={15} />
-              </Link>
-              <Link
-                href={page.hero.link2}
-                className="inline-flex items-center justify-center gap-2 border border-[var(--color-sandDark)]/80 bg-white text-[var(--color-brown)] text-sm font-medium px-7 py-4 hover:border-[var(--color-brown)] transition-colors w-full sm:w-auto"
-              >
-                <BookOpen size={15} />
-                {page.hero.button2}
-              </Link>
-            </div>
-          </div>
-
-          {heroImage && (
-            <div className="w-full">
-              <div className="relative aspect-[16/9] md:aspect-[2.4/1] w-full overflow-hidden bg-[var(--color-sand)] border border-[var(--color-sandDark)]/60 shadow-sm rounded-sm">
-                <picture>
-                  <source srcSet={heroImage.hero} media="(min-width: 768px)" type="image/webp" />
-                  <source srcSet={heroImage.card} type="image/webp" />
-                  <img
-                    src={heroImage.src}
-                    alt={page.hero.alt}
-                    fetchPriority="high"
-                    decoding="async"
-                    className="w-full h-full object-cover object-center"
-                  />
-                </picture>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <Link
+                  href={page.hero.link1}
+                  className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-7 py-4 hover:bg-[var(--color-brownMid)] transition-colors w-full sm:w-auto shadow-xs"
+                >
+                  {page.hero.button1} <ArrowRight size={15} />
+                </Link>
+                <Link
+                  href={page.hero.link2}
+                  className="inline-flex items-center justify-center gap-2 border border-[var(--color-sandDark)]/80 bg-white text-[var(--color-brown)] text-sm font-medium px-7 py-4 hover:border-[var(--color-brown)] transition-colors w-full sm:w-auto"
+                >
+                  <BookOpen size={15} />
+                  {page.hero.button2}
+                </Link>
               </div>
             </div>
-          )}
+
+            {/* Right Column: Hero Illustration (aligned with headline & text) */}
+            {heroImage && (
+              <div className="md:col-span-5 flex justify-center md:justify-end mt-6 md:mt-0">
+                <div className="w-full max-w-xs sm:max-w-sm md:max-w-none">
+                  <picture>
+                    <source srcSet={heroImage.hero} media="(min-width: 768px)" type="image/webp" />
+                    <source srcSet={heroImage.card} type="image/webp" />
+                    <img
+                      src={heroImage.src}
+                      alt={page.hero.alt}
+                      fetchPriority="high"
+                      decoding="async"
+                      className="w-full h-auto block select-none pointer-events-none"
+                    />
+                  </picture>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 

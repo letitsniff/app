@@ -1,0 +1,140 @@
+<svg viewBox="0 0 520 400" width="520" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=Inter:wght@700;800&amp;display=swap');
+      .diecut-title {
+        font-family: 'DM Serif Display', Georgia, serif;
+        font-size: 34px;
+        fill: #2C1810;
+        letter-spacing: 3px;
+        text-anchor: middle;
+      }
+      .diecut-tag {
+        font-family: 'Inter', -apple-system, sans-serif;
+        font-size: 13.5px;
+        font-weight: 800;
+        fill: #C4852A;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-anchor: middle;
+      }
+    </style>
+
+    <linearGradient id="lis-diecut-nose" x1="22" y1="4.5" x2="22" y2="20.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3B2219" />
+      <stop offset="48%" stop-color="#2C1810" />
+      <stop offset="100%" stop-color="#1A0D08" />
+    </linearGradient>
+
+    <radialGradient id="lis-diecut-glow" cx="50%" cy="55%" r="50%">
+      <stop offset="0%" stop-color="#F0E8D5" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#F0E8D5" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Drop Shadow for Realistic Die-cut Vinyl Preview -->
+    <filter id="sticker-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#2C1810" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- Die-Cut Peel Backing Contour Shape (Thick White/Cream Border for Easy Peeling) -->
+  <path
+    d="M 140 50
+       C 200 35, 320 35, 380 50
+       C 440 65, 480 110, 480 170
+       C 480 230, 440 280, 390 310
+       C 340 340, 310 355, 260 355
+       C 210 355, 180 340, 130 310
+       C 80 280, 40 230, 40 170
+       C 40 110, 80 65, 140 50 Z"
+    fill="#FDFAF5"
+    stroke="#DDD0B3"
+    stroke-width="2.5"
+    filter="url(#sticker-shadow)"
+  />
+
+  <!-- Subtle Inner Contour Line -->
+  <path
+    d="M 146 58
+       C 203 44, 317 44, 374 58
+       C 430 72, 468 114, 468 170
+       C 468 224, 430 271, 383 300
+       C 336 328, 307 342, 260 342
+       C 213 342, 184 328, 137 300
+       C 90 271, 52 224, 52 170
+       C 52 114, 90 72, 146 58 Z"
+    fill="#FAF6EF"
+    stroke="#C4852A"
+    stroke-width="1.5"
+    stroke-opacity="0.3"
+  />
+
+  <!-- Header Text -->
+  <text x="260" y="86" class="diecut-title">LET IT SNIFF</text>
+  <text x="260" y="106" class="diecut-tag">ΕΚΠΑΙΔΕΥΣΗ ΧΩΡΙΣ ΚΑΤΑΝΑΓΚΑΣΜΟ</text>
+
+  <!-- Central Muzzle & Nose Artwork (Centered) -->
+  <g transform="translate(136, 92) scale(5.6)">
+    <!-- Soft Muzzle Glow -->
+    <ellipse cx="22" cy="21" rx="16.5" ry="10.5" fill="url(#lis-diecut-glow)" />
+
+    <!-- Whisker Dots -->
+    <g fill="#2C1810" opacity="0.45">
+      <circle cx="10.2" cy="22.2" r="0.9" />
+      <circle cx="7.8" cy="24.2" r="0.85" />
+      <circle cx="11.8" cy="24.8" r="0.75" />
+      <circle cx="33.8" cy="22.2" r="0.9" />
+      <circle cx="36.2" cy="24.2" r="0.85" />
+      <circle cx="32.2" cy="24.8" r="0.75" />
+    </g>
+
+    <!-- Lip Lines -->
+    <path
+      d="M 22 19.5 L 22 24.5 M 22 24.5 C 20.2 27.6, 15.2 28.4, 11.2 26.2 C 9.6 25.3, 8.6 24.1, 8.2 23.2 M 22 24.5 C 23.8 27.6, 28.8 28.4, 32.8 26.2 C 34.4 25.3, 35.4 24.1, 35.8 23.2"
+      stroke="#2C1810"
+      stroke-width="2.1"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Rhinarium -->
+    <path
+      d="M 12.5 5.5
+         C 17.5 4.4, 26.5 4.4, 31.5 5.5
+         C 35.2 6.3, 36.8 9.2, 36.0 12.4
+         C 35.3 15.2, 32.8 16.5, 30.2 17.2
+         C 28.3 17.7, 27.2 19.3, 25.0 19.8
+         C 23.5 20.1, 20.5 20.1, 19.0 19.8
+         C 16.8 19.3, 15.7 17.7, 13.8 17.2
+         C 11.2 16.5, 8.7 15.2, 8.0 12.4
+         C 7.2 9.2, 8.8 6.3, 12.5 5.5 Z"
+      fill="url(#lis-diecut-nose)"
+      stroke="#1E100A"
+      stroke-width="0.75"
+    />
+
+    <!-- Wet Dorsal Gleam -->
+    <path
+      d="M 13.2 7.2 C 17.8 6.2, 26.2 6.2, 30.8 7.2 C 32.2 7.5, 32.5 8.7, 30.9 8.5 C 26.0 7.7, 18.0 7.7, 13.1 8.5 C 11.5 8.7, 11.8 7.5, 13.2 7.2 Z"
+      fill="#FDFAF5"
+      fill-opacity="0.32"
+    />
+
+    <!-- Philtrum -->
+    <path d="M 22 14.2 L 22 19.7" stroke="#120905" stroke-width="1.2" stroke-linecap="round" opacity="0.7" />
+
+    <!-- Left Nostril -->
+    <path d="M 16.8 10.8 C 15.1 10.2, 13.0 11.1, 12.2 12.7 C 11.5 14.0, 10.3 14.4, 9.7 13.9 C 10.5 15.2, 12.4 15.5, 13.9 14.7 C 15.7 13.9, 16.9 15.2, 17.8 14.2 C 18.6 13.2, 18.2 11.3, 16.8 10.8 Z" fill="#0E0704" />
+    <ellipse cx="15.7" cy="12.7" rx="1.8" ry="1.35" transform="rotate(-14 15.7 12.7)" fill="#070302" />
+
+    <!-- Right Nostril -->
+    <path d="M 27.2 10.8 C 28.9 10.2, 31.0 11.1, 31.8 12.7 C 32.5 14.0, 33.7 14.4, 34.3 13.9 C 33.5 15.2, 31.6 15.5, 30.1 14.7 C 28.3 13.9, 27.1 15.2, 26.2 14.2 C 25.4 13.2, 25.8 11.3, 27.2 10.8 Z" fill="#0E0704" />
+    <ellipse cx="28.3" cy="12.7" rx="1.8" ry="1.35" transform="rotate(14 28.3 12.7)" fill="#070302" />
+  </g>
+
+  <!-- Bottom Website Footer -->
+  <rect x="180" y="302" width="160" height="26" rx="13" fill="#2C1810" />
+  <text x="260" y="319" font-family="'Inter', sans-serif" font-size="12.5" font-weight="700" fill="#FDFAF5" letter-spacing="1.5px" text-anchor="middle">
+    LETITSNIFF.GR
+  </text>
+</svg>
