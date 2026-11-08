@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight, Mail } from "lucide-react";
+import SniffingNoseLogo from "./SniffingNoseLogo";
 
 export interface NavLinkItem {
   href: string;
@@ -38,24 +39,6 @@ const DEFAULT_NAV_LINKS: NavLinkItem[] = [
     desc: "Φιλοσοφία, αρχές & επικοινωνία",
   },
 ];
-
-function PawMark() {
-  return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 32 32"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <ellipse cx="16" cy="22" rx="6.5" ry="5.5" />
-      <circle cx="8" cy="12" r="3.5" />
-      <circle cx="24" cy="12" r="3.5" />
-      <circle cx="12" cy="7" r="2.8" />
-      <circle cx="20" cy="7" r="2.8" />
-    </svg>
-  );
-}
 
 export default function Navbar({
   navLinks = DEFAULT_NAV_LINKS,
@@ -118,10 +101,10 @@ export default function Navbar({
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="flex items-center gap-2 font-heading text-lg text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors"
+            className="group flex items-center gap-2.5 font-heading text-lg text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors"
             onClick={() => setOpen(false)}
           >
-            <PawMark />
+            <SniffingNoseLogo size={32} />
             <span>{brand}</span>
           </Link>
 
