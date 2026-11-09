@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getGlobalSettings, type GlobalSettings } from "@/lib/siteContent";
-import StaticNoseLogo from "./StaticNoseLogo";
+import PawLogo from "./PawLogo";
 
 interface FooterProps {
   settings?: GlobalSettings;
@@ -17,7 +17,7 @@ export default function Footer({ settings }: FooterProps) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <StaticNoseLogo size={26} ariaLabel={`${global.siteName} logo`} />
+              <PawLogo size={26} ariaLabel={`${global.siteName} logo`} />
               <span className="font-heading text-lg text-[var(--color-brown)]">
                 {global.siteName}
               </span>

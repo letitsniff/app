@@ -37,23 +37,23 @@ export default function HomePage() {
       {/* ── Hero ──────────────────────────────────────────── */}
       <section className="border-b border-[var(--color-sandDark)]/60 bg-[var(--color-cream)]">
         <div className="max-w-5xl mx-auto px-5 py-10 sm:py-14 md:py-18">
-          <div className="grid sm:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid md:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Headline, Subtitle, and Desktop CTAs */}
-            <div className="sm:col-span-7">
+            <div className="md:col-span-7">
               <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-amberText)] mb-3 sm:mb-4">
                 {page.hero.kicker}
               </p>
 
-              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[var(--color-brown)] leading-[1.18] sm:leading-[1.12] mb-5 sm:mb-6 break-words">
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-[var(--color-brown)] leading-[1.18] sm:leading-[1.14] mb-5 sm:mb-6 break-words">
                 {renderEmphasizedTitle(page.hero.title)}
               </h1>
 
-              <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed mb-6 sm:mb-9 max-w-xl font-light">
+              <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] leading-relaxed mb-6 sm:mb-8 md:mb-10 max-w-xl font-light">
                 {page.hero.subtitle}
               </p>
 
-              {/* Desktop CTAs (hidden on mobile, shown on sm+) */}
-              <div className="hidden sm:flex flex-row items-center gap-4">
+              {/* Desktop CTAs (hidden on mobile, shown on md+) */}
+              <div className="hidden md:flex flex-row items-center gap-4">
                 <Link
                   href={page.hero.link1}
                   className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-7 py-4 hover:bg-[var(--color-brownMid)] transition-colors w-auto shadow-xs"
@@ -70,10 +70,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: Hero Illustration (On desktop: right side; On mobile: between subtitle and buttons) */}
+            {/* Right Column: Hero Illustration */}
             {heroImage && (
-              <div className="sm:col-span-5 flex justify-center sm:justify-end my-2 sm:my-0">
-                <div className="w-full max-w-xs sm:max-w-none">
+              <div className="md:col-span-5 flex justify-center md:justify-end my-3 md:my-0">
+                <div className="w-full max-w-xs sm:max-w-sm md:max-w-none">
                   <picture>
                     <source srcSet={heroImage.hero} media="(min-width: 768px)" type="image/webp" />
                     <source srcSet={heroImage.card} type="image/webp" />
@@ -89,8 +89,8 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* Mobile CTAs (shown on mobile, hidden on sm+) */}
-            <div className="sm:hidden flex flex-col items-stretch gap-3 mt-2">
+            {/* Mobile CTAs (shown on mobile, hidden on md+) */}
+            <div className="md:hidden flex flex-col items-stretch gap-3 mt-2">
               <Link
                 href={page.hero.link1}
                 className="inline-flex items-center justify-center gap-2 bg-[var(--color-brown)] text-white text-sm font-medium px-6 py-3.5 hover:bg-[var(--color-brownMid)] transition-colors w-full shadow-xs"

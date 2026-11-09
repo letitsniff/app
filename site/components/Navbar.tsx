@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight, Mail } from "lucide-react";
-import SniffingNoseLogo from "./SniffingNoseLogo";
+import PawLogo from "./PawLogo";
 
 export interface NavLinkItem {
   href: string;
@@ -104,7 +104,7 @@ export default function Navbar({
             className="group flex items-center gap-2.5 font-heading text-lg text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors"
             onClick={() => setOpen(false)}
           >
-            <SniffingNoseLogo size={32} />
+            <PawLogo size={32} />
             <span>{brand}</span>
           </Link>
 

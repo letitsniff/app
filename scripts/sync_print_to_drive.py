@@ -99,6 +99,7 @@ def sync_print_to_drive(verbose=True):
                 "id": file_id,
                 "contentHash": file_hash,
                 "mimeType": mime_type,
+                "modifiedTime": (existing_drive_info or {}).get("modifiedTime") or (tracked_info or {}).get("modifiedTime"),
             }
             updated_count += 1
             print("✅ Done")
@@ -131,6 +132,7 @@ def sync_print_to_drive(verbose=True):
                     "id": new_id,
                     "contentHash": file_hash,
                     "mimeType": mime_type,
+                    "modifiedTime": (existing_drive_info or {}).get("modifiedTime"),
                 }
                 uploaded_count += 1
                 print(f"✅ Uploaded (ID: {new_id})")
