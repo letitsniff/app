@@ -59,6 +59,8 @@ def sanitize_markdown(filepath, id_to_filename=None):
     1. Removes any inline base64 image strings exported by Google Docs.
     2. Replaces Google Drive image links with local relative paths (./images/<filename>).
        ONLY links from the shared folders are allowed.
+    3. Normalizes legacy titles, categories, and terminology.
+    4. Ensures hero images are present for known articles.
     """
     if not filepath.endswith(".md") or not os.path.exists(filepath):
         return
@@ -96,11 +98,70 @@ def sanitize_markdown(filepath, id_to_filename=None):
 
             return match.group(0)
 
-        cleaned = re.sub(r"!\[(.*?)\]\((.*?)\)", drive_link_to_relative, text)
+        text = re.sub(r"!\[(.*?)\]\((.*?)\)", drive_link_to_relative, text)
 
-        if cleaned != original_text:
+        # 3. Normalize legacy titles, categories, and terminology
+        text = text.replace(
+            "# **01\\. Τι είναι το Sniffari και πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου**",
+            "# **01\\. Βόλτα Όσφρησης: Πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου**"
+        )
+        text = text.replace(
+            "# **01. Τι είναι το Sniffari και πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου**",
+            "# **01\\. Βόλτα Όσφρησης: Πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου**"
+        )
+        text = text.replace(
+            "# **01\\. Τι είναι η Θετική Εκπαίδευση Σκύλων (και γιατί ΔΕΝ σημαίνει «αφήνω τον σκύλο ασύδοτο»)**",
+            "# **01\\. Εκπαίδευση Χωρίς Καταναγκασμό (και γιατί ΔΕΝ σημαίνει «αφήνω τον σκύλο ασύδοτο»)**"
+        )
+        text = text.replace(
+            "# **01. Τι είναι η Θετική Εκπαίδευση Σκύλων (και γιατί ΔΕΝ σημαίνει «αφήνω τον σκύλο ασύδοτο»)**",
+            "# **01\\. Εκπαίδευση Χωρίς Καταναγκασμό (και γιατί ΔΕΝ σημαίνει «αφήνω τον σκύλο ασύδοτο»)**"
+        )
+        text = text.replace(
+            "# **03\\. Εκπαίδευση φίμωτρου με θετικό τρόπο: Ένα χρήσιμο εργαλείο ασφάλειας**",
+            "# **03\\. Εκπαίδευση φίμωτρου χωρίς πίεση: Ένα χρήσιμο εργαλείο ασφάλειας**"
+        )
+        text = text.replace(
+            "# **03. Εκπαίδευση φίμωτρου με θετικό τρόπο: Ένα χρήσιμο εργαλείο ασφάλειας**",
+            "# **03\\. Εκπαίδευση φίμωτρου χωρίς πίεση: Ένα χρήσιμο εργαλείο ασφάλειας**"
+        )
+        text = text.replace(
+            "01 - Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων",
+            "01 - Επιστήμη, Σύγχρονη Εκπαίδευση & Κατάρριψη Μύθων"
+        )
+        text = text.replace("Το **Sniffari** (Sniff \\+ Safari)", "Η **βόλτα όσφρησης**")
+        text = text.replace("Το **Sniffari** (Sniff + Safari)", "Η **βόλτα όσφρησης**")
+        text = text.replace("Το Sniffari δεν έχει στόχο", "Η βόλτα όσφρησης δεν έχει στόχο")
+        text = text.replace("το Sniffari δεν έχει στόχο", "η βόλτα όσφρησης δεν έχει στόχο")
+        text = text.replace("του Sniffari", "της βόλτας όσφρησης")
+        text = text.replace("Το Sniffari", "Η βόλτα όσφρησης")
+        text = text.replace("το Sniffari", "τη βόλτα όσφρησης")
+
+        # 4. Ensure hero images are present for known articles
+        fname = os.path.basename(str(filepath))
+        hero_images = {
+            "01. Βόλτα όσφρησης και πώς εμπλουτίζει τη βόλτα του σκύλου.md": (
+                "![Βόλτα Όσφρησης](./images/p01_01_volta_osfrisis.jpg)",
+                "p01_01_volta_osfrisis.jpg"
+            ),
+            "01. Εκπαίδευση χωρίς καταναγκασμό με σαφή όρια.md": (
+                "![Εκπαίδευση Χωρίς Καταναγκασμό](./images/p05_01_positive_reinforcement_boundaries.jpg)",
+                "p05_01_positive_reinforcement_boundaries.jpg"
+            ),
+            "03. Εκπαίδευση φίμωτρου χωρίς πίεση.md": (
+                "![Εκπαίδευση φίμωτρου χωρίς πίεση](./images/p06_03_positive_muzzle_training.jpg)",
+                "p06_03_positive_muzzle_training.jpg"
+            ),
+        }
+        if fname in hero_images:
+            img_tag, img_file = hero_images[fname]
+            if img_file not in text:
+                # Replace H1 and any blank lines right after it with H1 + image + clean spacing
+                text = re.sub(r"(# [^\n]+)\n+", r"\1\n\n" + img_tag + "\n\n", text, count=1)
+
+        if text != original_text:
             with open(filepath, "w", encoding="utf-8") as f:
-                f.write(cleaned)
+                f.write(text)
     except Exception as e:
         print(f"Error sanitizing markdown {filepath}: {e}")
 
