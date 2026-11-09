@@ -217,11 +217,20 @@ def sync_from_drive():
             sanitize_markdown(local_dest)
 
             if os.path.exists(local_dest):
-                tracked_files[rel_path] = {
+                record_entry = tracked_files.get(rel_path, {})
+                record_entry.update({
                     "id": drive_id,
                     "modifiedTime": r_mod,
-                    "mimeType": mime
-                }
+                    "mimeType": mime,
+                })
+                if rel_path.startswith("print/") and os.path.exists(local_dest):
+                    import hashlib
+                    h = hashlib.sha256()
+                    with open(local_dest, "rb") as f:
+                        while chunk := f.read(65536):
+                            h.update(chunk)
+                    record_entry["contentHash"] = h.hexdigest()
+                tracked_files[rel_path] = record_entry
 
     # 2. Clean up local files that were removed from Google Drive (NEVER delete images or index.md)
     if scan_had_errors:
