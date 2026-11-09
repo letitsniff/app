@@ -129,7 +129,7 @@ def generate_prompt_for_article(item):
     
     # Context-specific scene description
     lower = title.lower()
-    if "sniffari" in lower or "όσφρηση" in lower:
+    if "όσφρηση" in lower:
         scene = "A joyful curious dog wearing a comfortable sage green Y-harness walks calmly on a loose curved leash with its caring guardian along a warm Athenian pedestrian street. The dog gently lowers its nose to peacefully sniff blooming wildflowers and the base of an olive tree. Fluid organic motion: sniffing with curiosity, tail wagging slowly in contentment."
     elif "τράβηγμα" in lower or "λουρί" in lower:
         scene = "A guardian and dog walking together in harmony down a sunlit neoclassical street in Athens. The leash hangs in a relaxed J-shaped loose curve without any tension. The dog walks with relaxed loose body language, turning happily towards the guardian who offers a friendly smile and gentle praise."
@@ -280,7 +280,7 @@ def main():
         data = build_post_data(parsed, idx)
         master_list.append(data)
 
-        # Folder name: e.g. "001 - Τι είναι το Sniffari και πώς η όσφρηση εμπλουτίζει τη βόλτα"
+        # Folder name: e.g. "001 - Βόλτα όσφρησης και πώς εμπλουτίζει τη βόλτα" βόλτα"
         folder_title = sanitize_folder_name(f"{idx:03d} - {data['title']}")
         folder_path = os.path.join(POSTS_DIR, folder_title)
         os.makedirs(folder_path, exist_ok=True)
@@ -351,9 +351,9 @@ def main():
         with open(prompt_file, "w", encoding="utf-8") as f:
             f.write(prompt_content)
 
-        # For post 001, if sniffari_pilot_video.mp4 exists in root, copy as video.mp4
+        # For post 001, if pilot_video.mp4 exists in root, copy as video.mp4
         if idx == 1:
-            pilot_src = os.path.join(BASE_DIR, "sniffari_pilot_video.mp4")
+            pilot_src = os.path.join(BASE_DIR, "pilot_video.mp4")
             if os.path.exists(pilot_src):
                 shutil.copy2(pilot_src, os.path.join(folder_path, "video.mp4"))
                 print(f"Copied pilot video into {folder_path}/video.mp4")

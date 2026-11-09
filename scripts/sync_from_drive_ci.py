@@ -267,9 +267,45 @@ def save_state(state):
 sys.path.insert(0, str(WORKSPACE_DIR / ".sync"))
 from path_mapper import map_drive_rel_to_local_rel, map_local_rel_to_drive_rel
 
+def reconcile_drive_names(service):
+    """Renames any old terms ('θετική εκπαίδευση', 'sniffari') on Google Drive to match new repo standard."""
+    renames = [
+        ("01 - Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων", "01 - Επιστήμη, Σύγχρονη Εκπαίδευση & Κατάρριψη Μύθων"),
+        ("01. Θετική εκπαίδευση με σαφή όρια", "01. Εκπαίδευση χωρίς καταναγκασμό με σαφή όρια"),
+        ("01. Θετική εκπαίδευση με σαφή όρια.md", "01. Εκπαίδευση χωρίς καταναγκασμό με σαφή όρια.md"),
+        ("03. Θετική εκπαίδευση φίμωτρου", "03. Εκπαίδευση φίμωτρου χωρίς πίεση"),
+        ("03. Θετική εκπαίδευση φίμωτρου.md", "03. Εκπαίδευση φίμωτρου χωρίς πίεση.md"),
+        ("01. Τι είναι το Sniffari και πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου", "01. Βόλτα όσφρησης και πώς εμπλουτίζει τη βόλτα του σκύλου"),
+        ("01. Τι είναι το Sniffari και πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου.md", "01. Βόλτα όσφρησης και πώς εμπλουτίζει τη βόλτα του σκύλου.md"),
+        ("p01_01_sniffari.jpg", "p01_01_volta_osfrisis.jpg"),
+        ("001 - Τι είναι το Sniffari και πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου", "001 - Βόλτα όσφρησης και πώς εμπλουτίζει τη βόλτα του σκύλου"),
+        ("081 - Τι είναι η Θετική Εκπαίδευση Σκύλων (και γιατί ΔΕΝ σημαίνει «αφήνω τον σκύλο ασ", "081 - Τι είναι η Εκπαίδευση Χωρίς Καταναγκασμό (και γιατί ΔΕΝ σημαίνει «αφήνω τον σκύλο ασ"),
+        ("089 - Εκπαίδευση φίμωτρου με θετικό τρόπο Ένα χρήσιμο εργαλείο ασφάλειας", "089 - Εκπαίδευση φίμωτρου χωρίς πίεση Ένα χρήσιμο εργαλείο ασφάλειας"),
+    ]
+    for old_name, new_name in renames:
+        escaped_old = old_name.replace("'", "\\'")
+        query = f"name = '{escaped_old}' and trashed = false"
+        try:
+            res = service.files().list(q=query, fields="files(id, name)").execute()
+            for f in res.get("files", []):
+                try:
+                    service.files().update(fileId=f["id"], body={"name": new_name}).execute()
+                    print(f"🔄 Renamed on Google Drive: '{old_name}' -> '{new_name}' (ID: {f['id']})")
+                except Exception as e:
+                    print(f"⚠️ Could not rename '{old_name}' on Drive: {e}")
+        except Exception as e:
+            print(f"⚠️ Error querying '{old_name}' on Drive: {e}")
+
 def main():
     print(f"Connecting to Google Drive (Root Folder: {ROOT_FOLDER_ID})...")
     service = get_drive_service()
+
+    # Step 0: Reconcile any old names on Drive
+    print("Reconciling Drive names with repo standard...")
+    try:
+        reconcile_drive_names(service)
+    except Exception as e:
+        print(f"⚠️ Drive name reconciliation encountered an error: {e}")
 
     # Step 1: Upload any newly committed / local images to Google Drive
     print("Checking for local images to sync to Google Drive...")
