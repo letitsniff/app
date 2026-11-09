@@ -1,6 +1,6 @@
 # 🐾 Ο μύθος του «Κυρίαρχου Σκύλου»: Γιατί δεν χρειάζεται να γίνετε αρχηγός της αγέλης
 
-**Κατηγορία / Πυλώνας:** 01 - Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων  
+**Κατηγορία / Πυλώνας:** 01 - Επιστήμη, Εκπαίδευση Χωρίς Καταναγκασμό & Κατάρριψη Μύθων  
 **Link Άρθρου:** [https://letitsniff.gr/blog/mythos-kyriarxou-skylou-alpha-dog](https://letitsniff.gr/blog/mythos-kyriarxou-skylou-alpha-dog)  
 **Format:** 9:16 Vertical Video (TikTok / Reels / Shorts / FB Reels) + Social Posts
 
@@ -52,7 +52,7 @@
 
 🔗 Διαβάστε τον πλήρη αναλυτικό οδηγό: https://letitsniff.gr/blog/mythos-kyriarxou-skylou-alpha-dog
 
-#letitsniff #εκπαιδευσησκυλων #σκυλος #θετικηεκπαιδευση #αθηνα #βολτασκυλου #sniffari #σαμαρακι
+#letitsniff #εκπαιδευσησκυλων #σκυλος #εκπαιδευσηχωριςκαταναγκασμο #αθηνα #βολτασκυλου #οσφρηση #σαμαρακι
 ```
 
 ---

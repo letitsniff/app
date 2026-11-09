@@ -106,6 +106,7 @@ export interface HomePageContent {
     link2: string;
     image: string;
     alt: string;
+    highlights: string[];
   };
   services: {
     kicker: string;
@@ -129,6 +130,15 @@ export interface HomePageContent {
     badgePrefix: string;
     pillarsSuffix: string;
     articlesSuffix: string;
+  };
+  callout: {
+    kicker: string;
+    title: string;
+    description: string;
+    button1: string;
+    link1: string;
+    button2: string;
+    link2: string;
   };
 }
 
@@ -271,7 +281,7 @@ const DEFAULT_NAV_LINKS = [
   {
     href: "/blog",
     label: "Άρθρα & Οδηγοί",
-    desc: "Βιβλιοθήκη πρακτικών οδηγών θετικής εκπαίδευσης",
+    desc: "Βιβλιοθήκη πρακτικών οδηγών σύγχρονης εκπαίδευσης",
   },
   {
     href: "/ypiresies",
@@ -286,7 +296,7 @@ const DEFAULT_NAV_LINKS = [
 ];
 
 const DEFAULT_PRINCIPLES = [
-  "Αποκλειστικά θετική ενίσχυση — μηδενική ανοχή σε σωματική ή ψυχολογική πίεση",
+  "Εκπαίδευση χωρίς καταναγκασμό — μηδενική ανοχή σε σωματική ή ψυχολογική πίεση",
   "Επιστημονική τεκμηρίωση: συμπεριφορική ανάλυση και σύγχρονη κτηνιατρική ηθολογία",
   "Σεβασμός στον ρυθμό μάθησης κάθε σκύλου και κηδεμόνα",
   "Εκπαίδευση στο πραγματικό περιβάλλον: σπίτι, είσοδος, αστική βόλτα στην Αθήνα",
@@ -302,14 +312,19 @@ export function getHomePageContent(): HomePageContent {
   const servicesSection = extractSection(raw, "Υπηρεσίες");
   const philosophySection = extractSection(raw, "Φιλοσοφία");
   const librarySection = extractSection(raw, "Βιβλιοθήκη");
+  const calloutSection = extractSection(raw, "Επικοινωνία");
 
   const philosophyBody = philosophySection
     .replace(/\*\*[^:]+:\*\*[^\n]+\n?/g, "")
     .trim();
 
+  const h1 = extractField(heroSection, ["Σημείο 1"], "100% χωρίς καταναγκασμό & τιμωρία");
+  const h2 = extractField(heroSection, ["Σημείο 2"], "Κατ' οίκον & σε πραγματικές συνθήκες στην Αθήνα");
+  const h3 = extractField(heroSection, ["Σημείο 3"], "Επιστημονική προσέγγιση & σεβασμός στη γλώσσα σώματος");
+
   return {
     hero: {
-      kicker: extractField(heroSection, ["Kicker", "kicker"], "Εκπαίδευση Σκύλων στην Αθήνα"),
+      kicker: extractField(heroSection, ["Kicker", "kicker"], ""),
       title: extractField(
         heroSection,
         ["Τίτλος", "Title", "title"],
@@ -318,7 +333,7 @@ export function getHomePageContent(): HomePageContent {
       subtitle: extractField(
         heroSection,
         ["Υπότιτλος", "Subtitle", "Περιγραφή", "description"],
-        "Επιστημονική, θετική εκπαίδευση προσαρμοσμένη στις πραγματικές συνθήκες της Αθήνας. Ήρεμες βόλτες, συμβίωση χωρίς πίεση και ουσιαστικός δεσμός εμπιστοσύνης."
+        "Επιστημονική εκπαίδευση σκύλων προσαρμοσμένη στις πραγματικές συνθήκες της Αθήνας. Ήρεμες βόλτες, συμβίωση χωρίς πίεση και ουσιαστικός δεσμός εμπιστοσύνης."
       ),
       button1: extractField(heroSection, ["Κουμπί 1", "Κουμπί Υπηρεσιών"], "Υπηρεσίες Εκπαίδευσης"),
       link1: extractField(heroSection, ["Σύνδεσμος 1", "Σύνδεσμος Υπηρεσιών"], "/ypiresies"),
@@ -330,6 +345,7 @@ export function getHomePageContent(): HomePageContent {
         ["Alt Εικόνας", "Alt"],
         "Χαρούμενος σκύλος και κηδεμόνας σε χαλαρή βόλτα στην Αθήνα"
       ),
+      highlights: [h1, h2, h3].filter(Boolean),
     },
     services: {
       kicker: extractField(servicesSection, ["Kicker"], "Συνεργασία & Καθοδήγηση"),
@@ -368,6 +384,23 @@ export function getHomePageContent(): HomePageContent {
       pillarsSuffix: extractField(librarySection, ["Ετικέτα Πυλώνων"], "πυλώνες"),
       articlesSuffix: extractField(librarySection, ["Ετικέτα Άρθρων"], "άρθρα →"),
     },
+    callout: {
+      kicker: extractField(calloutSection, ["Kicker"], "Εξατομικευμένη Καθοδήγηση"),
+      title: extractField(
+        calloutSection,
+        ["Τίτλος", "Title"],
+        "Δεν είστε σίγουροι από πού να ξεκινήσετε;"
+      ),
+      description: extractField(
+        calloutSection,
+        ["Περιγραφή", "Description"],
+        "Κάθε σκύλος και κάθε σπίτι στην Αθήνα έχουν τις δικές τους ανάγκες. Στείλτε μου ένα μήνυμα με λίγα λόγια για τον σκύλο σας και τις προκλήσεις που αντιμετωπίζετε, για να δούμε μαζί πώς μπορούμε να δουλέψουμε."
+      ),
+      button1: extractField(calloutSection, ["Κουμπί 1"], "Επικοινωνία με τον Αλέξανδρο"),
+      link1: extractField(calloutSection, ["Σύνδεσμος 1"], "/o-alexandros#epikoinonia"),
+      button2: extractField(calloutSection, ["Κουμπί 2"], "Δείτε τις Υπηρεσίες"),
+      link2: extractField(calloutSection, ["Σύνδεσμος 2"], "/ypiresies"),
+    },
   };
 }
 
@@ -375,14 +408,15 @@ export function getAboutPageContent(): AboutPageContent {
   const raw = readFileSafe("about.md");
   const heroSection = extractSection(raw, "Hero");
   const methodologySection = extractSection(raw, "Μεθοδολογία");
+  const principlesSection = extractSection(raw, "Βασικές Αρχές");
   const servicesSection = extractSection(raw, "Προγράμματα Εκπαίδευσης");
   const contactSection = extractSection(raw, "Επικοινωνία");
 
   const bio = heroSection.replace(/\*\*[^:]+:\*\*[^\n]+\n?/g, "").trim();
 
-  // Extract methodology paragraphs before the ### Βασικές Αρχές subsection
+  // Extract methodology paragraphs
   const methodWithoutHeading = methodologySection.replace(/^###\s+.*$/m, "---SPLIT---");
-  const [methodText, principlesBlock] = methodWithoutHeading.split("---SPLIT---");
+  const [methodText, inlinePrinciplesBlock] = methodWithoutHeading.split("---SPLIT---");
 
   const methodParagraphs = methodText
     ? methodText
@@ -391,7 +425,8 @@ export function getAboutPageContent(): AboutPageContent {
         .filter(Boolean)
     : [];
 
-  const principlesList = principlesBlock ? extractListItems(principlesBlock) : [];
+  const principlesRaw = principlesSection || inlinePrinciplesBlock || "";
+  const principlesList = principlesRaw ? extractListItems(principlesRaw) : [];
 
   return {
     meta: {
@@ -420,7 +455,7 @@ export function getAboutPageContent(): AboutPageContent {
           : [
               "Η όσφρηση για τον σκύλο δεν είναι ένα απλό αισθητηριακό εργαλείο — είναι ο πρωταρχικός τρόπος που επεξεργάζεται τον κόσμο, αποκτά πληροφορίες και ρυθμίζει το νευρικό του σύστημα.",
               "Στο απαιτητικό περιβάλλον της Αθήνας (στενά πεζοδρόμια, θόρυβος, μηχανάκια, αδέσποτες γάτες), οι σκύλοι συχνά φορτίζονται με χρόνιο στρες. Όταν επιτρέπουμε στον σκύλο να μυρίσει ελεύθερα, του δίνουμε αυτονομία, ηρεμία και πνευματική εκτόνωση.",
-              "Η θετική εκπαίδευση δεν σημαίνει έλλειψη ορίων. Σημαίνει θέσπιση καθαρών κανόνων μέσω επιβράβευσης, διαχείριση του περιβάλλοντος και χτίσιμο συμπεριφορών που αντέχουν στον χρόνο χωρίς φόβο.",
+              "Η σύγχρονη εκπαίδευση με επιβράβευση δεν σημαίνει έλλειψη ορίων. Σημαίνει θέσπιση καθαρών κανόνων, διαχείριση του περιβάλλοντος και χτίσιμο συμπεριφορών που αντέχουν στον χρόνο χωρίς φόβο.",
             ],
       principlesTitle: "Βασικές Αρχές",
     },
@@ -476,7 +511,7 @@ export function getServicesPageContent(): ServicesPageContent {
       description: extractField(
         raw,
         ["Description"],
-        "Θετική εκπαίδευση σκύλων στην Αθήνα — αστική συμβίωση, προβλήματα συμπεριφοράς, κουτάβια, υιοθεσία."
+        "Εκπαίδευση & συμβουλευτική σκύλων στην Αθήνα — αστική συμβίωση, προβλήματα συμπεριφοράς, κουτάβια, υιοθεσία."
       ),
     },
     header: {
@@ -528,7 +563,7 @@ export function getBlogPageContent(): BlogPageContent {
       description: extractField(
         raw,
         ["Description"],
-        "Οργανωμένη βιβλιοθήκη θετικής εκπαίδευσης σκύλων στην Αθήνα — θεματικοί οδηγοί και άρθρα για τη βόλτα, το διαμέρισμα, την αντιδραστικότητα, το κουτάβι και την υιοθεσία."
+        "Οργανωμένη βιβλιοθήκη σύγχρονης εκπαίδευσης σκύλων στην Αθήνα — θεματικοί οδηγοί και άρθρα για τη βόλτα, το διαμέρισμα, την αντιδραστικότητα, το κουτάβι και την υιοθεσία."
       ),
     },
     header: {
@@ -550,7 +585,7 @@ export function getBlogPageContent(): BlogPageContent {
       title: extractField(
         bottomSection,
         ["Τίτλος", "Title"],
-        "Συνεδρίες Θετικής Εκπαίδευσης στην Αθήνα"
+        "Συνεδρίες Εκπαίδευσης & Συμβουλευτικής στην Αθήνα"
       ),
       description: extractField(
         bottomSection,
@@ -628,11 +663,11 @@ export function getGlobalSettings(): GlobalSettings {
 
   return {
     siteName: extractField(raw, ["Site Name", "Όνομα"], "Let It Sniff"),
-    tagline: extractField(raw, ["Tagline", "Υπότιτλος"], "Θετική εκπαίδευση σκύλων · Αθήνα"),
+    tagline: extractField(raw, ["Tagline", "Υπότιτλος"], "Εκπαίδευση σκύλων χωρίς καταναγκασμό · Αθήνα"),
     defaultDescription: extractField(
       raw,
       ["Default Description"],
-      "Θετική εκπαίδευση σκύλων στην Αθήνα από τον Αλέξανδρο. Βόλτα, αντιδραστικότητα, κουτάβια, υιοθεσία — επιστημονική & ανθρώπινη προσέγγιση."
+      "Εκπαίδευση σκύλων στην Αθήνα από τον Αλέξανδρο. Βόλτα, αντιδραστικότητα, κουτάβια, υιοθεσία — επιστημονική & ανθρώπινη προσέγγιση."
     ),
     email: extractField(raw, ["Email"], "info@letitsniff.gr"),
     copyright: extractField(
@@ -647,7 +682,7 @@ export function getGlobalSettings(): GlobalSettings {
       text: extractField(
         consultSection,
         ["Κείμενο"],
-        "Κάθε σκύλος και κάθε σπίτι στην πόλη είναι μοναδικά. Μπορούμε να δουλέψουμε μαζί με εξατομικευμένο πλάνο θετικής εκπαίδευσης."
+        "Κάθε σκύλος και κάθε σπίτι στην πόλη είναι μοναδικά. Μπορούμε να δουλέψουμε μαζί με εξατομικευμένο πλάνο σύγχρονης εκπαίδευσης."
       ),
       buttonText: extractField(consultSection, ["Κουμπί"], "Επικοινωνία με τον Αλέξανδρο"),
       buttonLink: extractField(consultSection, ["Σύνδεσμος"], "/o-alexandros#epikoinonia"),

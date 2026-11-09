@@ -26,7 +26,7 @@ const DEFAULT_NAV_LINKS: NavLinkItem[] = [
   {
     href: "/blog",
     label: "Άρθρα & Οδηγοί",
-    desc: "Βιβλιοθήκη πρακτικών οδηγών θετικής εκπαίδευσης",
+    desc: "Βιβλιοθήκη πρακτικών οδηγών σύγχρονης εκπαίδευσης",
   },
   {
     href: "/ypiresies",
@@ -90,13 +90,13 @@ export default function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-[border-color] duration-200 bg-[var(--color-cream)] border-b ${
+      className={`sticky top-0 z-50 transition-all duration-200 bg-[var(--color-cream)]/95 backdrop-blur-md border-b ${
         scrolled || open
-          ? "border-[var(--color-sandDark)]"
-          : "border-transparent"
+          ? "border-[var(--color-sandDark)] shadow-2xs"
+          : "border-[var(--color-sandDark)]/35"
       }`}
     >
-      <nav className="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+      <nav className="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
         {/* Logo + desktop nav links */}
         <div className="flex items-center gap-8">
           <Link
@@ -154,11 +154,11 @@ export default function Navbar({
       {open && (
         <>
           <div
-            className="md:hidden fixed inset-0 top-14 bg-black/25 z-40 backdrop-blur-xs transition-opacity"
+            className="md:hidden fixed inset-0 top-16 bg-black/25 z-40 backdrop-blur-xs transition-opacity"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div className="md:hidden relative z-50 bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100dvh-3.5rem)] overflow-y-auto">
+          <div className="md:hidden relative z-50 bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100dvh-4rem)] overflow-y-auto">
             <div className="space-y-3">
               <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-2">
                 {mobileMenuTitle}

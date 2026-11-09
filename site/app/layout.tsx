@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Serif_Display } from "next/font/google";
+import { DM_Serif_Display, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,6 +11,14 @@ const dmSerifDisplay = DM_Serif_Display({
   subsets: ["latin", "latin-ext"],
   style: ["normal", "italic"],
   variable: "--font-dm-serif",
+  display: "swap",
+});
+
+const sourceSerifGreek = Source_Serif_4({
+  weight: ["400", "500", "600"],
+  subsets: ["greek", "latin"],
+  style: ["normal", "italic"],
+  variable: "--font-greek-serif",
   display: "swap",
 });
 
@@ -52,7 +60,7 @@ export default function RootLayout({
   const global = getGlobalSettings();
 
   return (
-    <html lang="el" className={dmSerifDisplay.variable}>
+    <html lang="el" className={`${dmSerifDisplay.variable} ${sourceSerifGreek.variable}`}>
       <body>
         <Navbar
           navLinks={global.navLinks}

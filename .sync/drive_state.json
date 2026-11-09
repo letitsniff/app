@@ -2415,47 +2415,56 @@
     "print/letitsniff_brochure_trifold.pdf": {
       "id": "1olTRoG5XVUrpr5pL5Rt55qiJ74vPd-tG",
       "modifiedTime": "2026-11-09T17:36:13.118Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "25bd46b80f0c4be36306337ffcfaacad3a753e41f28a498577345dd377aa50f3"
     },
     "print/letitsniff_business_card.pdf": {
       "id": "1VWKljgaeVJVK9GGWG1nQKR3SXLV-AW5f",
       "modifiedTime": "2026-11-09T17:36:15.792Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "2f922cca4bb2769aba7a55b672bea2d9f9f755921c9d41dcfcfd8f1c5f59d4d7"
     },
     "print/letitsniff_flyer_a5.pdf": {
       "id": "1zxDa0qRETvRGpZZx7YQByOo6V5prlD0I",
       "modifiedTime": "2026-11-09T17:36:18.080Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "a25b0f1274409b18fb33f44feb305875707d2db90cf010434e071208a9e4b32c"
     },
     "print/letitsniff_sticker_classic_round.pdf": {
       "id": "1RV-qlqJAssVH6g8hG0PAMgCFOFRigfUE",
       "modifiedTime": "2026-11-09T17:36:20.243Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "175673499ca74bf9bf3f9fe83e49f7cf9577fc2c612095f7e1e3bdb68e506964"
     },
     "print/letitsniff_sticker_diecut_muzzle.pdf": {
       "id": "1MeGTPiL3UhonbxjrvpNml_Dpf4VgHYHf",
       "modifiedTime": "2026-11-09T17:36:22.556Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "c4b2c3943299aa143e6e104376d83f5ec1f4684ae6df0a0c4e36b0de09140e38"
     },
     "print/letitsniff_sticker_statement_round.pdf": {
       "id": "1lkbwcZF_2ShzEZE2j3YZRjnEV9nOMQC4",
       "modifiedTime": "2026-11-09T17:36:24.743Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "90ec8850c72a19bb28a2ac80200a695a4b2c4e927273baddeaa28105a0324b50"
     },
     "print/letitsniff_stickers_sheet_a4.pdf": {
       "id": "1fLAFmu2GIpNFtJohkrvAt9z5X0JYyy0W",
       "modifiedTime": "2026-11-09T17:36:27.528Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "0a3b2a2465c07407f7bcfad8b7b701f897261f29e9e4191c79ff04cc5b13967b"
     },
     "print/README.md": {
       "id": "1WVK_kklbGoDdrcn83Av3XEoQgI2kRCdh",
       "modifiedTime": "2026-11-09T16:30:39.966Z",
-      "mimeType": "text/markdown"
+      "mimeType": "text/markdown",
+      "contentHash": "91059307df8584dfad8f1086b811c8395675c4d4a076ca0c30fc18b21fcd19a1"
     },
     "print/kartaAlexTraining2b.pdf": {
       "id": "1ywXfAcE1hDBcb605NevbTOqlw5A26OCM",
       "modifiedTime": "2026-11-09T16:30:44.988Z",
-      "mimeType": "application/pdf"
+      "mimeType": "application/pdf",
+      "contentHash": "b946073946459488527d0f2809215c9825b761d95410837f17c57c5d4da2077c"
     }
   }
 }

@@ -1,6 +1,6 @@
 # 🐾 Γιατί δεν πρέπει ΠΟΤΕ να μαλώνετε έναν σκύλο όταν γρυλίζει
 
-**Κατηγορία / Πυλώνας:** 01 - Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων  
+**Κατηγορία / Πυλώνας:** 01 - Επιστήμη, Εκπαίδευση Χωρίς Καταναγκασμό & Κατάρριψη Μύθων  
 **Link Άρθρου:** [https://letitsniff.gr/blog/giati-den-malonoume-skylo-pou-grylizei](https://letitsniff.gr/blog/giati-den-malonoume-skylo-pou-grylizei)  
 **Format:** 9:16 Vertical Video (TikTok / Reels / Shorts / FB Reels) + Social Posts
 
@@ -52,7 +52,7 @@
 
 🔗 Διαβάστε τον πλήρη αναλυτικό οδηγό: https://letitsniff.gr/blog/giati-den-malonoume-skylo-pou-grylizei
 
-#letitsniff #εκπαιδευσησκυλων #σκυλος #θετικηεκπαιδευση #αθηνα #βολτασκυλου #sniffari #σαμαρακι
+#letitsniff #εκπαιδευσησκυλων #σκυλος #εκπαιδευσηχωριςκαταναγκασμο #αθηνα #βολτασκυλου #οσφρηση #σαμαρακι
 ```
 
 ---

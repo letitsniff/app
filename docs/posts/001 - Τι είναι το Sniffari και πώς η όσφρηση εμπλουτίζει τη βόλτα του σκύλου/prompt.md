@@ -1,4 +1,4 @@
-# 🎬 Gemini Video Prompt: Τι είναι το Sniffari και πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου
+# 🎬 Gemini Video Prompt: Τι είναι το Βόλτα Όσφρησης και πώς η όσφρηση εμπλουτίζει τη βόλτα του σκύλου
 
 * **Εργαλείο:** Google Gemini (Veo Video Generation)
 * **Αναλογία:** Portrait (9:16)

@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${category.title} — Οδηγοί & Άρθρα`,
     description:
       category.intro ||
-      `Οδηγοί και άρθρα θετικής εκπαίδευσης για ${category.title} από το Let It Sniff στην Αθήνα.`,
+      `Οδηγοί και άρθρα εκπαίδευσης & συμπεριφοράς για ${category.title} από το Let It Sniff στην Αθήνα.`,
     openGraph: {
       title: `${category.title} | Let It Sniff`,
       description: category.intro,

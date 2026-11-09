@@ -21,7 +21,7 @@ os.makedirs(POSTS_DIR, exist_ok=True)
 
 # Pillar hashtag mapping
 PILLAR_TAGS = {
-    "01": ["#βολτασκυλου", "#sniffari", "#σαμαρακι", "#letitsniff"],
+    "01": ["#βολτασκυλου", "#οσφρηση", "#σαμαρακι", "#letitsniff"],
     "02": ["#πολυκατοικια", "#αγχοςαποχωρισμου", "#γαβγισμα", "#cratetraining"],
     "03": ["#διακοπεςμεσκυλο", "#ταξιδιμεσκυλο", "#αυτοκινητοσκυλος", "#παραλιασκυλος"],
     "04": ["#παρκοσκυλων", "#dogwalker", "#κοινωνικοποιηση", "#αστικηζωη"],
@@ -248,7 +248,7 @@ def build_post_data(item, index_num):
     ig_caption = "\n".join(cap_parts)
 
     # Tweet
-    tw_summary = tldr[0][:110] if tldr else steps[0][1][:110] if steps else "Πρακτικές συμβουλές θετικής εκπαίδευσης για την πόλη."
+    tw_summary = tldr[0][:110] if tldr else steps[0][1][:110] if steps else "Πρακτικές συμβουλές σύγχρονης εκπαίδευσης για την πόλη."
     tweet = f"🐕 {title[:75]}...\n\n👉 {tw_summary}...\n\n🔗 Οδηγός: {url} #letitsniff #σκυλος"
 
     # Gemini prompt

@@ -3,7 +3,7 @@
 /* ─── CSS Custom Properties ─────────────────────────── */
 :root {
   /* Fonts */
-  --font-heading: var(--font-dm-serif, "DM Serif Display"), Georgia, serif;
+  --font-heading: var(--font-dm-serif, "DM Serif Display"), var(--font-greek-serif, "Source Serif 4"), Georgia, serif;
   --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* Brand Palette — earthy, warm, Mediterranean */
@@ -52,8 +52,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: 400;
-  line-height: 1.25;
+  font-weight: 500;
+  line-height: 1.22;
   color: var(--color-brown);
   overflow-wrap: break-word;
 }
@@ -81,7 +81,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .prose h1, .prose h2, .prose h3, .prose h4 {
   font-family: var(--font-heading);
-  font-weight: 400;
+  font-weight: 500;
   color: var(--color-brown);
   margin-top: 2em;
   margin-bottom: 0.5em;

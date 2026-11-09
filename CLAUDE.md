@@ -213,7 +213,7 @@ Every pillar uses a designated primary accent tone from `CATEGORY_COLORS` (`site
   - **Pillar 02:** `#C4522A` — Ζωή στην Πολυκατοικία & Διαχείριση Άγχους (Terracotta)
   - **Pillar 03:** `#A83228` — Αντιδραστικότητα, Φοβίες & Ερεθίσματα της Πόλης (Brick Red)
   - **Pillar 04:** `#5A7A54` — Κουτάβι στο Διαμέρισμα (Puppy Hub) (Sage Green)
-  - **Pillar 05:** `#6B7C3A` — Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων (Olive / Moss Green)
+  - **Pillar 05:** `#6B7C3A` — Επιστήμη, Σύγχρονη Εκπαίδευση & Κατάρριψη Μύθων (Olive / Moss Green)
   - **Pillar 06:** `#2E7D7A` — Συνεργατική Φροντίδα, Κτηνίατρος & Grooming (Teal)
   - **Pillar 07:** `#9B4D6B` — Οικογένεια, Μωρά, Παιδιά & Πολλά Κατοικίδια (Plum / Berry)
   - **Pillar 08:** `#3A6B9B` — Ταξίδια, Μετακινήσεις στην Αθήνα & Διακοπές (Steel Blue)
@@ -248,7 +248,7 @@ Every pillar uses a designated primary accent tone from `CATEGORY_COLORS` (`site
 
 ![Descriptive Greek alt text](./images/p05_01_positive_reinforcement_boundaries.jpg)
 
-**Κατηγορία:** 05 - Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων  
+**Κατηγορία:** 05 - Επιστήμη, Σύγχρονη Εκπαίδευση & Κατάρριψη Μύθων  
 **Προτεινόμενο URL:** /blog/my-slug  
 **Χρόνος ανάγνωσης:** 2 λεπτά
 ```

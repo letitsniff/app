@@ -1,6 +1,6 @@
 # 🐾 Γιατί αποφεύγουμε πνίχτες, αγκαθωτά και ηλεκτρικά κολάρα στην εκπαίδευση
 
-**Κατηγορία / Πυλώνας:** 01 - Επιστήμη, Θετική Εκπαίδευση & Κατάρριψη Μύθων  
+**Κατηγορία / Πυλώνας:** 01 - Επιστήμη, Εκπαίδευση Χωρίς Καταναγκασμό & Κατάρριψη Μύθων  
 **Link Άρθρου:** [https://letitsniff.gr/blog/giati-apofevgoume-pnixtes-ilektrika-kolara](https://letitsniff.gr/blog/giati-apofevgoume-pnixtes-ilektrika-kolara)  
 **Format:** 9:16 Vertical Video (TikTok / Reels / Shorts / FB Reels) + Social Posts
 
@@ -52,7 +52,7 @@
 
 🔗 Διαβάστε τον πλήρη αναλυτικό οδηγό: https://letitsniff.gr/blog/giati-apofevgoume-pnixtes-ilektrika-kolara
 
-#letitsniff #εκπαιδευσησκυλων #σκυλος #θετικηεκπαιδευση #αθηνα #βολτασκυλου #sniffari #σαμαρακι
+#letitsniff #εκπαιδευσησκυλων #σκυλος #εκπαιδευσηχωριςκαταναγκασμο #αθηνα #βολτασκυλου #οσφρηση #σαμαρακι
 ```
 
 ---
