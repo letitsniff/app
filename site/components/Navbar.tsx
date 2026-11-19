@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowRight, Mail } from "lucide-react";
+import { Menu, X, ArrowRight, ChevronRight, Mail, BookOpen, PawPrint, UserRound } from "lucide-react";
 import PawLogo from "./PawLogo";
 
 export interface NavLinkItem {
   href: string;
   label: string;
   desc: string;
+  mobileDesc?: string;
 }
 
 export interface NavbarProps {
@@ -17,9 +19,6 @@ export interface NavbarProps {
   brand?: string;
   contactLabel?: string;
   mobileMenuTitle?: string;
-  mobileContactLabel?: string;
-  mobileArea?: string;
-  email?: string;
 }
 
 const DEFAULT_NAV_LINKS: NavLinkItem[] = [
@@ -45,13 +44,18 @@ export default function Navbar({
   brand = "Let It Sniff",
   contactLabel = "Επικοινωνία",
   mobileMenuTitle = "Μενού Πλοήγησης",
-  mobileContactLabel = "Επικοινωνία με τον Αλέξανδρο",
-  mobileArea = "Αθήνα & Αττική",
-  email = "info@letitsniff.gr",
 }: NavbarProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const isLinkActive = (href: string) => {
+    const route = href.replace(/\/$/, "") || "/";
+    const current = pathname.replace(/\/$/, "") || "/";
+    return current === route || (route !== "/" && current.startsWith(`${route}/`));
+  };
 
   // Close menu on route change during render
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -60,25 +64,54 @@ export default function Navbar({
     setOpen(false);
   }
 
-  // Prevent background scrolling when mobile menu is open
+  // The portal keeps fixed elements relative to the viewport, outside the
+  // header's backdrop filter. Keep keyboard focus in the open dialog.
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!open) return;
+
+    const toggle = toggleRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const background = Array.from(document.querySelectorAll<HTMLElement>("main, footer"));
+    const previousInert = background.map((element) => element.inert);
+    background.forEach((element) => { element.inert = true; });
+    panelRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+      }
+      if (event.key !== "Tab") return;
+      const items = Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>("a[href], button") ?? []
+      );
+      const first = items[0];
+      const last = items[items.length - 1];
+      const outside = !panelRef.current?.contains(document.activeElement);
+      if (outside || (event.shiftKey && document.activeElement === first)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first)?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
+      background.forEach((element, index) => { element.inert = previousInert[index]; });
+      document.removeEventListener("keydown", onKeyDown);
+      toggle?.focus();
     };
   }, [open]);
 
-  // Close on Escape key
+  // Switching to desktop also releases the scroll lock and focus trap.
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const onChange = () => { if (desktop.matches) setOpen(false); };
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
   }, []);
 
   // Subtle border on scroll
@@ -96,7 +129,7 @@ export default function Navbar({
           : "border-[var(--color-sandDark)]/35"
       }`}
     >
-      <nav className="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
+      <nav className="max-w-5xl mx-auto px-5 h-14 md:h-16 flex items-center justify-between">
         {/* Logo + desktop nav links */}
         <div className="flex items-center gap-8">
           <Link
@@ -110,13 +143,12 @@ export default function Navbar({
 
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((l) => {
-              const isActive =
-                pathname === l.href ||
-                (l.href !== "/" && pathname.startsWith(l.href));
+              const isActive = isLinkActive(l.href);
               return (
                 <Link
                   key={l.href}
                   href={l.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={`text-sm transition-colors ${
                     isActive
                       ? "text-[var(--color-brown)] font-semibold border-b-2 border-[var(--color-amber)] pb-0.5"
@@ -140,92 +172,85 @@ export default function Navbar({
 
         {/* Mobile toggle button */}
         <button
+          ref={toggleRef}
           type="button"
-          className="md:hidden min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-[var(--color-brown)] hover:text-[var(--color-amber)] transition-colors focus:outline-none"
+          className="mobile-nav-toggle md:hidden"
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
           aria-expanded={open}
+          aria-controls="mobile-nav-panel"
+          aria-haspopup="dialog"
         >
-          {open ? <X size={24} /> : <Menu size={24} />}
+          {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
         </button>
       </nav>
 
-      {/* Mobile Dropdown Panel & Backdrop */}
-      {open && (
+      {open && createPortal(
         <>
           <div
-            className="md:hidden fixed inset-0 top-16 bg-black/25 z-40 backdrop-blur-xs transition-opacity"
+            className="mobile-nav-backdrop"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div className="md:hidden relative z-50 bg-[var(--color-cream)] border-t border-[var(--color-sandDark)] px-5 py-6 shadow-xl max-h-[calc(100dvh-4rem)] overflow-y-auto">
-            <div className="space-y-3">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-2">
-                {mobileMenuTitle}
-              </p>
-              {navLinks.map((l) => {
-                const isActive =
-                  pathname === l.href ||
-                  (l.href !== "/" && pathname.startsWith(l.href));
+          <div
+            ref={panelRef}
+            id="mobile-nav-panel"
+            className="mobile-nav-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-nav-title"
+          >
+            <div className="mobile-nav-panel-heading">
+              <p id="mobile-nav-title">{mobileMenuTitle}</p>
+              <button
+                type="button"
+                className="mobile-nav-close"
+                onClick={() => setOpen(false)}
+                aria-label="Κλείσιμο μενού πλοήγησης"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </div>
+            <nav aria-label={mobileMenuTitle} className="mobile-nav-links">
+              {navLinks.map((link) => {
+                const isActive = isLinkActive(link.href);
+                const Icon = link.href.startsWith("/blog") ? BookOpen
+                  : link.href.startsWith("/ypiresies") ? PawPrint
+                  : link.href.startsWith("/o-alexandros") ? UserRound : ArrowRight;
                 return (
                   <Link
-                    key={l.href}
-                    href={l.href}
-                    className={`block p-4 border transition-colors ${
-                      isActive
-                        ? "bg-white border-l-4 border-l-[var(--color-amber)] border-y-[var(--color-sandDark)]/60 border-r-[var(--color-sandDark)]/60"
-                        : "bg-white/70 border-[var(--color-sandDark)]/60 hover:bg-white"
-                    }`}
+                    key={link.href}
+                    href={link.href}
+                    className="mobile-nav-link"
+                    aria-current={isActive ? "page" : undefined}
                     onClick={() => setOpen(false)}
                   >
-                    <div className="flex items-center justify-between mb-1">
-                      <span
-                        className={`font-heading text-lg ${
-                          isActive
-                            ? "text-[var(--color-brown)] font-bold"
-                            : "text-[var(--color-brown)]"
-                        }`}
-                      >
-                        {l.label}
-                      </span>
-                      <ArrowRight
-                        size={16}
-                        className={
-                          isActive
-                            ? "text-[var(--color-amberText)]"
-                            : "text-[var(--color-muted)]"
-                        }
-                      />
-                    </div>
-                    <p className="text-xs text-[var(--color-muted)] leading-relaxed">
-                      {l.desc}
-                    </p>
+                    <span className="mobile-nav-icon"><Icon size={18} aria-hidden="true" /></span>
+                    <span className="mobile-nav-text">
+                      <span className="mobile-nav-label">{link.label}</span>
+                      {(link.mobileDesc || link.desc) && (
+                        <span className="mobile-nav-description">{link.mobileDesc || link.desc}</span>
+                      )}
+                    </span>
+                    <ChevronRight size={14} className="mobile-nav-chevron" aria-hidden="true" />
                   </Link>
                 );
               })}
-
-              <div className="pt-2">
-                <Link
-                  href="/o-alexandros#epikoinonia"
-                  className="flex items-center justify-center gap-2 w-full bg-[var(--color-brown)] text-white font-medium py-3.5 text-sm hover:bg-[var(--color-brownMid)] transition-colors"
-                  onClick={() => setOpen(false)}
-                >
-                  {mobileContactLabel} <ArrowRight size={14} />
-                </Link>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-[var(--color-sandDark)]/70 text-xs text-[var(--color-muted)] flex flex-wrap items-center justify-between gap-2">
-              <span>{mobileArea}</span>
-              <a
-                href={`mailto:${email}`}
-                className="flex items-center gap-1.5 text-[var(--color-brown)] font-medium hover:text-[var(--color-amber)] break-all"
+            </nav>
+            <div className="mobile-nav-contact-wrap">
+              <Link
+                href="/o-alexandros#epikoinonia"
+                className="mobile-nav-contact"
+                onClick={() => setOpen(false)}
               >
-                <Mail size={13} className="shrink-0" /> {email}
-              </a>
+                <Mail size={17} aria-hidden="true" />
+                <span>{contactLabel}</span>
+                <ArrowRight size={15} aria-hidden="true" />
+              </Link>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </header>
   );

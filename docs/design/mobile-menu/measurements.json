@@ -1,0 +1,36 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "current": {
+    "headerHeight": 64,
+    "panelHeight": 501
+  },
+  "variants": [
+    {
+      "id": "1-dropdown",
+      "name": "Compact dropdown",
+      "kind": "dropdown",
+      "width": 366,
+      "height": 224,
+      "visibleMenuAreaPercent": 25
+    },
+    {
+      "id": "2-side-panel",
+      "name": "Narrow side panel",
+      "kind": "side",
+      "width": 268,
+      "height": 304,
+      "visibleMenuAreaPercent": 25
+    },
+    {
+      "id": "3-bottom-sheet",
+      "name": "Bottom sheet",
+      "kind": "bottom",
+      "width": 390,
+      "height": 263,
+      "visibleMenuAreaPercent": 31
+    }
+  ]
+}

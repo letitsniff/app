@@ -67,9 +67,6 @@ export default function RootLayout({
           brand={global.siteName}
           contactLabel={global.ui.mobileContact}
           mobileMenuTitle={global.ui.mobileMenuTitle}
-          mobileContactLabel={global.consultationBox.buttonText}
-          mobileArea={global.ui.mobileArea}
-          email={global.email}
         />
         <main>{children}</main>
         <Footer settings={global} />

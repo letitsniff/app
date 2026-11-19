@@ -71,21 +71,23 @@ function extractListItems(raw: string): string[] {
 
 function extractBlockquoteNavLinks(
   raw: string,
-  defaultLinks: { href: string; label: string; desc: string }[]
-): { href: string; label: string; desc: string }[] {
+  defaultLinks: { href: string; label: string; desc: string; mobileDesc?: string }[]
+): { href: string; label: string; desc: string; mobileDesc?: string }[] {
   const entries = raw.split(/>\s*\*\s+/);
-  const links: { href: string; label: string; desc: string }[] = [];
+  const links: { href: string; label: string; desc: string; mobileDesc?: string }[] = [];
 
   for (const entry of entries) {
     const titleMatch = entry.match(/\*\*([^*]+)\*\*/);
     const urlMatch = entry.match(/\*URL:\*\s*([^\n\r]+)/);
     const descMatch = entry.match(/\*Περιγραφή:\*\s*([^\n\r]+)/);
+    const mobileDescMatch = entry.match(/\*Μενού κινητού:\*\s*([^\n\r]+)/);
 
     if (titleMatch && urlMatch) {
       links.push({
         label: titleMatch[1].trim(),
         href: urlMatch[1].trim(),
         desc: descMatch ? descMatch[1].trim() : "",
+        mobileDesc: mobileDescMatch?.[1].trim(),
       });
     }
   }
@@ -258,7 +260,7 @@ export interface GlobalSettings {
   defaultDescription: string;
   email: string;
   copyright: string;
-  navLinks: { href: string; label: string; desc: string }[];
+  navLinks: { href: string; label: string; desc: string; mobileDesc?: string }[];
   consultationBox: {
     kicker: string;
     title: string;
